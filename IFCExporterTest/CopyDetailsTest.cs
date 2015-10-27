@@ -6,7 +6,7 @@ using System.IO;
 namespace IFCExporterTest
 {
     [TestClass]
-    public class CopyDetailsTest
+    public class FunctionTest
     {
         [TestMethod]
         public void DirectoryCopy_CheckWhatFilesGetsCopied()
