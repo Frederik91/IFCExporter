@@ -35,6 +35,22 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AcCoreMgd, Version=20.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\ObjectARX 2015\inc\AcCoreMgd.dll</HintPath>
+    </Reference>
+    <Reference Include="AcCui, Version=20.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\ObjectARX 2015\inc\AcCui.dll</HintPath>
+    </Reference>
+    <Reference Include="AcDbMgd, Version=20.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\ObjectARX 2015\inc\AcDbMgd.dll</HintPath>
+    </Reference>
+    <Reference Include="AcMgd, Version=20.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\ObjectARX 2015\inc\AcMgd.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
   </ItemGroup>
   <Choose>
@@ -59,6 +75,17 @@
       <Project>{c5c71ac0-4946-429d-a1a4-0943e6d0c47d}</Project>
       <Name>IFCExporter</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <COMReference Include="AXDBLib">
+      <Guid>{594E795C-1019-46CC-969B-121BE08917B2}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
