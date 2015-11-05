@@ -13,5 +13,6 @@ namespace IFCExporter.Models
         public List<StartFile> StartFiles { get; set; }
         public List<string> Disciplines { get; set; }
         public CopyDetails TomIFC { get; set; }
+        public List<CopyDetails> Exports { get; set; }
     }
 }

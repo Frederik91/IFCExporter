@@ -30,8 +30,9 @@ namespace IFCExporterTest
 
             foreach (var file in Files)
             {
-                if (file.Extension != fileType)
-                {
+                if (file.Extension != fileType && file.Extension != ".dwl2" && file.Extension != ".bak" && file.Extension != ".dwl")
+                {                    
+                    System.Windows.Forms.MessageBox.Show("The file \"" + file.Name + "\" is not a dwg.");
                     FileTypeBool = false;
                 }
             }

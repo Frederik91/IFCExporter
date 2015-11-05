@@ -52,6 +52,7 @@
       <HintPath>C:\ObjectARX 2015\inc\AcMgd.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <Choose>
     <When Condition="('$(VisualStudioVersion)' == '10.0' or '$(VisualStudioVersion)' == '') and '$(TargetFrameworkVersion)' == 'v3.5'">
@@ -66,6 +67,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="FormsTest.cs" />
     <Compile Include="XMLReaderTest.cs" />
     <Compile Include="CopyDetailsTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

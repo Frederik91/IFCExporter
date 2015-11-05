@@ -20,7 +20,8 @@ namespace IFCExporter.Helpers
                 Folders = new List<CopyDetails>(),
                 StartFiles = new List<StartFile>(),
                 Disciplines = new List<string>(),
-                TomIFC = new CopyDetails()
+                TomIFC = new CopyDetails(),
+                Exports = new List<CopyDetails>()
             };
             var Folders = xDoc.Element("Project").Element("Folders").Elements("Folder");
             var Files = xDoc.Element("Project").Element("Files").Elements("File");
@@ -34,7 +35,8 @@ namespace IFCExporter.Helpers
                     From = Folder.Attribute("From").Value,
                     To = Folder.Attribute("To").Value,
                     Export = Folder.Attribute("Export").Value,
-                    Discipline = Folder.Attribute("Discipline").Value
+                    Discipline = Folder.Attribute("Discipline").Value,
+                    IFC = Folder.Attribute("IFC").Value
                 });
             }
 
@@ -62,10 +64,29 @@ namespace IFCExporter.Helpers
                 ProjectInfo.Disciplines.Add(Discipline.Value);
             }
 
-            ProjectInfo.TomIFC = new CopyDetails{
+            ProjectInfo.TomIFC = new CopyDetails
+            {
                 From = xDoc.Element("Project").Element("IFC").Attribute("From").Value,
-                To = xDoc.Element("Project").Element("IFC").Attribute("To").Value
+                To = xDoc.Element("Project").Element("IFC").Attribute("To").Value,
+                Export = xDoc.Element("Project").Element("IFC").Attribute("Export").Value
             };
+
+
+
+            foreach (var Folder in ProjectInfo.Folders)
+            {
+                ProjectInfo.Exports.Add(new CopyDetails
+                {
+                    Export = Folder.Export,
+                    Discipline = Folder.Discipline
+                }
+                );
+            }
+            IEnumerable<CopyDetails> filteredList = ProjectInfo
+                .Exports.GroupBy(c => c.Export)
+                .Select(group => group.First());
+
+            ProjectInfo.Exports = filteredList.ToList();
 
             return ProjectInfo;
         }

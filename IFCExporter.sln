@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IFCExporter", "IFCExporter\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IFCExporterTest", "IFCExporterTest\IFCExporterTest.csproj", "{1CE30634-DF86-4D16-99F1-E119982D9D92}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IFCExporterXmlManager", "IFCExporterXmlManager\IFCExporterXmlManager.csproj", "{176F4245-76FB-4B31-B0DA-0C2DBC0FEC71}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{1CE30634-DF86-4D16-99F1-E119982D9D92}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1CE30634-DF86-4D16-99F1-E119982D9D92}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1CE30634-DF86-4D16-99F1-E119982D9D92}.Release|Any CPU.Build.0 = Release|Any CPU
+		{176F4245-76FB-4B31-B0DA-0C2DBC0FEC71}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{176F4245-76FB-4B31-B0DA-0C2DBC0FEC71}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{176F4245-76FB-4B31-B0DA-0C2DBC0FEC71}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{176F4245-76FB-4B31-B0DA-0C2DBC0FEC71}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
