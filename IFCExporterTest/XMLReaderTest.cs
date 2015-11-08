@@ -14,9 +14,8 @@ namespace IFCExporterTest
         {
             var CP = new Copier();
             var reader = new XMLReader();
-            var ProjectInfo = reader.GetprojectInfo("C:\\TestMappe\\XmlOutput.xml");
+            var ProjectInfo = reader.GetprojectInfo("C:\\TestMappe\\Hjemmeprosjekt.xml");
 
-            int countOfMatches = 0;
             List<string> RIEFOLDERS = new List<string>();
             List<string> RIVFOLDERS = new List<string>();
 
@@ -41,7 +40,7 @@ namespace IFCExporterTest
 
             }
 
-            Assert.AreNotEqual(0, countOfMatches);
+            Assert.AreNotEqual(0, RIEFOLDERS.Count);
         }
 
         [TestMethod]

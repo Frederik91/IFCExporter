@@ -12,6 +12,7 @@ namespace IFCExporter.Models
         public IFCFile TomIFC { get; set; }
         public List<File> Files { get; set; }
         public File BaseFolder { get; set; }
+        public string ProjectName { get; set; }
 
     }
 }
