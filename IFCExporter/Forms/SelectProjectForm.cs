@@ -40,10 +40,12 @@ namespace IFCExporter.Forms
             ExportsToRun.Clear();
             if (AllExports_Checkbox.Checked)
             {
-
-                foreach (var Export in projectInfo.Exports)
+                foreach (var Discipline in projectInfo.Disciplines)
                 {
-                    ExportsToRun.Add(Export.Export);
+                    foreach (var Export in Discipline.Exports)
+                    {
+                        ExportsToRun.Add(Export.Name);
+                    }
                 }
             }
             else
@@ -51,7 +53,7 @@ namespace IFCExporter.Forms
                 foreach (var SelectedExport in checkedListBox1.CheckedItems)
                 {
                     ExportsToRun.Add(SelectedExport.ToString());
-                }                
+                }
             }
 
             ActiveForm.Close();
@@ -76,12 +78,16 @@ namespace IFCExporter.Forms
                 projectInfo = reader.GetprojectInfo(FD.FileName);
 
                 checkedListBox1.Items.Clear();
-                foreach (var Export in projectInfo.Exports)
+
+                foreach (var Discipline in projectInfo.Disciplines)
                 {
-                    checkedListBox1.Items.Add(Export.Export);
+
+                    foreach (var Export in Discipline.Exports)
+                    {
+                        checkedListBox1.Items.Add(Export.Name);
+                    }
+
                 }
-
-
             }
             catch (Exception)
             {

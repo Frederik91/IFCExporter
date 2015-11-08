@@ -31,44 +31,32 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="AcCoreMgd">
-      <HintPath>C:\ObjectARX 2015\inc\AcCoreMgd.dll</HintPath>
+      <HintPath>..\..\..\..\..\Program Files\AutoCAD 2016\accoremgd.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="AcCui">
-      <HintPath>C:\ObjectARX 2015\inc\AcCui.dll</HintPath>
+      <HintPath>..\..\..\..\..\Program Files\AutoCAD 2016\AcCui.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="AcDbMgd">
-      <HintPath>C:\ObjectARX 2015\inc\AcDbMgd.dll</HintPath>
+      <HintPath>..\..\..\..\..\Program Files\AutoCAD 2016\acdbmgd.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="AcMgd">
-      <HintPath>C:\ObjectARX 2015\inc\AcMgd.dll</HintPath>
+      <HintPath>..\..\..\..\..\Program Files\AutoCAD 2016\acmgd.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Autodesk.AutoCAD.Interop">
-      <HintPath>C:\ObjectARX 2015\inc-x64\Autodesk.AutoCAD.Interop.dll</HintPath>
+      <HintPath>C:\ObjectARX 2016\inc-x64\Autodesk.AutoCAD.Interop.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
     <Reference Include="Autodesk.AutoCAD.Interop.Common">
-      <HintPath>C:\ObjectARX 2015\inc-x64\Autodesk.AutoCAD.Interop.Common.dll</HintPath>
+      <HintPath>C:\ObjectARX 2016\inc-x64\Autodesk.AutoCAD.Interop.Common.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
-    </Reference>
-    <Reference Include="GalaSoft.MvvmLight, Version=5.2.0.37222, Culture=neutral, PublicKeyToken=e7570ab207bcb616, processorArchitecture=MSIL">
-      <HintPath>..\packages\MvvmLightLibs.5.2.0.0\lib\net45\GalaSoft.MvvmLight.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="GalaSoft.MvvmLight.Extras, Version=5.2.0.37222, Culture=neutral, PublicKeyToken=669f0b5e8f868abf, processorArchitecture=MSIL">
-      <HintPath>..\packages\MvvmLightLibs.5.2.0.0\lib\net45\GalaSoft.MvvmLight.Extras.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="GalaSoft.MvvmLight.Platform, Version=5.2.0.37226, Culture=neutral, PublicKeyToken=5f873c45e98af8a1, processorArchitecture=MSIL">
-      <HintPath>..\packages\MvvmLightLibs.5.2.0.0\lib\net45\GalaSoft.MvvmLight.Platform.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.3.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\CommonServiceLocator.1.3\lib\portable-net4+sl5+netcore45+wpa81+wp8\Microsoft.Practices.ServiceLocation.dll</HintPath>
-      <Private>True</Private>
+      <Private>False</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -76,7 +64,7 @@
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\MvvmLightLibs.5.2.0.0\lib\net45\System.Windows.Interactivity.dll</HintPath>
-      <Private>True</Private>
+      <Private>False</Private>
     </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -103,9 +91,12 @@
     <Compile Include="Helpers\DocumentManager.cs" />
     <Compile Include="Helpers\XMLReader.cs" />
     <Compile Include="MainClass.cs" />
-    <Compile Include="Models\CopyDetails.cs" />
+    <Compile Include="Models\Folder.cs" />
+    <Compile Include="Models\Discipline.cs" />
+    <Compile Include="Models\Export.cs" />
+    <Compile Include="Models\File.cs" />
+    <Compile Include="Models\IFCFile.cs" />
     <Compile Include="Models\IFCProjectInfo.cs" />
-    <Compile Include="Models\StartFile.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

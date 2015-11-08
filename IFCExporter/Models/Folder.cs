@@ -6,12 +6,10 @@ using System.Threading.Tasks;
 
 namespace IFCExporter.Models
 {
-    public class CopyDetails
+    public class Folder
     {
         public string From { get; set; }
         public string To { get; set; }
-        public string Export { get; set; }
-        public string Discipline { get; set; }
         public string IFC { get; set; }
     }
 }

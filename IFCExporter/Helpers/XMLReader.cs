@@ -10,83 +10,59 @@ namespace IFCExporter.Helpers
 {
     public class XMLReader
     {
-        public IFCProjectInfo GetprojectInfo(string _XMLPath)
+        public IFCProjectInfo GetprojectInfo(string path)
         {
-            XDocument xDoc = XDocument.Load(_XMLPath);
 
-            var ProjectInfo = new IFCProjectInfo
-            {
-                Files = new List<CopyDetails>(),
-                Folders = new List<CopyDetails>(),
-                StartFiles = new List<StartFile>(),
-                Disciplines = new List<string>(),
-                TomIFC = new CopyDetails(),
-                Exports = new List<CopyDetails>()
-            };
-            var Folders = xDoc.Element("Project").Element("Folders").Elements("Folder");
-            var Files = xDoc.Element("Project").Element("Files").Elements("File");
-            var StartFiles = xDoc.Element("Project").Element("StartFiles").Elements("StartFile");
-            var Disciplines = xDoc.Element("Project").Element("Disciplines").Elements("Discipline").Attributes("Name");
 
-            foreach (var Folder in Folders)
+
+            var ProjectInfo = new IFCProjectInfo { Disciplines = new List<Discipline>(), Files = new List<File>(), TomIFC = new IFCFile(), BaseFolder = new File() } ;
+            XElement xdoc = XElement.Load(path);
+            var Dicsiplines = xdoc.Elements("Discipline");
+            var disciplinecol = new List<Discipline>();
+            foreach (var dis in Dicsiplines)
             {
-                ProjectInfo.Folders.Add(new CopyDetails
+                Discipline _discipline = new Discipline { Exports = new List<Export>() };
+                _discipline.Name = dis.Attribute("Value").Value;
+
+                _discipline.StartFile = dis.Element("StartFile").Attribute("Value").Value;
+                var exps = dis.Elements("Export");
+                foreach (var exp in exps)
                 {
-                    From = Folder.Attribute("From").Value,
-                    To = Folder.Attribute("To").Value,
-                    Export = Folder.Attribute("Export").Value,
-                    Discipline = Folder.Attribute("Discipline").Value,
-                    IFC = Folder.Attribute("IFC").Value
-                });
-            }
+                    var _export = new Export {Folders = new List<Folder>() };
+                    _export.Name = exp.Attribute("Value").Value;
 
-            foreach (var File in Files)
-            {
-                ProjectInfo.Files.Add(new CopyDetails
-                {
-                    From = File.Attribute("From").Value,
-                    To = File.Attribute("To").Value,
-                    Export = File.Attribute("Export").Value
-                });
-            }
+                    var folders = exp.Elements("Folder");
+                    foreach (var folder in folders)
+                    {
+                        var From = folder.Attribute("From").Value;
+                        var To = folder.Attribute("To").Value;
+                        var IFC = folder.Attribute("IFC").Value;
 
-            foreach (var StartFile in StartFiles)
-            {
-                ProjectInfo.StartFiles.Add(new StartFile
-                {
-                    Path = StartFile.Attribute("Path").Value,
-                    Discipline = StartFile.Attribute("Discipline").Value
-                });
-            }
-
-            foreach (var Discipline in Disciplines)
-            {
-                ProjectInfo.Disciplines.Add(Discipline.Value);
-            }
-
-            ProjectInfo.TomIFC = new CopyDetails
-            {
-                From = xDoc.Element("Project").Element("IFC").Attribute("From").Value,
-                To = xDoc.Element("Project").Element("IFC").Attribute("To").Value,
-                Export = xDoc.Element("Project").Element("IFC").Attribute("Export").Value
-            };
-
-
-
-            foreach (var Folder in ProjectInfo.Folders)
-            {
-                ProjectInfo.Exports.Add(new CopyDetails
-                {
-                    Export = Folder.Export,
-                    Discipline = Folder.Discipline
+                        var f = new Folder { From = From, To = To, IFC = IFC };
+                        _export.Folders.Add(f);
+                    }
+                    _discipline.Exports.Add(_export);
                 }
-                );
-            }
-            IEnumerable<CopyDetails> filteredList = ProjectInfo
-                .Exports.GroupBy(c => c.Export)
-                .Select(group => group.First());
 
-            ProjectInfo.Exports = filteredList.ToList();
+                ProjectInfo.Disciplines.Add(_discipline);
+            }
+
+            var BaseFolder = xdoc.Element("BaseFolder");
+            ProjectInfo.BaseFolder.From = BaseFolder.Attribute("From").Value;
+            ProjectInfo.BaseFolder.To = BaseFolder.Attribute("To").Value;          
+            
+               
+            var files = xdoc.Element("Files").Elements("File");
+            foreach (var file in files)
+            {
+                ProjectInfo.Files.Add(new File { From = file.Attribute("From").Value, To = file.Attribute("To").Value });                
+            }
+
+            var ifc = xdoc.Element("IFC");
+
+            ProjectInfo.TomIFC.Export = ifc.Attribute("Export").Value;
+            ProjectInfo.TomIFC.From = ifc.Attribute("From").Value;
+            ProjectInfo.TomIFC.To = ifc.Attribute("To").Value;
 
             return ProjectInfo;
         }

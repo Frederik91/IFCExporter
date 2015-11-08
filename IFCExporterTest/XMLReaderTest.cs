@@ -14,34 +14,31 @@ namespace IFCExporterTest
         {
             var CP = new Copier();
             var reader = new XMLReader();
-            var ProjectInfo = reader.GetprojectInfo("H:\\IFCEXPORT\\XML\\BUS2.xml");
+            var ProjectInfo = reader.GetprojectInfo("C:\\TestMappe\\XmlOutput.xml");
 
             int countOfMatches = 0;
             List<string> RIEFOLDERS = new List<string>();
             List<string> RIVFOLDERS = new List<string>();
 
-            foreach (var Folder in ProjectInfo.Folders)
+            foreach (var Discipline in ProjectInfo.Disciplines)
             {
-                foreach (var Discipline in ProjectInfo.Disciplines)
+                foreach (var Export in Discipline.Exports)
                 {
-                    if (Discipline == Folder.Discipline)
+                    foreach (var Folder in Export.Folders)
                     {
-                        countOfMatches++;
+
+                        if (Discipline.Name == "RIE")
+                        {
+                            RIEFOLDERS.Add(Folder.From);
+                        }
+
+                        if (Discipline.Name == "RIV")
+                        {
+                            RIVFOLDERS.Add(Folder.From);
+                        }
                     }
-
-                    if (Folder.Discipline == "RIE")
-                    {
-                        RIEFOLDERS.Add(Folder.From);
-                    }
-
-                    if (Folder.Discipline == "RIV")
-                    {
-                        RIVFOLDERS.Add(Folder.From);
-                    }
-
-
-
                 }
+
             }
 
             Assert.AreNotEqual(0, countOfMatches);

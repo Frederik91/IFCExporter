@@ -8,11 +8,10 @@ namespace IFCExporter.Models
 {
     public class IFCProjectInfo
     {
-        public List<CopyDetails> Folders { get; set; }
-        public List<CopyDetails> Files { get; set; }
-        public List<StartFile> StartFiles { get; set; }
-        public List<string> Disciplines { get; set; }
-        public CopyDetails TomIFC { get; set; }
-        public List<CopyDetails> Exports { get; set; }
+        public List<Discipline> Disciplines { get; set; }
+        public IFCFile TomIFC { get; set; }
+        public List<File> Files { get; set; }
+        public File BaseFolder { get; set; }
+
     }
 }
