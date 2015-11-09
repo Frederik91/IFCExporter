@@ -6,20 +6,67 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Threading;
 
 namespace IFCExporter.Workers
 {
     public class FolderMonitor
     {
-        private List<FolderDate> OldFolderList;
-        private List<Discipline> Disciplines;
+        public System.IO.FileSystemWatcher m_Watcher;
+        public bool m_bDirty = false;
+        private MainClass MC;
 
-        public FolderMonitor(List<Discipline> disciplines)
+        public void Watcher(MainClass _MC)
         {
-            Disciplines = disciplines;
+            MC = _MC;
+
+            m_Watcher = new System.IO.FileSystemWatcher();
+         
+            // m_Watcher.Filter = txtFile.Text.Substring(txtFile.Text.LastIndexOf('\\') + 1);
+            m_Watcher.Path = @"C:\TestMappe\Drawings";
+            m_Watcher.IncludeSubdirectories = true;
+
+            m_Watcher.NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite
+                                 | NotifyFilters.FileName | NotifyFilters.DirectoryName;
+            m_Watcher.Changed += new FileSystemEventHandler(OnChanged);
+            m_Watcher.Created += new FileSystemEventHandler(OnChanged);
+            m_Watcher.Deleted += new FileSystemEventHandler(OnChanged);
+            m_Watcher.Renamed += new RenamedEventHandler(OnRenamed);
+            m_Watcher.EnableRaisingEvents = true;
         }
 
-        private List<FolderDate> MonitorFolders()
+        private void OnChanged(object sender, FileSystemEventArgs e)
+        {
+            if (!m_bDirty)
+            {
+                var dir = Path.GetDirectoryName(e.FullPath);
+
+                MC.Execute(LocateDrawingExport(dir, MC.ProjectInfo.Disciplines));
+                m_bDirty = true;
+            }
+        }
+
+        private void OnRenamed(object sender, RenamedEventArgs e)
+        {
+            if (!m_bDirty)
+            {
+              
+
+                m_bDirty = true;
+            }
+        }
+
+
+        //private List<FolderDate> OldFolderList;
+        //private List<Discipline> Disciplines;
+
+
+        //public FolderMonitor(List<Discipline> disciplines)
+        //{
+        //    Disciplines = disciplines;
+        //}
+
+        public string LocateDrawingExport(string FolderPath, List<Discipline> Disciplines)
         {
             var FolderDateList = new List<FolderDate>();
 
@@ -29,48 +76,61 @@ namespace IFCExporter.Workers
                 {
                     foreach (var Folder in Export.Folders)
                     {
-                        FolderDateList.Add(new FolderDate { Path = Folder.From, LastUpdatet = Directory.GetLastWriteTime(Folder.From), Discipline = Discipline.Name, Export = Export.Name});
-                    }                    
-                }
-            }
-            return FolderDateList;
-        }
-
-        private FolderDate CheckIfFolderIsUpdated(List<FolderDate> NewFolderList)
-        {
-            foreach (var oldFolder in OldFolderList)
-            {
-                foreach (var newFolder in NewFolderList)
-                {
-                    if (newFolder.Path == oldFolder.Path)
-                    {
-                        if (newFolder.LastUpdatet != oldFolder.LastUpdatet)
+                        if (FolderPath == Folder.From)
                         {
-                            return newFolder;
+                            return Export.Name;
                         }
                     }
                 }
             }
-            return new FolderDate();
+            return "";
         }
 
-        public FolderDate StartMonitoring()
-        {
-            OldFolderList = MonitorFolders();
-            FolderDate CheckFolderResult = new FolderDate();
-            while (true)
-            {
-                var newList = MonitorFolders();
-                CheckFolderResult = CheckIfFolderIsUpdated(newList);
+        //private FolderDate CheckIfFolderIsUpdated(List<FolderDate> NewFolderList)
+        //{
+        //    foreach (var oldFolder in OldFolderList)
+        //    {
+        //        foreach (var newFolder in NewFolderList)
+        //        {
+        //            if (newFolder.Path == oldFolder.Path)
+        //            {
+        //                foreach (var oldFile in oldFolder.Files)
+        //                {
+        //                    foreach (var newFile in newFolder.Files)
+        //                    {
+        //                        if (newFile.Path == oldFile.Path)
+        //                        {
+        //                            if (newFile.LastUpdated != oldFile.LastUpdated)
+        //                            {
+        //                                return newFolder;
+        //                            }
+        //                        }
+        //                    }
+        //                }
+        //            }
+        //        }
+        //    }
+        //    return new FolderDate();
+        //}
 
-                if (!string.IsNullOrEmpty(CheckFolderResult.Path))
-                {
-                    break;
-                }
-            }
-            MessageBox.Show("Folder \"" + CheckFolderResult.Path + "\" was updated at: " + CheckFolderResult.LastUpdatet.ToShortDateString());
-            return CheckFolderResult;
-        }
+        //public async Task<FolderDate> StartMonitoring()
+        //{         
+
+        //    OldFolderList = MonitorFolders();
+        //    FolderDate CheckFolderResult = new FolderDate();
+        //    while (true)
+        //    {
+        //        var newList = MonitorFolders();
+        //        CheckFolderResult = CheckIfFolderIsUpdated(newList);
+
+        //        if (!string.IsNullOrEmpty(CheckFolderResult.Path))
+        //        {
+        //            break;
+        //        }
+        //        //System.Threading.Thread.Sleep(1000);
+        //    }
+        //    return CheckFolderResult;
+        //}
 
     }
 }

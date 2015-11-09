@@ -6,12 +6,9 @@ using System.Threading.Tasks;
 
 namespace IFCExporter.Models
 {
-    public class FolderDate
+    public class FileDate
     {
         public string Path { get; set; }
-        public List<FileDate> Files { get; set; }
-        public string Export { get; set; }
-        public string Discipline { get; set; }
         public DateTime LastUpdated { get; set; }
     }
 }

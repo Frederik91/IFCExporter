@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace IFCExporter.Helpers
 {
-    public class DocumentManager
+    public class OpenActivateClass
     {
         public void OpenDrawing(string FileName)
         {           

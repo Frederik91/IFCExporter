@@ -3,28 +3,30 @@ using Autodesk.AutoCAD.Runtime;
 using IFCExporter.Helpers;
 using IFCExporter.Models;
 using System.IO;
-using Autodesk.AutoCAD.DatabaseServices;
-using Autodesk.AutoCAD.Geometry;
-using Autodesk.AutoCAD.EditorInput;
-using aGi = Autodesk.AutoCAD.GraphicsInterface;
 using Autodesk.AutoCAD.Interop;
-using System;
 using IFCExporter.Forms;
-using System.Text;
 using System.Collections.Generic;
+using IFCExporter.Workers;
+using Autodesk.AutoCAD.EditorInput;
+using System;
 
 namespace IFCExporter
 {
     public class MainClass
     {
+        DocumentCollection dm = Application.DocumentManager;
+        Document doc = Application.DocumentManager.MdiActiveDocument;
         private List<string> ExportsToExecute = new List<string>();
+        private string MonitoredExport = "";
         private Copier CP = new Copier();
-        private DocumentManager DM = new DocumentManager();
-        private Document Doc = Application.DocumentManager.MdiActiveDocument;
+        private OpenActivateClass DM = new OpenActivateClass();
+        private Document Doc = Autodesk.AutoCAD.ApplicationServices.Application.DocumentManager.MdiActiveDocument;
         private string _selectedProject;
         private string XMLFolder = "";
         private bool runForeverBool = false;
-        private IFCProjectInfo ProjectInfo = new IFCProjectInfo();
+        public IFCProjectInfo ProjectInfo = new IFCProjectInfo();
+        public System.IO.FileSystemWatcher _fsw;
+        private Editor ed = Application.DocumentManager.MdiActiveDocument.Editor;
 
 
         [CommandMethod("IFCEXPORTER", CommandFlags.Session)]
@@ -34,13 +36,12 @@ namespace IFCExporter
 
             switch (runForeverBool)
             {
+
                 case true:
-                    while (true)
-                    {
-                        Execute();
-                    }
+                    EventCommand();
+                    break;
                 case false:
-                    Execute();
+                    Execute("");
                     break;
             }
         }
@@ -84,8 +85,14 @@ namespace IFCExporter
 
         }
 
-        private void Execute()
+        public void Execute(string ExcusiveExport)
         {
+
+            if (ExcusiveExport != "")
+            {
+                MonitoredExport = ExcusiveExport;
+            }
+
             foreach (var Discipline in ProjectInfo.Disciplines)
             {
                 foreach (var Export in Discipline.Exports)
@@ -95,8 +102,20 @@ namespace IFCExporter
                     {
                         if (Export.Name == Exp)
                         {
-                            RunExport = true;
-                            break;
+                            if (runForeverBool)
+                            {
+                                if (Export.Name == MonitoredExport)
+                                {
+                                    RunExport = true;
+                                    break;
+
+                                }
+                            }
+                            else
+                            {
+                                RunExport = true;
+                                break;
+                            }
                         }
                     }
 
@@ -126,13 +145,13 @@ namespace IFCExporter
                         }
 
                         //--Åpne starttegning og sett som aktiv
-
-                        DM.OpenDrawing(Discipline.StartFile.To);
-                        Application.DocumentManager.MdiActiveDocument = DM.ReturnActivateDrawing(Discipline.StartFile.To);
-
+                        var OAC = new OpenActivateClass();
+                        OAC.OpenDrawing(Discipline.StartFile.To);
+                        Application.DocumentManager.MdiActiveDocument = OAC.ReturnActivateDrawing(Discipline.StartFile.To);
+                    
 
                         //--Kjør eksport
-                        AcadApplication app = Application.AcadApplication as AcadApplication;
+                        AcadApplication app = Autodesk.AutoCAD.ApplicationServices.Application.AcadApplication as AcadApplication;
                         app.ActiveDocument.SendCommand("_.-MAGIIFCEXPORT " + Export.Name + "\n");
 
                         //--Last opp IFC
@@ -144,6 +163,8 @@ namespace IFCExporter
                 }
             }
         }
+
+
 
         private void prepareFirstTime()
         {
@@ -175,7 +196,7 @@ namespace IFCExporter
         {
             DirectoryInfo DI = new DirectoryInfo(FolderDir);
             var SourceDirFiles = DI.GetFiles();
-            var OpenDrawings = Application.DocumentManager;
+            var OpenDrawings = Autodesk.AutoCAD.ApplicationServices.Application.DocumentManager;
 
             foreach (var File in SourceDirFiles)
             {
@@ -191,6 +212,93 @@ namespace IFCExporter
                 }
             }
         }
+
+        #region test
+
+        const string path = "C:\\TestMappe\\Drawings\\Folder1";
+        private bool _drawing = false;
+
+
+        private void EventCommand()
+        {
+           
+            if (doc == null)
+                return;
+
+            var ed = doc.Editor;
+
+            // Create a FileSystemWatcher for the path, looking for
+            // write changes and drawing more squares as needed
+
+            if (_fsw == null)
+            {
+                _fsw = new FileSystemWatcher();
+                _fsw.Path = path;
+             //  _fsw.Changed += (o, s) => nSquaresInContext(dm, ed, path);
+                _fsw.NotifyFilter = NotifyFilters.LastWrite;
+                _fsw.Changed += new FileSystemEventHandler(OnChanged);
+                _fsw.EnableRaisingEvents = true;
+            }
+        }
+
+
+        private void OnChanged(object sender, FileSystemEventArgs e)
+        {
+            var dir = Path.GetDirectoryName(e.FullPath);
+
+            var Export = LocateDrawingExport(dir, ProjectInfo.Disciplines);
+            nSquaresInContext(dm, ed, Export);
+
+        }
+#pragma warning disable 1998
+
+        private async void nSquaresInContext(DocumentCollection dc, Editor ed, string Export)
+        {
+            if (!_drawing)
+            {
+                _drawing = true;
+
+                // Call our square creation function asynchronously
+
+                await dc.ExecuteInCommandContextAsync(
+                  async (o) => nSquares(ed, Export),
+                  null
+                );
+
+                _drawing = false;
+            }
+        }
+
+#pragma warning restore 1998
+
+        public string LocateDrawingExport(string FolderPath, List<Discipline> Disciplines)
+        {
+            var FolderDateList = new List<FolderDate>();
+
+            foreach (var Discipline in Disciplines)
+            {
+                foreach (var Export in Discipline.Exports)
+                {
+                    foreach (var Folder in Export.Folders)
+                    {
+                        if (FolderPath == Folder.From)
+                        {
+                            return Export.Name;
+                        }
+                    }
+                }
+            }
+            return "";
+        }
+
+        private void nSquares(Editor ed, string Export)
+        {
+            //ON GUI THREAD
+            Execute(Export);
+        }
+
+        #endregion
+
 
     }
 }

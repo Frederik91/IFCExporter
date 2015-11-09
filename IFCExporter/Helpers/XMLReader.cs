@@ -13,8 +13,6 @@ namespace IFCExporter.Helpers
         public IFCProjectInfo GetprojectInfo(string path)
         {
 
-
-
             var ProjectInfo = new IFCProjectInfo { Disciplines = new List<Discipline>(), Files = new List<File>(), TomIFC = new IFCFile(), BaseFolder = new File() } ;
             XElement xdoc = XElement.Load(path);
             ProjectInfo.ProjectName = xdoc.Attribute("Name").Value;
