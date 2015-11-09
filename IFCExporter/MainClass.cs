@@ -22,7 +22,7 @@ namespace IFCExporter
         private DocumentManager DM = new DocumentManager();
         private Document Doc = Application.DocumentManager.MdiActiveDocument;
         private string _selectedProject;
-        private string XMLFolder = "H:\\IFCEXPORT\\XML\\";
+        private string XMLFolder = "";
         private bool runForeverBool = false;
         private IFCProjectInfo ProjectInfo = new IFCProjectInfo();
 
@@ -57,6 +57,7 @@ namespace IFCExporter
                 _selectedProject = form.SelectedProject;
                 runForeverBool = form.RunForeverBool;
                 ExportsToExecute = form.ExportsToRun;
+                XMLFolder = form.XMLPath;
                 if (_selectedProject == "")
                 {
                     System.Windows.Forms.MessageBox.Show("No project file selected, exiting.");
@@ -69,7 +70,7 @@ namespace IFCExporter
 
             //Les inn XMLfil
             var reader = new XMLReader();
-            ProjectInfo = reader.GetprojectInfo(XMLFolder + _selectedProject + ".xml");
+            ProjectInfo = reader.GetprojectInfo(XMLFolder);
 
             try
             {
@@ -170,7 +171,7 @@ namespace IFCExporter
                     {
                         try
                         {
-                            Directory.CreateDirectory(Folder.To);
+                            CP.DirectoryCopy(Folder.From, Folder.To, false, ".dwg");
                         }
                         catch (System.Exception e)
                         {
@@ -180,7 +181,7 @@ namespace IFCExporter
                 }
 
             }
-            Directory.CreateDirectory(ProjectInfo.BaseFolder.To + "\\IFC\\IFC-Files");
+            Directory.CreateDirectory(ProjectInfo.TomIFC.To);
 
 
         }

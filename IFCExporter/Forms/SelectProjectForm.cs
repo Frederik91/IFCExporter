@@ -19,6 +19,7 @@ namespace IFCExporter.Forms
         public string SelectedProject { get; set; }
         public bool RunForeverBool { get; set; }
         private IFCProjectInfo projectInfo;
+        public string XMLPath { get; set; }
 
         public SelectProjectForm()
         {
@@ -69,6 +70,7 @@ namespace IFCExporter.Forms
             OpenFileDialog FD = new OpenFileDialog();
             FD.Filter = "XML-files (*.xml)|*.xml";
             FD.ShowDialog();
+            XMLPath = FD.FileName;
             SelectedFilePath_TextBox.Text = FD.FileName;
             SelectedProject = Path.GetFileNameWithoutExtension(FD.FileName);
 
