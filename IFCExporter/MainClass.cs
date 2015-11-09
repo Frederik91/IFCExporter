@@ -14,7 +14,6 @@ namespace IFCExporter
 {
     public class MainClass
     {
-        DocumentCollection dm = Application.DocumentManager;
         Document doc = Application.DocumentManager.MdiActiveDocument;
         private List<string> ExportsToExecute = new List<string>();
         private string MonitoredExport = "";
@@ -25,9 +24,6 @@ namespace IFCExporter
         private string XMLFolder = "";
         private bool runForeverBool = false;
         public IFCProjectInfo ProjectInfo = new IFCProjectInfo();
-        public System.IO.FileSystemWatcher _fsw;
-        private Editor ed = Application.DocumentManager.MdiActiveDocument.Editor;
-
 
         [CommandMethod("IFCEXPORTER", CommandFlags.Session)]
         public void IFCExporter()
@@ -38,7 +34,8 @@ namespace IFCExporter
             {
 
                 case true:
-                    EventCommand();
+                    FolderMonitor FM = new FolderMonitor(this);
+                    FM.EventCommand();
                     break;
                 case false:
                     Execute("");
@@ -164,8 +161,6 @@ namespace IFCExporter
             }
         }
 
-
-
         private void prepareFirstTime()
         {
             foreach (var Discipline in ProjectInfo.Disciplines)
@@ -188,8 +183,6 @@ namespace IFCExporter
 
             }
             Directory.CreateDirectory(ProjectInfo.TomIFC.To);
-
-
         }
 
         private void CheckIfDrawingIsOpen_CloseIfOpen(string FolderDir)
@@ -212,92 +205,6 @@ namespace IFCExporter
                 }
             }
         }
-
-        #region test
-
-        const string path = "C:\\TestMappe\\Drawings\\Folder1";
-        private bool _drawing = false;
-
-
-        private void EventCommand()
-        {
-           
-            if (doc == null)
-                return;
-
-            var ed = doc.Editor;
-
-            // Create a FileSystemWatcher for the path, looking for
-            // write changes and drawing more squares as needed
-
-            if (_fsw == null)
-            {
-                _fsw = new FileSystemWatcher();
-                _fsw.Path = path;
-             //  _fsw.Changed += (o, s) => nSquaresInContext(dm, ed, path);
-                _fsw.NotifyFilter = NotifyFilters.LastWrite;
-                _fsw.Changed += new FileSystemEventHandler(OnChanged);
-                _fsw.EnableRaisingEvents = true;
-            }
-        }
-
-
-        private void OnChanged(object sender, FileSystemEventArgs e)
-        {
-            var dir = Path.GetDirectoryName(e.FullPath);
-
-            var Export = LocateDrawingExport(dir, ProjectInfo.Disciplines);
-            nSquaresInContext(dm, ed, Export);
-
-        }
-#pragma warning disable 1998
-
-        private async void nSquaresInContext(DocumentCollection dc, Editor ed, string Export)
-        {
-            if (!_drawing)
-            {
-                _drawing = true;
-
-                // Call our square creation function asynchronously
-
-                await dc.ExecuteInCommandContextAsync(
-                  async (o) => nSquares(ed, Export),
-                  null
-                );
-
-                _drawing = false;
-            }
-        }
-
-#pragma warning restore 1998
-
-        public string LocateDrawingExport(string FolderPath, List<Discipline> Disciplines)
-        {
-            var FolderDateList = new List<FolderDate>();
-
-            foreach (var Discipline in Disciplines)
-            {
-                foreach (var Export in Discipline.Exports)
-                {
-                    foreach (var Folder in Export.Folders)
-                    {
-                        if (FolderPath == Folder.From)
-                        {
-                            return Export.Name;
-                        }
-                    }
-                }
-            }
-            return "";
-        }
-
-        private void nSquares(Editor ed, string Export)
-        {
-            //ON GUI THREAD
-            Execute(Export);
-        }
-
-        #endregion
 
 
     }

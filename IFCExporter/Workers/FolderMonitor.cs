@@ -7,64 +7,64 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Threading;
+using Autodesk.AutoCAD.EditorInput;
 
 namespace IFCExporter.Workers
 {
     public class FolderMonitor
     {
-        public System.IO.FileSystemWatcher m_Watcher;
-        public bool m_bDirty = false;
-        private MainClass MC;
+        public MainClass MC;
+        const string path = "C:\\TestMappe\\Drawings\\Folder1";
+        private bool _drawing = false;
+        public System.IO.FileSystemWatcher _fsw;
+        private Autodesk.AutoCAD.ApplicationServices.DocumentCollection dm = Autodesk.AutoCAD.ApplicationServices.Core.Application.DocumentManager;
+        private Autodesk.AutoCAD.ApplicationServices.Document doc = Autodesk.AutoCAD.ApplicationServices.Core.Application.DocumentManager.MdiActiveDocument;
+        private Editor ed = Autodesk.AutoCAD.ApplicationServices.Core.Application.DocumentManager.MdiActiveDocument.Editor;
 
-        public void Watcher(MainClass _MC)
+        public FolderMonitor(MainClass _MC)
         {
             MC = _MC;
-
-            m_Watcher = new System.IO.FileSystemWatcher();
-         
-            // m_Watcher.Filter = txtFile.Text.Substring(txtFile.Text.LastIndexOf('\\') + 1);
-            m_Watcher.Path = @"C:\TestMappe\Drawings";
-            m_Watcher.IncludeSubdirectories = true;
-
-            m_Watcher.NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite
-                                 | NotifyFilters.FileName | NotifyFilters.DirectoryName;
-            m_Watcher.Changed += new FileSystemEventHandler(OnChanged);
-            m_Watcher.Created += new FileSystemEventHandler(OnChanged);
-            m_Watcher.Deleted += new FileSystemEventHandler(OnChanged);
-            m_Watcher.Renamed += new RenamedEventHandler(OnRenamed);
-            m_Watcher.EnableRaisingEvents = true;
         }
+
+        public void EventCommand()
+        {
+
+            if (doc == null)
+                return;
+
+            var ed = doc.Editor;
+
+            if (_fsw == null)
+            {
+                _fsw = new FileSystemWatcher();
+                _fsw.Path = path;
+                _fsw.NotifyFilter = NotifyFilters.LastWrite;
+                _fsw.Changed += new FileSystemEventHandler(OnChanged);
+                _fsw.EnableRaisingEvents = true;
+            }
+        }
+
 
         private void OnChanged(object sender, FileSystemEventArgs e)
         {
-            if (!m_bDirty)
-            {
-                var dir = Path.GetDirectoryName(e.FullPath);
+            var dir = Path.GetDirectoryName(e.FullPath);
 
-                MC.Execute(LocateDrawingExport(dir, MC.ProjectInfo.Disciplines));
-                m_bDirty = true;
-            }
+            var Export = LocateDrawingExport(dir, MC.ProjectInfo.Disciplines);
+            nSquaresInContext(dm, ed, Export);
+
         }
 
-        private void OnRenamed(object sender, RenamedEventArgs e)
+        private async void nSquaresInContext(Autodesk.AutoCAD.ApplicationServices.DocumentCollection dc, Editor ed, string Export)
         {
-            if (!m_bDirty)
+            if (!_drawing)
             {
-              
+                _drawing = true;
 
-                m_bDirty = true;
+                await dc.ExecuteInCommandContextAsync(async (o) => nSquares(ed, Export), null);
+
+                _drawing = false;
             }
         }
-
-
-        //private List<FolderDate> OldFolderList;
-        //private List<Discipline> Disciplines;
-
-
-        //public FolderMonitor(List<Discipline> disciplines)
-        //{
-        //    Disciplines = disciplines;
-        //}
 
         public string LocateDrawingExport(string FolderPath, List<Discipline> Disciplines)
         {
@@ -86,51 +86,11 @@ namespace IFCExporter.Workers
             return "";
         }
 
-        //private FolderDate CheckIfFolderIsUpdated(List<FolderDate> NewFolderList)
-        //{
-        //    foreach (var oldFolder in OldFolderList)
-        //    {
-        //        foreach (var newFolder in NewFolderList)
-        //        {
-        //            if (newFolder.Path == oldFolder.Path)
-        //            {
-        //                foreach (var oldFile in oldFolder.Files)
-        //                {
-        //                    foreach (var newFile in newFolder.Files)
-        //                    {
-        //                        if (newFile.Path == oldFile.Path)
-        //                        {
-        //                            if (newFile.LastUpdated != oldFile.LastUpdated)
-        //                            {
-        //                                return newFolder;
-        //                            }
-        //                        }
-        //                    }
-        //                }
-        //            }
-        //        }
-        //    }
-        //    return new FolderDate();
-        //}
-
-        //public async Task<FolderDate> StartMonitoring()
-        //{         
-
-        //    OldFolderList = MonitorFolders();
-        //    FolderDate CheckFolderResult = new FolderDate();
-        //    while (true)
-        //    {
-        //        var newList = MonitorFolders();
-        //        CheckFolderResult = CheckIfFolderIsUpdated(newList);
-
-        //        if (!string.IsNullOrEmpty(CheckFolderResult.Path))
-        //        {
-        //            break;
-        //        }
-        //        //System.Threading.Thread.Sleep(1000);
-        //    }
-        //    return CheckFolderResult;
-        //}
+        private void nSquares(Editor ed, string Export)
+        {
+            //ON GUI THREAD
+            MC.Execute(Export);
+        }
 
     }
 }

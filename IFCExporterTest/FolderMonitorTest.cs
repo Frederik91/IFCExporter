@@ -14,9 +14,9 @@ namespace IFCExporterTest
         [TestMethod]
         public void CheckFoldeUpdateDetection()
         {
-            XMLReader reader = new XMLReader();
-            var ProjectData = reader.GetprojectInfo("C:\\TestMappe\\FolderMonitorTest.xml");
-            FolderMonitor FM = new FolderMonitor();
+            //XMLReader reader = new XMLReader();
+            //var ProjectData = reader.GetprojectInfo("C:\\TestMappe\\FolderMonitorTest.xml");
+            //FolderMonitor FM = new FolderMonitor();
             //FM.Watcher(ProjectData.Disciplines);
 
 
