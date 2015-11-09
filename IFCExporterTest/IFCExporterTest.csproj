@@ -67,6 +67,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="FolderMonitorTest.cs" />
     <Compile Include="FormsTest.cs" />
     <Compile Include="XMLReaderTest.cs" />
     <Compile Include="CopyDetailsTest.cs" />

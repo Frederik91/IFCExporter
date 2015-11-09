@@ -5,12 +5,21 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace IFCExporter.Workers
 {
     public class FolderMonitor
     {
-        private List<FolderDate> MonitorFolders(List<Discipline> Disciplines)
+        private List<FolderDate> OldFolderList;
+        private List<Discipline> Disciplines;
+
+        public FolderMonitor(List<Discipline> disciplines)
+        {
+            Disciplines = disciplines;
+        }
+
+        private List<FolderDate> MonitorFolders()
         {
             var FolderDateList = new List<FolderDate>();
 
@@ -27,7 +36,7 @@ namespace IFCExporter.Workers
             return FolderDateList;
         }
 
-        private void CheckIfFolderIsUpdated(List<FolderDate> NewFolderList, List<FolderDate> OldFolderList)
+        private FolderDate CheckIfFolderIsUpdated(List<FolderDate> NewFolderList)
         {
             foreach (var oldFolder in OldFolderList)
             {
@@ -35,10 +44,32 @@ namespace IFCExporter.Workers
                 {
                     if (newFolder.Path == oldFolder.Path)
                     {
-
+                        if (newFolder.LastUpdatet != oldFolder.LastUpdatet)
+                        {
+                            return newFolder;
+                        }
                     }
                 }
             }
+            return new FolderDate();
+        }
+
+        public FolderDate StartMonitoring()
+        {
+            OldFolderList = MonitorFolders();
+            FolderDate CheckFolderResult = new FolderDate();
+            while (true)
+            {
+                var newList = MonitorFolders();
+                CheckFolderResult = CheckIfFolderIsUpdated(newList);
+
+                if (!string.IsNullOrEmpty(CheckFolderResult.Path))
+                {
+                    break;
+                }
+            }
+            MessageBox.Show("Folder \"" + CheckFolderResult.Path + "\" was updated at: " + CheckFolderResult.LastUpdatet.ToShortDateString());
+            return CheckFolderResult;
         }
 
     }

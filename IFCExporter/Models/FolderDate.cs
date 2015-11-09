@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace IFCExporter.Models
 {
-    class FolderDate
+    public class FolderDate
     {
         public string Path { get; set; }
         public DateTime LastUpdatet { get; set; }
