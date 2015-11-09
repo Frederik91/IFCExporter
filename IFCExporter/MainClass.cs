@@ -15,30 +15,30 @@ namespace IFCExporter
     public class MainClass
     {
         Document doc = Application.DocumentManager.MdiActiveDocument;
-        private List<string> ExportsToExecute = new List<string>();
+        public List<string> ExportsToExecute = new List<string>();
         private string MonitoredExport = "";
         private Copier CP = new Copier();
-        private OpenActivateClass DM = new OpenActivateClass();
+        private DrawingManager DM = new DrawingManager();
         private Document Doc = Autodesk.AutoCAD.ApplicationServices.Application.DocumentManager.MdiActiveDocument;
         private string _selectedProject;
         private string XMLFolder = "";
-        private bool runForeverBool = false;
+        public bool RunForeverBool = false;
         public IFCProjectInfo ProjectInfo = new IFCProjectInfo();
 
         [CommandMethod("IFCEXPORTER", CommandFlags.Session)]
         public void IFCExporter()
         {
             Prepare();
-
-            switch (runForeverBool)
+            FolderMonitor FM = new FolderMonitor(this);
+            switch (RunForeverBool)
             {
-
                 case true:
-                    FolderMonitor FM = new FolderMonitor(this);
+                    
                     FM.EventCommand();
                     break;
                 case false:
-                    Execute("");
+                    var exp = new Exporter(ProjectInfo, ExportsToExecute, "", RunForeverBool);
+                    exp.ExportAsync(FM);
                     break;
             }
         }
@@ -53,7 +53,7 @@ namespace IFCExporter
             {
                 var result = form.ShowDialog();
                 _selectedProject = form.SelectedProject;
-                runForeverBool = form.RunForeverBool;
+                RunForeverBool = form.RunForeverBool;
                 ExportsToExecute = form.ExportsToRun;
                 XMLFolder = form.XMLPath;
                 if (_selectedProject == "")
@@ -62,8 +62,6 @@ namespace IFCExporter
                     System.Windows.Forms.Application.Exit();
                 }
             }
-
-
 
 
             //Les inn XMLfil
@@ -82,9 +80,9 @@ namespace IFCExporter
 
         }
 
+        /*
         public void Execute(string ExcusiveExport)
         {
-
             if (ExcusiveExport != "")
             {
                 MonitoredExport = ExcusiveExport;
@@ -99,7 +97,7 @@ namespace IFCExporter
                     {
                         if (Export.Name == Exp)
                         {
-                            if (runForeverBool)
+                            if (RunForeverBool)
                             {
                                 if (Export.Name == MonitoredExport)
                                 {
@@ -142,7 +140,7 @@ namespace IFCExporter
                         }
 
                         //--Åpne starttegning og sett som aktiv
-                        var OAC = new OpenActivateClass();
+                        var OAC = new DrawingManager();
                         OAC.OpenDrawing(Discipline.StartFile.To);
                         Application.DocumentManager.MdiActiveDocument = OAC.ReturnActivateDrawing(Discipline.StartFile.To);
                     
@@ -160,6 +158,8 @@ namespace IFCExporter
                 }
             }
         }
+        */
+
 
         private void prepareFirstTime()
         {
@@ -171,7 +171,7 @@ namespace IFCExporter
                     {
                         try
                         {
-                            CheckIfDrawingIsOpen_CloseIfOpen(Folder.From);
+                            DM.CloseDrawing(Folder.From);
                             CP.DirectoryCopy(Folder.From, Folder.To, false, ".dwg");
                         }
                         catch (System.Exception e)
@@ -183,27 +183,6 @@ namespace IFCExporter
 
             }
             Directory.CreateDirectory(ProjectInfo.TomIFC.To);
-        }
-
-        private void CheckIfDrawingIsOpen_CloseIfOpen(string FolderDir)
-        {
-            DirectoryInfo DI = new DirectoryInfo(FolderDir);
-            var SourceDirFiles = DI.GetFiles();
-            var OpenDrawings = Autodesk.AutoCAD.ApplicationServices.Application.DocumentManager;
-
-            foreach (var File in SourceDirFiles)
-            {
-                foreach (Document drawing in OpenDrawings)
-                {
-                    var DrawingName = Path.GetFileName(drawing.Name);
-                    var FileName = Path.GetFileName(File.Name);
-
-                    if (DrawingName == FileName)
-                    {
-                        drawing.CloseAndDiscard();
-                    }
-                }
-            }
         }
 
 

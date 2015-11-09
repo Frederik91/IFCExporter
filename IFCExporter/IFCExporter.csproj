@@ -74,9 +74,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Forms\DrawingManager.cs" />
+    <Compile Include="Models\ExportSyncData.cs" />
     <Compile Include="Models\FileDate.cs" />
     <Compile Include="Models\FolderDate.cs" />
+    <Compile Include="Workers\Exporter.cs" />
     <Compile Include="Workers\FolderMonitor.cs" />
     <Compile Include="Forms\ControlForm.cs">
       <SubType>Form</SubType>
@@ -92,7 +93,7 @@
     </Compile>
     <Compile Include="Helpers\Copier.cs" />
     <Compile Include="Helpers\UnloadAllXrefs.cs" />
-    <Compile Include="Helpers\OpenActivateClass.cs" />
+    <Compile Include="Helpers\DrawingManager.cs" />
     <Compile Include="Helpers\XMLReader.cs" />
     <Compile Include="MainClass.cs" />
     <Compile Include="Models\Folder.cs" />
