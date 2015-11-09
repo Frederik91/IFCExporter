@@ -107,23 +107,7 @@ namespace IFCExporter
                             //--Last ned filer (modellfiler og tom.ifc)
 
                             //Sjekk om tegning som er åpen skal overskrives, lukke så denne mens den kopieres
-                            DirectoryInfo DI = new DirectoryInfo(Folder.From);
-                            var SourceDirFiles = DI.GetFiles();
-                            var OpenDrawings = Application.DocumentManager;
-
-                            foreach (var File in SourceDirFiles)
-                            {
-                                foreach (Document drawing in OpenDrawings)
-                                {
-                                    var DrawingName = Path.GetFileName(drawing.Name);
-                                    var FileName = Path.GetFileName(File.Name);
-
-                                    if (DrawingName == FileName)
-                                    {
-                                        drawing.CloseAndDiscard();
-                                    }
-                                }
-                            }
+                            CheckIfDrawingIsOpen_CloseIfOpen(Folder.From);
 
                             //Last ned mappe med modellfiler
                             CP.DirectoryCopy(Folder.From, Folder.To, false, ".dwg");
@@ -171,6 +155,7 @@ namespace IFCExporter
                     {
                         try
                         {
+                            CheckIfDrawingIsOpen_CloseIfOpen(Folder.From);
                             CP.DirectoryCopy(Folder.From, Folder.To, false, ".dwg");
                         }
                         catch (System.Exception e)
@@ -184,6 +169,27 @@ namespace IFCExporter
             Directory.CreateDirectory(ProjectInfo.TomIFC.To);
 
 
+        }
+
+        private void CheckIfDrawingIsOpen_CloseIfOpen(string FolderDir)
+        {
+            DirectoryInfo DI = new DirectoryInfo(FolderDir);
+            var SourceDirFiles = DI.GetFiles();
+            var OpenDrawings = Application.DocumentManager;
+
+            foreach (var File in SourceDirFiles)
+            {
+                foreach (Document drawing in OpenDrawings)
+                {
+                    var DrawingName = Path.GetFileName(drawing.Name);
+                    var FileName = Path.GetFileName(File.Name);
+
+                    if (DrawingName == FileName)
+                    {
+                        drawing.CloseAndDiscard();
+                    }
+                }
+            }
         }
 
     }
