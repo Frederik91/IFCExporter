@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.AccessControl;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -65,8 +66,11 @@ namespace IFCExporter.Helpers
 
         public void TomIFCCopy(IFCFile TomIFC, string NewName)
         {
+            var SaveDir = Path.GetDirectoryName(TomIFC.To);
+            Directory.CreateDirectory(SaveDir);
+
             FileInfo file = new FileInfo(TomIFC.From);
-            file.CopyTo(TomIFC.To + "\\" + NewName + ".ifc", true);
+            file.CopyTo(SaveDir + "\\" + NewName + ".ifc", true);
         }
     }
 

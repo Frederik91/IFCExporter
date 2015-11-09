@@ -25,7 +25,7 @@ namespace IFCExporter.Helpers
                 Discipline _discipline = new Discipline { Exports = new List<Export>() };
                 _discipline.Name = dis.Attribute("Value").Value;
 
-                _discipline.StartFile = dis.Element("StartFile").Attribute("Value").Value;
+                _discipline.StartFile = new File { From = dis.Element("StartFile").Attribute("From").Value, To = dis.Element("StartFile").Attribute("To").Value };
                 var exps = dis.Elements("Export");
                 foreach (var exp in exps)
                 {

@@ -14,7 +14,7 @@ namespace IFCExporterTest
         {
             var CP = new Copier();
             var reader = new XMLReader();
-            var ProjectInfo = reader.GetprojectInfo("C:\\TestMappe\\Hjemmeprosjekt.xml");
+            var ProjectInfo = reader.GetprojectInfo("H:\\IFCEXPORT\\XML\\BUS2.xml");
 
             List<string> RIEFOLDERS = new List<string>();
             List<string> RIVFOLDERS = new List<string>();

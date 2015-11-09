@@ -89,60 +89,73 @@ namespace IFCExporter
             {
                 foreach (var Export in Discipline.Exports)
                 {
-                    foreach (var Folder in Export.Folders)
+                    var RunExport = false;
+                    foreach (var Exp in ExportsToExecute)
                     {
-                        //--Last ned filer (modellfiler og tom.ifc)
-
-                        //Sjekk om tegning som er åpen skal overskrives, lukke så denne mens den kopieres
-                        DirectoryInfo DI = new DirectoryInfo(Folder.From);
-                        var SourceDirFiles = DI.GetFiles();
-                        var OpenDrawings = Application.DocumentManager;
-
-                        foreach (var File in SourceDirFiles)
+                        if (Export.Name == Exp)
                         {
-                            foreach (Document drawing in OpenDrawings)
-                            {
-                                var DrawingName = Path.GetFileName(drawing.Name);
-                                var FileName = Path.GetFileName(File.Name);
+                            RunExport = true;
+                            break;
+                        }
+                    }
 
-                                if (DrawingName == FileName)
+                    if (RunExport)
+                    {
+                        foreach (var Folder in Export.Folders)
+                        {
+                            //--Last ned filer (modellfiler og tom.ifc)
+
+                            //Sjekk om tegning som er åpen skal overskrives, lukke så denne mens den kopieres
+                            DirectoryInfo DI = new DirectoryInfo(Folder.From);
+                            var SourceDirFiles = DI.GetFiles();
+                            var OpenDrawings = Application.DocumentManager;
+
+                            foreach (var File in SourceDirFiles)
+                            {
+                                foreach (Document drawing in OpenDrawings)
                                 {
-                                    drawing.CloseAndDiscard();
+                                    var DrawingName = Path.GetFileName(drawing.Name);
+                                    var FileName = Path.GetFileName(File.Name);
+
+                                    if (DrawingName == FileName)
+                                    {
+                                        drawing.CloseAndDiscard();
+                                    }
                                 }
                             }
+
+                            //Last ned mappe med modellfiler
+                            CP.DirectoryCopy(Folder.From, Folder.To, false, ".dwg");
+
+                            UnloadAllXrefs UAX = new UnloadAllXrefs();
+                            UAX.UnloadAllXref(Folder.To);
                         }
 
-                        //Last ned mappe med modellfiler
-                        CP.DirectoryCopy(Folder.From, Folder.To, false, ".dwg");
+                        //Lag ny IFC for eksport
+                        CP.TomIFCCopy(ProjectInfo.TomIFC, Export.Name);
 
-                        UnloadAllXrefs UAX = new UnloadAllXrefs();
-                        UAX.UnloadAllXref(Folder.To);
+                        //Last ned single filer
+                        foreach (var File in ProjectInfo.Files)
+                        {
+                            CP.CopySingleFile(File.From, File.To);
+                        }
+
+                        //--Åpne starttegning og sett som aktiv
+
+                        DM.OpenDrawing(Discipline.StartFile.To);
+                        Application.DocumentManager.MdiActiveDocument = DM.ReturnActivateDrawing(Discipline.StartFile.To);
+
+
+                        //--Kjør eksport
+                        AcadApplication app = Application.AcadApplication as AcadApplication;
+                        app.ActiveDocument.SendCommand("_.-MAGIIFCEXPORT " + Export.Name + "\n");
+
+                        //--Last opp IFC
+
+                        string fromPath = Path.GetDirectoryName(ProjectInfo.TomIFC.To) + "\\" + Export.Name + ".ifc";
+                        string toPath = ProjectInfo.TomIFC.Export + "\\" + Export.Name + ".ifc";
+                        CP.CopySingleFile(fromPath, toPath);
                     }
-
-                    //Lag ny IFC for eksport
-                    CP.TomIFCCopy(ProjectInfo.TomIFC, Export.Name);
-
-                    //Last ned single filer
-                    foreach (var File in ProjectInfo.Files)
-                    {
-                        CP.CopySingleFile(File.From, File.To);
-                    }
-
-                    //--Åpne starttegning og sett som aktiv
-
-                    DM.OpenDrawing(Discipline.StartFile);
-                    Application.DocumentManager.MdiActiveDocument = DM.ReturnActivateDrawing(Discipline.StartFile);
-
-
-                    //--Kjør eksport
-                    AcadApplication app = Application.AcadApplication as AcadApplication;
-                    app.ActiveDocument.SendCommand("_.-MAGIIFCEXPORT " + Export.Name + "\n");
-
-                    //--Last opp IFC
-
-                    string fromPath = ProjectInfo.TomIFC.To + "\\" + Export.Name + ".ifc";
-                    string toPath = ProjectInfo.TomIFC.Export + "\\" + Export.Name + ".ifc";
-                    CP.CopySingleFile(fromPath, toPath);
                 }
             }
         }
