@@ -60,10 +60,19 @@ namespace IFCExporter
         [CommandMethod("MonitorIFC", CommandFlags.Session)]
         public void MonitorIFC()
         {
-            var expAll = new ExportAll();
-            app = Application.AcadApplication as AcadApplication;
-            expAll.Run(app);
-            AutoModeIFC();
+            try
+            {
+                var expAll = new ExportAll();
+                app = Application.AcadApplication as AcadApplication;
+                expAll.Run(app);
+                AutoModeIFC();
+            }
+            catch (System.Exception e)
+            {
+                System.Windows.Forms.MessageBox.Show(e.Message);
+                throw;
+            }
+
         }
 
 
@@ -134,6 +143,7 @@ namespace IFCExporter
 
             }
             Directory.CreateDirectory(ProjectInfo.TomIFC.To);
+            DataStorage.ExportUpdateList = new List<ExportUpdateInfo>();
         }
 
         [CommandMethod("ActiveDrawing")]
@@ -143,5 +153,7 @@ namespace IFCExporter
 
             Application.ShowAlertDialog(t);
         }
+
+    
     }
 }

@@ -10,5 +10,6 @@ namespace IFCExporter.Models
     {
         public static IFCProjectInfo ProjectInfo { get; set; }
         public static string ExportToRun { get; set; }
+        public static List<ExportUpdateInfo> ExportUpdateList { get; set; }
     }
 }

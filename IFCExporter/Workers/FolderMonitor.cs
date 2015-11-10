@@ -17,9 +17,9 @@ using System.Runtime.InteropServices;
 namespace IFCExporter.Workers
 {
     public class FolderMonitor
-    {        
+    {
         private bool _drawing = false;
-        public System.IO.FileSystemWatcher _fsw;
+        public FileSystemWatcher _fsw;
         private Autodesk.AutoCAD.ApplicationServices.DocumentCollection dm = Autodesk.AutoCAD.ApplicationServices.Core.Application.DocumentManager;
         private Autodesk.AutoCAD.ApplicationServices.Document doc = Autodesk.AutoCAD.ApplicationServices.Core.Application.DocumentManager.MdiActiveDocument;
         private Copier CP = new Copier();
@@ -45,18 +45,16 @@ namespace IFCExporter.Workers
                 _fsw.IncludeSubdirectories = true;
                 _fsw.Path = DataStorage.ProjectInfo.BaseFolder.From;
                 _fsw.NotifyFilter = NotifyFilters.LastWrite;
+                _fsw.InternalBufferSize = 65536;
+                _fsw.Filter = "*.dwl";
                 _fsw.Changed += new FileSystemEventHandler(OnChanged);
                 _fsw.EnableRaisingEvents = true;
             }
         }
 
         [CommandMethod("ChangeDetected", CommandFlags.Session)]
-        public  void OnChanged(object sender, FileSystemEventArgs e)
+        public void OnChanged(object sender, FileSystemEventArgs e)
         {
-            if (Path.GetExtension(e.FullPath) == ".dwg")
-            {
-                return;
-            }
             var dir = Path.GetDirectoryName(e.FullPath);
 
             var Export = LocateDrawingExport(dir);
@@ -66,8 +64,55 @@ namespace IFCExporter.Workers
                 return;
             }
 
+            var RunExportBool = false;
+            var ExportIsInList = false;
+            var ForCount = 0;
+            
+            foreach (var exp in DataStorage.ExportUpdateList)
+            {
+                if (exp.Name == Export)
+                {
+                    if (exp.LastUpdated.AddSeconds(10) < DateTime.Now)
+                    {
+                        RunExportBool = true;
+                        ExportIsInList = true;
+                        break;                   
+                    }
+                    else
+                    {
+                        ExportIsInList = true;
+                        return;
+                    }
+                }
+                ForCount++;
+            }
+
+            if (RunExportBool) //Må komme før ExportIsInList-if-løkken
+            {
+                DataStorage.ExportUpdateList[ForCount] = new ExportUpdateInfo { Name = Export, LastUpdated = DateTime.Now };
+            }
+
+            if (!ExportIsInList) //Må komme etter RunExportBool-if-løkken
+            {
+                DataStorage.ExportUpdateList.Add(new ExportUpdateInfo { Name = Export, LastUpdated = DateTime.Now });
+                RunExportBool = true;
+            }
+
+            if (RunExportBool) //Siste If-løkke i rekken.
+            {
+                if (DataStorage.ExportUpdateList.Count > 0)
+                {
+                    DataStorage.ExportUpdateList[ForCount] = new ExportUpdateInfo { Name = Export, LastUpdated = DateTime.Now };
+                }               
+
+            }
+
             DataStorage.ExportToRun = Export;
+
+
+            //MessageBox.Show("Change in file: " + e.FullPath + ". Change: " + e.ChangeType + ". FileName: " + e.Name + "Last Updated: " + DataStorage.ExportUpdateList[ForCount].LastUpdated);
             RunExport();
+
         }
 
         public async void RunExport()
@@ -90,6 +135,8 @@ namespace IFCExporter.Workers
             app = (AcadApplication)Autodesk.AutoCAD.ApplicationServices.Application.AcadApplication;
 
             app.ActiveDocument.SendCommand("MonitorIFC ");
+
+
 
         }
 

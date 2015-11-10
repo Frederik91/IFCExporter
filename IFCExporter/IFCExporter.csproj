@@ -75,6 +75,7 @@
     <Compile Include="Models\ExportAll.cs" />
     <Compile Include="Models\ExportSyncData.cs" />
     <Compile Include="Models\FileDate.cs" />
+    <Compile Include="Models\ExportUpdateInfo.cs" />
     <Compile Include="Models\FolderDate.cs" />
     <Compile Include="Workers\Exporter.cs" />
     <Compile Include="Workers\FolderMonitor.cs" />
