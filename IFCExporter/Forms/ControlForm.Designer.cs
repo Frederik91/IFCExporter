@@ -32,6 +32,7 @@
             this.Quit_button = new System.Windows.Forms.Button();
             this.Status_label = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // Start_stop_button
@@ -71,11 +72,23 @@
             this.label1.TabIndex = 2;
             this.label1.Text = "Status:";
             // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 26.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label2.Location = new System.Drawing.Point(54, 97);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(109, 39);
+            this.label2.TabIndex = 4;
+            this.label2.Text = "label2";
+            this.label2.Click += new System.EventHandler(this.label2_Click);
+            // 
             // ControlForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(212, 91);
+            this.ClientSize = new System.Drawing.Size(212, 145);
+            this.Controls.Add(this.label2);
             this.Controls.Add(this.Status_label);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.Quit_button);
@@ -93,5 +106,6 @@
         private System.Windows.Forms.Button Quit_button;
         private System.Windows.Forms.Label Status_label;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label label2;
     }
 }

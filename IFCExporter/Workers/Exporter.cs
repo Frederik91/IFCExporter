@@ -61,16 +61,14 @@ namespace IFCExporter.Workers
                         {
                             //--Last ned filer (modellfiler og tom.ifc)
 
-                            //Sjekk om tegning som er åpen skal overskrives, lukke så denne mens den kopieres
-                            DM.CheckIfDrawingIsOpen_CloseIfOpen(Folder.From);
+                            //Sjekk om tegning som er åpen skal overskrives, lukke så denne mens den kopieres. UPDATE: Lukker nå alle tegninger når den den har kjørt eksporten.
+                            //DM.CheckIfDrawingIsOpen_CloseIfOpen(Folder.From);
 
                             //Last ned mappe med modellfiler
                             CP.DirectoryCopy(Folder.From, Folder.To, false, ".dwg");
 
-
-
-                            UnloadAllXrefs UAX = new UnloadAllXrefs();
-                            UAX.UnloadAllXref(Folder.To);
+                            //UnloadAllXrefs UAX = new UnloadAllXrefs();
+                            //UAX.UnloadAllXref(Folder.To);
                         }
 
                         //Lag ny IFC for eksport
@@ -82,7 +80,7 @@ namespace IFCExporter.Workers
                             CP.CopySingleFile(File.From, File.To);
                         }
 
-                        FM.nSquaresInContext(Discipline.StartFile.To, Export.Name, this);
+                        //FM.nSquaresInContext(Discipline.StartFile.To, Export.Name, this);
 
                     }
                 }
@@ -100,8 +98,10 @@ namespace IFCExporter.Workers
             AcadApplication app = Autodesk.AutoCAD.ApplicationServices.Application.AcadApplication as AcadApplication;
             app.ActiveDocument.SendCommand("_.-MAGIIFCEXPORT " + ExportName + "\n");
 
-            //--Last opp IFC
+            // Lukk tegning
+            Application.DocumentManager.CloseAll();
 
+            //--Last opp IFC
             string fromPath = Path.GetDirectoryName(ProjectInfo.TomIFC.To) + "\\" + ExportName + ".ifc";
             string toPath = ProjectInfo.TomIFC.Export + "\\" + ExportName + ".ifc";
             CP.CopySingleFile(fromPath, toPath);

@@ -8,26 +8,31 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Threading;
 using Autodesk.AutoCAD.EditorInput;
+using IFCExporter.Helpers;
+using Autodesk.AutoCAD.Interop;
+using Autodesk.AutoCAD.Runtime;
+using IFCExporter.Forms;
 
 namespace IFCExporter.Workers
 {
     public class FolderMonitor
     {        
         public MainClass MC;
-        const string path = "C:\\TestMappe\\Drawings\\Folder1";
         private bool _drawing = false;
         public System.IO.FileSystemWatcher _fsw;
         private Autodesk.AutoCAD.ApplicationServices.DocumentCollection dm = Autodesk.AutoCAD.ApplicationServices.Core.Application.DocumentManager;
         private Autodesk.AutoCAD.ApplicationServices.Document doc = Autodesk.AutoCAD.ApplicationServices.Core.Application.DocumentManager.MdiActiveDocument;
+        private Copier CP = new Copier();
+        private DrawingManager DM = new DrawingManager();
 
         public FolderMonitor(MainClass _MC)
         {
             MC = _MC;
         }
 
+        [CommandMethod("EventCommand", CommandFlags.Session)]
         public void EventCommand()
         {
-
             if (doc == null)
                 return;
 
@@ -36,44 +41,50 @@ namespace IFCExporter.Workers
             if (_fsw == null)
             {
                 _fsw = new FileSystemWatcher();
-                _fsw.Path = path;
+                _fsw.IncludeSubdirectories = true;
+                _fsw.Path = MC.ProjectInfo.BaseFolder.From;
+                _fsw.Filter = "*.dwg";
                 _fsw.NotifyFilter = NotifyFilters.LastWrite;
                 _fsw.Changed += new FileSystemEventHandler(OnChanged);
                 _fsw.EnableRaisingEvents = true;
             }
         }
 
-
-        private void OnChanged(object sender, FileSystemEventArgs e)
+        [CommandMethod("ChangeDetected", CommandFlags.Session)]
+        public  void OnChanged(object sender, FileSystemEventArgs e)
         {
             var dir = Path.GetDirectoryName(e.FullPath);
 
             var Export = LocateDrawingExport(dir, MC.ProjectInfo.Disciplines);
 
-            var Exp = new Exporter(MC.ProjectInfo, MC.ExportsToExecute, Export, MC.RunForeverBool );
+            var ExportList = new List<string>();
+            ExportList.Add(Export);
 
-            Exp.ExportAsync(this);
-
+            MC.ExportsToExecute = ExportList;
+            RunExport();
         }
 
-        public async void nSquaresInContext(string StartFile, string ExportName, Exporter Exp)
+        public async void RunExport()
         {
             if (!_drawing)
             {
                 _drawing = true;
 
-                var dc = Autodesk.AutoCAD.ApplicationServices.Application.DocumentManager;
+                var dc = Autodesk.AutoCAD.ApplicationServices.Core.Application.DocumentManager;
 
-                await dc.ExecuteInCommandContextAsync(async (o) => nSquares(StartFile, ExportName, Exp), null);
-
+                await dc.ExecuteInCommandContextAsync(async (o) => RunSpecifiedExport(), null);
                 _drawing = false;
             }
         }
 
-        private void nSquares(string StartFile, string ExportName, Exporter Exp)
+        private void RunSpecifiedExport()
         {
             //ON GUI THREAD
-            Exp.ExportSync(MC.ProjectInfo, StartFile, ExportName );
+            //var EA = new ExportAll(MC);
+            //EA.Run();
+
+            AcadApplication app = Autodesk.AutoCAD.ApplicationServices.Application.AcadApplication as AcadApplication;
+            app.ActiveDocument.SendCommand("RunOnceIFC");
         }
 
         public string LocateDrawingExport(string FolderPath, List<Discipline> Disciplines)

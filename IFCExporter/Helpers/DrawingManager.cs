@@ -1,4 +1,5 @@
 ﻿using Autodesk.AutoCAD.ApplicationServices;
+using Autodesk.AutoCAD.Runtime;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -11,8 +12,7 @@ namespace IFCExporter.Helpers
     public class DrawingManager
     {
         public void OpenDrawing(string FileName)
-        {           
-
+        {
             var DocMgr = Application.DocumentManager;
 
             foreach (Document Doc  in DocMgr)
@@ -24,6 +24,16 @@ namespace IFCExporter.Helpers
             }
 
             DocMgr.Open(FileName, false);
+        }
+
+        public void CloseAndDiscardAllDrawings()
+        {
+            var DocMgr = Application.DocumentManager;
+
+            foreach (Document doc in DocMgr)
+            {
+                doc.CloseAndDiscard();
+            }
         }
 
         public Document ReturnActivateDrawing(string FileName)
@@ -41,19 +51,11 @@ namespace IFCExporter.Helpers
             return document;
         }
 
-        public async void CheckIfDrawingIsOpen_CloseIfOpen(string FolderDir)
-        {
-                var dc = Autodesk.AutoCAD.ApplicationServices.Application.DocumentManager;
-
-                await dc.ExecuteInCommandContextAsync(async (o) => CloseDrawing(FolderDir), null);
-        }
-
-
-        public void CloseDrawing(string FolderDir)
+        public void CloseIfOpen(string FolderDir)
         {
             DirectoryInfo DI = new DirectoryInfo(FolderDir);
             var SourceDirFiles = DI.GetFiles();
-            var OpenDrawings = Autodesk.AutoCAD.ApplicationServices.Application.DocumentManager;
+            var OpenDrawings = Autodesk.AutoCAD.ApplicationServices.Core.Application.DocumentManager;
 
             foreach (var File in SourceDirFiles)
             {
@@ -63,7 +65,7 @@ namespace IFCExporter.Helpers
                     var FileName = Path.GetFileName(File.Name);
 
                     if (DrawingName == FileName)
-                    {
+                    {                        
                         drawing.CloseAndDiscard();
                     }
                 }

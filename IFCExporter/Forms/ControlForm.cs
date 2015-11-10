@@ -14,15 +14,23 @@ namespace IFCExporter.Forms
     {
         public bool RunBool { get; set; }
         public bool QuitBool { get; set; }
-
-        public ControlForm()
+        public string Status
         {
-            InitializeComponent();
-            RunBool = false;
-            QuitBool = false;
+            get { return label2.Text; }
+            set
+            {
+                label2.Text = value;
+            }
         }
 
-        private void Start_stop_button_Click(object sender, EventArgs e)
+            public ControlForm()
+        {
+                InitializeComponent();
+                RunBool = false;
+                QuitBool = false;
+            }
+
+            private void Start_stop_button_Click(object sender, EventArgs e)
         {
             RunBool = !RunBool;
 
@@ -31,13 +39,13 @@ namespace IFCExporter.Forms
                 case (true):
                     Status_label.Text = "Running";
                     Status_label.ForeColor = Color.Green;
-                        break;
+                    break;
                 case (false):
                     Status_label.Text = "Stopping";
                     Status_label.ForeColor = Color.Red;
                     break;
             }
-            
+
         }
 
         private void Quit_button_Click(object sender, EventArgs e)
@@ -45,6 +53,9 @@ namespace IFCExporter.Forms
             QuitBool = !QuitBool;
         }
 
-        
+        private void label2_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }
