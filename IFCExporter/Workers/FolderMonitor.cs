@@ -12,6 +12,7 @@ using IFCExporter.Helpers;
 using Autodesk.AutoCAD.Interop;
 using Autodesk.AutoCAD.Runtime;
 using IFCExporter.Forms;
+using System.Runtime.InteropServices;
 
 namespace IFCExporter.Workers
 {
@@ -24,10 +25,12 @@ namespace IFCExporter.Workers
         private Autodesk.AutoCAD.ApplicationServices.Document doc = Autodesk.AutoCAD.ApplicationServices.Core.Application.DocumentManager.MdiActiveDocument;
         private Copier CP = new Copier();
         private DrawingManager DM = new DrawingManager();
+        private AcadApplication app;
 
-        public FolderMonitor(MainClass _MC)
+        public FolderMonitor(MainClass _MC, AcadApplication _app)
         {
             MC = _MC;
+            app = _app;
         }
 
         [CommandMethod("EventCommand", CommandFlags.Session)]
@@ -43,7 +46,6 @@ namespace IFCExporter.Workers
                 _fsw = new FileSystemWatcher();
                 _fsw.IncludeSubdirectories = true;
                 _fsw.Path = MC.ProjectInfo.BaseFolder.From;
-                _fsw.Filter = "*.dwg";
                 _fsw.NotifyFilter = NotifyFilters.LastWrite;
                 _fsw.Changed += new FileSystemEventHandler(OnChanged);
                 _fsw.EnableRaisingEvents = true;
@@ -53,9 +55,18 @@ namespace IFCExporter.Workers
         [CommandMethod("ChangeDetected", CommandFlags.Session)]
         public  void OnChanged(object sender, FileSystemEventArgs e)
         {
+            if (Path.GetExtension(e.FullPath) == ".dwg")
+            {
+                return;
+            }
             var dir = Path.GetDirectoryName(e.FullPath);
 
             var Export = LocateDrawingExport(dir, MC.ProjectInfo.Disciplines);
+
+            if (string.IsNullOrEmpty(Export))
+            {
+                return;
+            }
 
             var ExportList = new List<string>();
             ExportList.Add(Export);
@@ -80,11 +91,11 @@ namespace IFCExporter.Workers
         private void RunSpecifiedExport()
         {
             //ON GUI THREAD
-            //var EA = new ExportAll(MC);
-            //EA.Run();
+            app.ActiveDocument.SendCommand("RunOnceIFC ");
+            //Autodesk.AutoCAD.ApplicationServices.Application.DocumentManager.MdiActiveDocument.SendStringToExecute("RunOnceIFC ", true, false, false);
 
-            AcadApplication app = Autodesk.AutoCAD.ApplicationServices.Application.AcadApplication as AcadApplication;
-            app.ActiveDocument.SendCommand("RunOnceIFC");
+            MC.AutoModeIFC();
+
         }
 
         public string LocateDrawingExport(string FolderPath, List<Discipline> Disciplines)

@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -24,7 +25,7 @@ namespace IFCExporter.Models
             ExportsToRun = exportsToRun;
         }
 
-        public void Run()
+        public void Run(AcadApplication app)
         {
             MC.ExportsToExecute = ExportsToRun;
             foreach (var Discipline in MC.ProjectInfo.Disciplines)
@@ -72,17 +73,8 @@ namespace IFCExporter.Models
                         Application.DocumentManager.MdiActiveDocument = OAC.ReturnActivateDrawing(Discipline.StartFile.To);
 
                         //--Kjør eksport
-                        AcadApplication app = Autodesk.AutoCAD.ApplicationServices.Application.AcadApplication as AcadApplication;
-
-                        try
-                        {
-                            app.ActiveDocument.SendCommand("_.-MAGIIFCEXPORT " + Export.Name + "\n");  // KRASJER HER!!
-                        }
-                        catch (System.Exception e)
-                        {
-                            Application.ShowAlertDialog(e.Message);
-                            throw;
-                        }
+                        app.ActiveDocument.SendCommand("_.-MAGIIFCEXPORT " + Export.Name + "\n");  // KRASJER HER!!
+          
                         //--Last opp IFC
 
                         string fromPath = Path.GetDirectoryName(MC.ProjectInfo.TomIFC.To) + "\\" + Export.Name + ".ifc";
