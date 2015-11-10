@@ -14,35 +14,20 @@ namespace IFCExporter.Models
 {
     public class ExportAll
     {
-        private MainClass MC;
         private Copier CP = new Copier();
         private DrawingManager DM = new DrawingManager();
-        private List<string> ExportsToRun;
 
-        public ExportAll(MainClass _MC, List<string> exportsToRun)
+        public ExportAll()
         {
-            MC = _MC;
-            ExportsToRun = exportsToRun;
         }
 
         public void Run(AcadApplication app)
         {
-            MC.ExportsToExecute = ExportsToRun;
-            foreach (var Discipline in MC.ProjectInfo.Disciplines)
+            foreach (var Discipline in DataStorage.ProjectInfo.Disciplines)
             {
                 foreach (var Export in Discipline.Exports)
                 {
-                    var RunExport = false;
-                    foreach (var Exp in MC.ExportsToExecute)
-                    {
-                        if (Export.Name == Exp)
-                        {
-                            RunExport = true;
-                            break;
-                        }
-                    }
-
-                    if (RunExport)
+                    if (Export.Name == DataStorage.ExportToRun)
                     {
                         foreach (var Folder in Export.Folders)
                         {
@@ -59,10 +44,10 @@ namespace IFCExporter.Models
                         }
 
                         //Lag ny IFC for eksport
-                        CP.TomIFCCopy(MC.ProjectInfo.TomIFC, Export.Name);
+                        CP.TomIFCCopy(DataStorage.ProjectInfo.TomIFC, Export.Name);
 
                         //Last ned single filer
-                        foreach (var File in MC.ProjectInfo.Files)
+                        foreach (var File in DataStorage.ProjectInfo.Files)
                         {
                             CP.CopySingleFile(File.From, File.To);
                         }
@@ -73,12 +58,13 @@ namespace IFCExporter.Models
                         Application.DocumentManager.MdiActiveDocument = OAC.ReturnActivateDrawing(Discipline.StartFile.To);
 
                         //--Kjør eksport
-                        app.ActiveDocument.SendCommand("_.-MAGIIFCEXPORT " + Export.Name + "\n");  // KRASJER HER!!
-          
+                        //app.ActiveDocument.SendCommand("_.-MAGIIFCEXPORT " + Export.Name + "\n");
+                        app.ActiveDocument.SendCommand(".Zoom e "); 
+
                         //--Last opp IFC
 
-                        string fromPath = Path.GetDirectoryName(MC.ProjectInfo.TomIFC.To) + "\\" + Export.Name + ".ifc";
-                        string toPath = MC.ProjectInfo.TomIFC.Export + "\\" + Export.Name + ".ifc";
+                        string fromPath = Path.GetDirectoryName(DataStorage.ProjectInfo.TomIFC.To) + "\\" + Export.Name + ".ifc";
+                        string toPath = DataStorage.ProjectInfo.TomIFC.Export + "\\" + Export.Name + ".ifc";
                         CP.CopySingleFile(fromPath, toPath);
                     }
                 }

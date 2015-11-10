@@ -1,7 +1,6 @@
 ﻿using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.Runtime;
 using IFCExporter.Helpers;
-using IFCExporter.Models;
 using System.IO;
 using Autodesk.AutoCAD.Interop;
 using IFCExporter.Forms;
@@ -10,6 +9,7 @@ using IFCExporter.Workers;
 using Autodesk.AutoCAD.EditorInput;
 using System;
 using System.Runtime.InteropServices;
+using IFCExporter.Models;
 
 namespace IFCExporter
 {
@@ -26,15 +26,14 @@ namespace IFCExporter
         public IFCProjectInfo ProjectInfo = new IFCProjectInfo();
         private AcadApplication app;
 
-
-
         [CommandMethod("IFCExporter", CommandFlags.Session)]
         public void IFCExporter()
         {
-            const string strProgId = "AutoCAD.Application.20.1";
-            app = (AcadApplication)Marshal.GetActiveObject(strProgId);
+            app = Application.AcadApplication as AcadApplication;
 
             Prepare();
+
+            DataStorage.ProjectInfo = ProjectInfo;
 
             var x = System.Windows.Forms.MessageBox.Show("Yes = Automatic, No = Manual", "Mode select", System.Windows.Forms.MessageBoxButtons.YesNo);
 
@@ -44,7 +43,7 @@ namespace IFCExporter
                     AutoModeIFC();
                     break;
                 case System.Windows.Forms.DialogResult.No:
-                    RunOnceIFC();                   
+                    RunOnceIFC();
                     break;
 
             }
@@ -53,15 +52,25 @@ namespace IFCExporter
         [CommandMethod("RunOnceIFC", CommandFlags.Session)]
         public void RunOnceIFC()
         {
-            var expAll = new ExportAll(this, ExportsToExecute);
+            var expAll = new ExportAll();
+            app = Application.AcadApplication as AcadApplication;
             expAll.Run(app);
+        }
+
+        [CommandMethod("MonitorIFC", CommandFlags.Session)]
+        public void MonitorIFC()
+        {
+            var expAll = new ExportAll();
+            app = Application.AcadApplication as AcadApplication;
+            expAll.Run(app);
+            AutoModeIFC();
         }
 
 
         [CommandMethod("AutoModeIFC", CommandFlags.Session)]
         public void AutoModeIFC()
         {
-            FolderMonitor FM = new FolderMonitor(this, app);
+            FolderMonitor FM = new FolderMonitor();
             FM.EventCommand();
         }
 

@@ -12,19 +12,19 @@ namespace LaunchAutoCAD
     {
         static void Main(string[] args)
         {
-            Autodesk.AutoCAD.Interop.AcadApplication app = new Autodesk.AutoCAD.Interop.AcadApplication();
+            //Autodesk.AutoCAD.Interop.AcadApplication app = new Autodesk.AutoCAD.Interop.AcadApplication();
 
-            app = new Autodesk.AutoCAD.Interop.AcadApplication();
+            //app = new Autodesk.AutoCAD.Interop.AcadApplication();
 
-            app.Visible = true;            
+            //app.Visible = true;            
 
-            var test = new MainClass();
+            //var test = new MainClass();
 
-            app.Documents.Application.ActiveDocument.SendCommand("RunOnceIFC");
+            //app.Documents.Application.ActiveDocument.SendCommand("RunOnceIFC");
 
-            app.Quit();
+            //app.Quit();
 
-            Console.Read();
+            //Console.Read();
 
         }
     }
