@@ -10,6 +10,7 @@ using Autodesk.AutoCAD.EditorInput;
 using System;
 using System.Runtime.InteropServices;
 using IFCExporter.Models;
+using System.Timers;
 
 namespace IFCExporter
 {
@@ -23,8 +24,10 @@ namespace IFCExporter
         private string _selectedProject;
         private string XMLFolder = "";
         public bool RunForeverBool = false;
+        public bool AutomaticBool = false;
         public IFCProjectInfo ProjectInfo = new IFCProjectInfo();
         private AcadApplication app;
+        private AutoExport AE;
 
         [CommandMethod("IFCExporter", CommandFlags.Session)]
         public void IFCExporter()
@@ -33,16 +36,23 @@ namespace IFCExporter
 
             Prepare();
 
+            AE = new AutoExport(ProjectInfo);
+            DataStorage.OldFolderDateList = AE.GetNewFolderDateList();
             DataStorage.ProjectInfo = ProjectInfo;
+            DataStorage.ExportsToRun = new List<string>();
+            DataStorage.TempExportsToRun = new List<string>();
+
 
             var x = System.Windows.Forms.MessageBox.Show("Yes = Automatic, No = Manual", "Mode select", System.Windows.Forms.MessageBoxButtons.YesNo);
 
             switch (x)
             {
                 case System.Windows.Forms.DialogResult.Yes:
+                    AutomaticBool = true;
                     AutoModeIFC();
                     break;
                 case System.Windows.Forms.DialogResult.No:
+                    AutomaticBool = false;
                     RunOnceIFC();
                     break;
 
@@ -52,35 +62,40 @@ namespace IFCExporter
         [CommandMethod("RunOnceIFC", CommandFlags.Session)]
         public void RunOnceIFC()
         {
-            var expAll = new ExportAll();
-            app = Application.AcadApplication as AcadApplication;
+            var expAll = new ExportAll(AutomaticBool);
             expAll.Run(app);
-        }
-
-        [CommandMethod("MonitorIFC", CommandFlags.Session)]
-        public void MonitorIFC()
-        {
-            try
-            {
-                var expAll = new ExportAll();
-                app = Application.AcadApplication as AcadApplication;
-                expAll.Run(app);
-                AutoModeIFC();
-            }
-            catch (System.Exception e)
-            {
-                System.Windows.Forms.MessageBox.Show(e.Message);
-                throw;
-            }
-
         }
 
 
         [CommandMethod("AutoModeIFC", CommandFlags.Session)]
         public void AutoModeIFC()
         {
-            FolderMonitor FM = new FolderMonitor();
-            FM.EventCommand();
+            var x = AE.GetNewFolderDateList();
+
+            if (AE.CompareFolderLists_ReturnTrueIfChanged(x))
+            {
+                DataStorage.FilesWithChanges = AE.ReturnChangedFiles(DataStorage.OldFolderDateList, x);
+                DataStorage.OldFolderDateList = x;
+                var expAll = new ExportAll(AutomaticBool);
+                expAll.Run(app);
+                AutoModeIFC();
+            }
+            else
+            {
+                System.Threading.Thread.Sleep(50);
+                AutoModeIFC();
+
+                //Timer t = new Timer();
+                //t.Interval = 500; //In milliseconds here
+                //t.AutoReset = true; //Stops it from repeating
+                //t.Elapsed += new ElapsedEventHandler(TimerElapsed);
+                //t.Start();
+            }
+        }
+
+        public void TimerElapsed(object sender, ElapsedEventArgs e)
+        {
+            AutoModeIFC();
         }
 
 
@@ -143,7 +158,6 @@ namespace IFCExporter
 
             }
             Directory.CreateDirectory(ProjectInfo.TomIFC.To);
-            DataStorage.ExportUpdateList = new List<ExportUpdateInfo>();
         }
 
         [CommandMethod("ActiveDrawing")]
@@ -154,6 +168,6 @@ namespace IFCExporter
             Application.ShowAlertDialog(t);
         }
 
-    
+
     }
 }

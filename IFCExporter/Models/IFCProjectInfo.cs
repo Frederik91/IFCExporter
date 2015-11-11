@@ -10,8 +10,8 @@ namespace IFCExporter.Models
     {
         public List<Discipline> Disciplines { get; set; }
         public IFCFile TomIFC { get; set; }
-        public List<File> Files { get; set; }
-        public File BaseFolder { get; set; }
+        public List<FileInfo> Files { get; set; }
+        public FileInfo BaseFolder { get; set; }
         public string ProjectName { get; set; }
 
     }

@@ -12,16 +12,11 @@ namespace IFCExporterTest
     public class FolderMonitorTest
     {
         [TestMethod]
-        public void CheckFoldeUpdateDetection()
+        public void TestCopy()
         {
-            //XMLReader reader = new XMLReader();
-            //var ProjectData = reader.GetprojectInfo("C:\\TestMappe\\FolderMonitorTest.xml");
-            //FolderMonitor FM = new FolderMonitor();
-            //FM.Watcher(ProjectData.Disciplines);
+            var CP = new Copier();
 
-
-          //  var  res = await FM.StartMonitoring();
-          //  Assert.AreNotEqual(null, res.Path);
+            CP.CopySingleFile(@"O:\A005000\A009727\BUSP 2\3.7 Tegninger\E41\00-Modellfiler\F50-02-E-410-00-31.dwg", @"C:\IFCEXPORT\Projects\BUS2\E41\00-Modellfiler\F50-02-E-410-00-31.dwg");
         }
 
     }

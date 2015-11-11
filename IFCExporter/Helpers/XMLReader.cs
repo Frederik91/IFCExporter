@@ -13,7 +13,7 @@ namespace IFCExporter.Helpers
         public IFCProjectInfo GetprojectInfo(string path)
         {
 
-            var ProjectInfo = new IFCProjectInfo { Disciplines = new List<Discipline>(), Files = new List<File>(), TomIFC = new IFCFile(), BaseFolder = new File() } ;
+            var ProjectInfo = new IFCProjectInfo { Disciplines = new List<Discipline>(), Files = new List<FileInfo>(), TomIFC = new IFCFile(), BaseFolder = new FileInfo() } ;
             XElement xdoc = XElement.Load(path);
             ProjectInfo.ProjectName = xdoc.Attribute("Name").Value;
             var Dicsiplines = xdoc.Elements("Discipline");
@@ -23,7 +23,7 @@ namespace IFCExporter.Helpers
                 Discipline _discipline = new Discipline { Exports = new List<Export>() };
                 _discipline.Name = dis.Attribute("Value").Value;
 
-                _discipline.StartFile = new File { From = dis.Element("StartFile").Attribute("From").Value, To = dis.Element("StartFile").Attribute("To").Value };
+                _discipline.StartFile = new FileInfo { From = dis.Element("StartFile").Attribute("From").Value, To = dis.Element("StartFile").Attribute("To").Value };
                 var exps = dis.Elements("Export");
                 foreach (var exp in exps)
                 {
@@ -54,7 +54,7 @@ namespace IFCExporter.Helpers
             var files = xdoc.Element("Files").Elements("File");
             foreach (var file in files)
             {
-                ProjectInfo.Files.Add(new File { From = file.Attribute("From").Value, To = file.Attribute("To").Value });                
+                ProjectInfo.Files.Add(new FileInfo { From = file.Attribute("From").Value, To = file.Attribute("To").Value });                
             }
 
             var ifc = xdoc.Element("IFC");

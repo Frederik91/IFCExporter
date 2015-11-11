@@ -9,6 +9,6 @@ namespace IFCExporter.Models
     public class FileDate
     {
         public string Path { get; set; }
-        public DateTime LastUpdated { get; set; }
+        public DateTime EditDate { get; set; }
     }
 }

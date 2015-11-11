@@ -2,6 +2,7 @@
 using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.EditorInput;
 using Autodesk.AutoCAD.Runtime;
+using IFCExporter.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -14,27 +15,39 @@ namespace IFCExporter.Helpers
     public class UnloadAllXrefs
     {
         [CommandMethod("DetachAllXref")]
-        public void UnloadAllXref(string dirPath) // This method can have any name
+        public void UnloadAllXref(List<string> OriginalFilePaths, bool Automatic) 
         {
             //Get the document
             Document Doc = Application.DocumentManager.MdiActiveDocument;
             Editor ed = Doc.Editor;
 
-            string[] filepaths = Directory.GetFiles(dirPath, "*.dwg", SearchOption.TopDirectoryOnly);
-            int filecount = filepaths.Length;
-            ed.WriteMessage("\nScanning " + filecount + " files");
-
-            for (int i = 0; i < filecount; i++)
+            var LocalFilePaths = new List<string>();
+            //Locate files in base folders
+            if (Automatic)
             {
-                ed.WriteMessage("\n File Name : " + filepaths[i]);
+                foreach (var file in LocalFilePaths)
+                {
+                    LocalFilePaths.Add(Directory.GetFiles(DataStorage.ProjectInfo.BaseFolder.To, Path.GetFileName(file)).First());
+                }
+            }
+            else
+            {
+                LocalFilePaths = OriginalFilePaths;
+            }
+
+            ed.WriteMessage("\nScanning " + LocalFilePaths.Count + " files");
+
+            foreach (var file in LocalFilePaths)
+            {
+                ed.WriteMessage("\n File Name : " + file);
                 //create a database and try to load the file
                 Database db = new Database(false, true);
                 using (db)
                 {
                     try
                     {
-                        ed.WriteMessage("\nOpening file: " + Path.GetFileName(filepaths[i]));
-                        db.ReadDwgFile(filepaths[i], FileShare.ReadWrite, false, "");
+                        ed.WriteMessage("\nOpening file: " + Path.GetFileName(file));
+                        db.ReadDwgFile(file, FileShare.ReadWrite, false, "");
                     }
                     catch (System.Exception)
                     {
@@ -72,7 +85,7 @@ namespace IFCExporter.Helpers
                         }
                     }
                     // Overwrite the current drawing file with new updated XRef paths
-                    db.SaveAs(filepaths[i], false, DwgVersion.Current, null);
+                    db.SaveAs(file, false, DwgVersion.Current, null);
 
                 }
             }

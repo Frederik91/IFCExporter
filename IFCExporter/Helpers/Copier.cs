@@ -30,8 +30,8 @@ namespace IFCExporter.Helpers
             }
 
             //Finn filene i kildemappen og kopier dem til destinasjonsmappen
-            FileInfo[] files = dir.GetFiles();
-            foreach (FileInfo file in files)
+            System.IO.FileInfo[] files = dir.GetFiles();
+            foreach (System.IO.FileInfo file in files)
             {
                 string temppath = Path.Combine(DestDir, file.Name);
 
@@ -54,13 +54,13 @@ namespace IFCExporter.Helpers
 
         public void CopySingleFile_NewName(string SourceDir, string DestDir, string NewName)
         {
-            FileInfo file = new FileInfo(SourceDir);
+            System.IO.FileInfo file = new System.IO.FileInfo(SourceDir);
             file.CopyTo(DestDir + NewName, true);
         }
 
         public void CopySingleFile(string SourceDir, string DestDir)
         {
-            FileInfo file = new FileInfo(SourceDir);
+            System.IO.FileInfo file = new System.IO.FileInfo(SourceDir);
             file.CopyTo(DestDir, true);
         }
 
@@ -69,7 +69,7 @@ namespace IFCExporter.Helpers
             var SaveDir = Path.GetDirectoryName(TomIFC.To);
             Directory.CreateDirectory(SaveDir);
 
-            FileInfo file = new FileInfo(TomIFC.From);
+            System.IO.FileInfo file = new System.IO.FileInfo(TomIFC.From);
             file.CopyTo(SaveDir + "\\" + NewName + ".ifc", true);
         }
     }

@@ -20,7 +20,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <PlatformTarget>x64</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -44,11 +44,11 @@
       <HintPath>C:\Program Files\Autodesk\AutoCAD 2016\acmgd.dll</HintPath>
     </Reference>
     <Reference Include="Autodesk.AutoCAD.Interop">
-      <HintPath>..\..\..\..\..\Program Files\AutoCAD 2016\Autodesk.AutoCAD.Interop.dll</HintPath>
+      <HintPath>C:\Program Files\Autodesk\AutoCAD 2016\Autodesk.AutoCAD.Interop.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
     <Reference Include="Autodesk.AutoCAD.Interop.Common">
-      <HintPath>..\..\..\..\..\Program Files\AutoCAD 2016\Autodesk.AutoCAD.Interop.Common.dll</HintPath>
+      <HintPath>C:\Program Files\Autodesk\AutoCAD 2016\Autodesk.AutoCAD.Interop.Common.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.3.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -72,13 +72,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Models\DataStorage.cs" />
-    <Compile Include="Models\ExportAll.cs" />
-    <Compile Include="Models\ExportSyncData.cs" />
     <Compile Include="Models\FileDate.cs" />
-    <Compile Include="Models\ExportUpdateInfo.cs" />
+    <Compile Include="Workers\ExportAll.cs" />
     <Compile Include="Models\FolderDate.cs" />
-    <Compile Include="Workers\Exporter.cs" />
-    <Compile Include="Workers\FolderMonitor.cs" />
+    <Compile Include="Workers\AutoExport.cs" />
     <Compile Include="Forms\ControlForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -99,7 +96,7 @@
     <Compile Include="Models\Folder.cs" />
     <Compile Include="Models\Discipline.cs" />
     <Compile Include="Models\Export.cs" />
-    <Compile Include="Models\File.cs" />
+    <Compile Include="Models\FileInfo.cs" />
     <Compile Include="Models\IFCFile.cs" />
     <Compile Include="Models\IFCProjectInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

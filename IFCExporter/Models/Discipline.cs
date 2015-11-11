@@ -10,6 +10,6 @@ namespace IFCExporter.Models
     {
         public string Name { get; set; }
         public List<Export> Exports { get; set; }
-        public File StartFile { get; set; }
+        public FileInfo StartFile { get; set; }
     }
 }

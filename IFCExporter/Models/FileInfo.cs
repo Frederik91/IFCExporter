@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace IFCExporter.Models
 {
-    public class ExportUpdateInfo
+    public class FileInfo
     {
-        public string Name { get; set; }
-        public DateTime LastUpdated { get; set; }
+        public string From { get; set; }
+        public string To { get; set; }
     }
 }
