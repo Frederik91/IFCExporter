@@ -12,15 +12,15 @@ namespace IFCExporterTest
     public class AutoExportTest
     {
         [TestMethod]
-        public void TestMethod1()
+        public void TestFileWatcher()
         {
             DataStorage.ExportsToRun = new List<string>();
 
             var reader = new XMLReader();
 
-            var ProjectInfo = reader.GetprojectInfo(@"H:\IFCEXPORT\XML\BUS2.xml");
+            DataStorage.ProjectInfo = reader.GetprojectInfo(@"H:\IFCEXPORT\XML\BUS2Test.xml");
 
-            var x = new AutoExport(ProjectInfo);
+            var x = new FileWatcher();
 
             DataStorage.OldFolderDateList = x.GetNewFolderDateList();
 
@@ -31,6 +31,28 @@ namespace IFCExporterTest
                 y = x.GetNewFolderDateList();
                 System.Threading.Thread.Sleep(50);
             }
+
+        }
+
+        [TestMethod]
+        public void FileChangedActionsTest()
+        {
+            DataStorage.ExportsToRun = new List<string>();
+
+            var reader = new XMLReader();
+
+            DataStorage.ProjectInfo = reader.GetprojectInfo(@"H:\IFCEXPORT\XML\BUS2Test.xml");
+
+            var x = new FileWatcher();
+
+            DataStorage.OldFolderDateList = x.GetNewFolderDateList();
+
+            var FCA = new FileChangedActions(x);
+
+            //while (!FCA.CheckForChange())
+            //{
+            //    System.Threading.Thread.Sleep(50);
+            //}
 
         }
     }

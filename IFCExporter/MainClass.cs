@@ -21,153 +21,69 @@ namespace IFCExporter
         private Copier CP = new Copier();
         private DrawingManager DM = new DrawingManager();
         private Document Doc = Autodesk.AutoCAD.ApplicationServices.Core.Application.DocumentManager.MdiActiveDocument;
-        private string _selectedProject;
-        private string XMLFolder = "";
         public bool RunForeverBool = false;
         public bool AutomaticBool = false;
         public IFCProjectInfo ProjectInfo = new IFCProjectInfo();
-        private AcadApplication app;
-        private AutoExport AE;
+
 
         [CommandMethod("IFCExporter", CommandFlags.Session)]
         public void IFCExporter()
         {
-            app = Application.AcadApplication as AcadApplication;
+            DataStorage.app = Application.AcadApplication as AcadApplication;
 
-            Prepare();
+            var NAcadTask = new NonAutoCADTasks();
+            DataStorage.ProjectInfo = NAcadTask.Prepare();
 
-            AE = new AutoExport(ProjectInfo);
-            DataStorage.OldFolderDateList = AE.GetNewFolderDateList();
-            DataStorage.ProjectInfo = ProjectInfo;
-            DataStorage.ExportsToRun = new List<string>();
+            RunForeverBool = NAcadTask.RunForeverBool;
+            AutomaticBool = NAcadTask.AutomaticMode;
+            DataStorage.ExportsToRun = NAcadTask.ExportsToExecute;
             DataStorage.TempExportsToRun = new List<string>();
 
 
-            var x = System.Windows.Forms.MessageBox.Show("Yes = Automatic, No = Manual", "Mode select", System.Windows.Forms.MessageBoxButtons.YesNo);
-
-            switch (x)
+            switch (AutomaticBool)
             {
-                case System.Windows.Forms.DialogResult.Yes:
-                    AutomaticBool = true;
-                    AutoModeIFC();
+                case true:
+                    FileWatcher AE = new FileWatcher();
+                    DataStorage.OldFolderDateList = AE.GetNewFolderDateList();
+                    var FCA = new FileChangedActions(AE);
+                    FCA.startMonitoring();
                     break;
-                case System.Windows.Forms.DialogResult.No:
-                    AutomaticBool = false;
+                case false:
                     RunOnceIFC();
                     break;
 
             }
         }
 
-        [CommandMethod("RunOnceIFC", CommandFlags.Session)]
-        public void RunOnceIFC()
-        {
-            var expAll = new ExportAll(AutomaticBool);
-            expAll.Run(app);
-        }
-
 
         [CommandMethod("AutoModeIFC", CommandFlags.Session)]
         public void AutoModeIFC()
         {
-            var x = AE.GetNewFolderDateList();
+            var EA = new ExportAll(true);
+            EA.Run();
+        }
 
-            if (AE.CompareFolderLists_ReturnTrueIfChanged(x))
+
+        #region RunOnce
+
+        [CommandMethod("RunOnceIFC", CommandFlags.Session)]
+        public void RunOnceIFC()
+        {
+            if (RunForeverBool)
             {
-                DataStorage.FilesWithChanges = AE.ReturnChangedFiles(DataStorage.OldFolderDateList, x);
-                DataStorage.OldFolderDateList = x;
-                var expAll = new ExportAll(AutomaticBool);
-                expAll.Run(app);
-                AutoModeIFC();
+                while (true)
+                {
+                    var expAll = new ExportAll(AutomaticBool);
+                    expAll.Run();
+                }
             }
             else
             {
-                System.Threading.Thread.Sleep(50);
-                AutoModeIFC();
-
-                //Timer t = new Timer();
-                //t.Interval = 500; //In milliseconds here
-                //t.AutoReset = true; //Stops it from repeating
-                //t.Elapsed += new ElapsedEventHandler(TimerElapsed);
-                //t.Start();
+                var expAll = new ExportAll(AutomaticBool);
+                expAll.Run();
             }
         }
 
-        public void TimerElapsed(object sender, ElapsedEventArgs e)
-        {
-            AutoModeIFC();
-        }
-
-
-        private void Prepare()
-        {
-            //Finn prosjektmappe
-
-            //Velg prosjekt
-
-            using (var form = new SelectProjectForm())
-            {
-                var result = form.ShowDialog();
-                _selectedProject = form.SelectedProject;
-                RunForeverBool = form.RunForeverBool;
-                ExportsToExecute = form.ExportsToRun;
-                XMLFolder = form.XMLPath;
-                if (_selectedProject == "")
-                {
-                    System.Windows.Forms.MessageBox.Show("No project file selected, exiting.");
-                    return;
-                }
-            }
-
-
-            //Les inn XMLfil
-            var reader = new XMLReader();
-            ProjectInfo = reader.GetprojectInfo(XMLFolder);
-
-            try
-            {
-                prepareFirstTime();
-
-            }
-            catch (System.Exception e)
-            {
-                System.Windows.Forms.MessageBox.Show("Failed first time setup: " + e.Message);
-            }
-
-        }
-
-        private void prepareFirstTime()
-        {
-            foreach (var Discipline in ProjectInfo.Disciplines)
-            {
-                foreach (var Export in Discipline.Exports)
-                {
-                    foreach (var Folder in Export.Folders)
-                    {
-                        try
-                        {
-                            DM.CloseIfOpen(Folder.From);
-                            CP.DirectoryCopy(Folder.From, Folder.To, false, ".dwg");
-                        }
-                        catch (System.Exception e)
-                        {
-                            System.Windows.Forms.MessageBox.Show("Failed creating Directory: " + Folder.To + " - " + e.Message);
-                        }
-                    }
-                }
-
-            }
-            Directory.CreateDirectory(ProjectInfo.TomIFC.To);
-        }
-
-        [CommandMethod("ActiveDrawing")]
-        public void ActiveDrawing()
-        {
-            var t = Application.DocumentManager.MdiActiveDocument.Name;
-
-            Application.ShowAlertDialog(t);
-        }
-
-
+        #endregion
     }
 }

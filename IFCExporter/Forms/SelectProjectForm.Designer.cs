@@ -34,6 +34,7 @@
             this.SelectedFilePath_TextBox = new System.Windows.Forms.TextBox();
             this.AllExports_Checkbox = new System.Windows.Forms.CheckBox();
             this.checkedListBox1 = new System.Windows.Forms.CheckedListBox();
+            this.AutoModeCheckBox = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // ProjectSelectedButton
@@ -49,7 +50,7 @@
             // RunForeverCheckBox
             // 
             this.RunForeverCheckBox.AutoSize = true;
-            this.RunForeverCheckBox.Location = new System.Drawing.Point(13, 40);
+            this.RunForeverCheckBox.Location = new System.Drawing.Point(195, 72);
             this.RunForeverCheckBox.Name = "RunForeverCheckBox";
             this.RunForeverCheckBox.Size = new System.Drawing.Size(82, 17);
             this.RunForeverCheckBox.TabIndex = 2;
@@ -94,11 +95,23 @@
             this.checkedListBox1.TabIndex = 6;
             this.checkedListBox1.SelectedIndexChanged += new System.EventHandler(this.checkedListBox1_SelectedIndexChanged);
             // 
+            // AutoModeCheckBox
+            // 
+            this.AutoModeCheckBox.AutoSize = true;
+            this.AutoModeCheckBox.Location = new System.Drawing.Point(13, 40);
+            this.AutoModeCheckBox.Name = "AutoModeCheckBox";
+            this.AutoModeCheckBox.Size = new System.Drawing.Size(102, 17);
+            this.AutoModeCheckBox.TabIndex = 7;
+            this.AutoModeCheckBox.Text = "Automatic mode";
+            this.AutoModeCheckBox.UseVisualStyleBackColor = true;
+            this.AutoModeCheckBox.CheckedChanged += new System.EventHandler(this.AutoModeCheckBox_CheckedChanged);
+            // 
             // SelectProjectForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(307, 293);
+            this.Controls.Add(this.AutoModeCheckBox);
             this.Controls.Add(this.checkedListBox1);
             this.Controls.Add(this.AllExports_Checkbox);
             this.Controls.Add(this.SelectedFilePath_TextBox);
@@ -119,5 +132,6 @@
         private System.Windows.Forms.TextBox SelectedFilePath_TextBox;
         private System.Windows.Forms.CheckBox AllExports_Checkbox;
         private System.Windows.Forms.CheckedListBox checkedListBox1;
+        private System.Windows.Forms.CheckBox AutoModeCheckBox;
     }
 }

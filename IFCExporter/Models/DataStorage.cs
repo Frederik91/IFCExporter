@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Autodesk.AutoCAD.Interop;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,5 +17,6 @@ namespace IFCExporter.Models
         public static List<FolderDate> OldFolderDateList { get; set; }
         public static List<string> FilesWithChanges { get; set; }
         public static List<string> AllFiles { get; set; }
+        public static AcadApplication app { get; set; }
     }
 }

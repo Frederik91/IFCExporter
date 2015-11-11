@@ -1,4 +1,5 @@
-﻿using IFCExporter.Models;
+﻿using Autodesk.AutoCAD.ApplicationServices.Core;
+using IFCExporter.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -8,13 +9,12 @@ using System.Threading.Tasks;
 
 namespace IFCExporter.Workers
 {
-    public class AutoExport
+    public class FileWatcher
     {
-        private IFCProjectInfo ProjectInfo;
+        private IFCProjectInfo ProjectInfo = DataStorage.ProjectInfo;
 
-        public AutoExport(IFCProjectInfo _projectInfo)
+        public FileWatcher()
         {
-            ProjectInfo = _projectInfo;
         }
 
         public List<FolderDate> GetNewFolderDateList()

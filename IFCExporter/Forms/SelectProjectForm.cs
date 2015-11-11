@@ -20,13 +20,19 @@ namespace IFCExporter.Forms
         public bool RunForeverBool { get; set; }
         private IFCProjectInfo projectInfo;
         public string XMLPath { get; set; }
+        public bool AutomaticMode { get; set; }
 
         public SelectProjectForm()
         {
             ExportsToRun = new List<string>();
+            var path = @"H:\IFCEXPORT\XML\BUS2Test.xml";
 
             InitializeComponent();
+
+            XMLPath = path;
             checkedListBox1.Enabled = false;
+            SelectedFilePath_TextBox.Text = path;
+            AutoModeCheckBox.Checked = true;
         }
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
@@ -117,6 +123,25 @@ namespace IFCExporter.Forms
         private void checkedListBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
 
+        }
+
+        private void AutoModeCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            if (AutoModeCheckBox.Checked)
+            {
+                AllExports_Checkbox.Enabled = false;
+                checkedListBox1.Enabled = false;
+                RunForeverCheckBox.Enabled = false;
+                AutomaticMode = true;
+            }
+
+            if (!AutoModeCheckBox.Checked)
+            {
+                AllExports_Checkbox.Enabled = true;
+                checkedListBox1.Enabled = true;
+                RunForeverCheckBox.Enabled = true;
+                AutomaticMode = false;
+            }
         }
     }
 

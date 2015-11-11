@@ -18,25 +18,29 @@ namespace IFCExporter.Models
         private Copier CP = new Copier();
         private DrawingManager DM = new DrawingManager();
         private bool AutomaticBool;
-        private EventWaitHandle waitHandle;
 
         public ExportAll(bool automaticBool)
         {
             AutomaticBool = automaticBool;
         }
 
-        public void Run(AcadApplication app)
+        public void Run()
         {
+
             foreach (var Discipline in DataStorage.ProjectInfo.Disciplines)
             {
+
                 foreach (var Export in Discipline.Exports)
                 {
+
                     foreach (var exp in DataStorage.ExportsToRun)
                     {
+
                         if (exp == Export.Name)
                         {
                             foreach (var Folder in Export.Folders)
                             {
+
                                 //--Last ned filer (modellfiler og tom.ifc)
 
                                 //Sjekk om tegning som er åpen skal overskrives, lukke så denne mens den kopieres
@@ -58,10 +62,11 @@ namespace IFCExporter.Models
                                 else
                                 {
                                     CP.DirectoryCopy(Folder.From, Folder.To, false, ".dwg");
+
                                     UAX.UnloadAllXref(Directory.GetFiles(Folder.To).ToList(), AutomaticBool);
                                 }
                             }
-
+       
                             //Lag ny IFC for eksport
                             CP.TomIFCCopy(DataStorage.ProjectInfo.TomIFC, Export.Name);
 
@@ -77,19 +82,19 @@ namespace IFCExporter.Models
                             Application.DocumentManager.MdiActiveDocument = OAC.ReturnActivateDrawing(Discipline.StartFile.To);
 
                             //--Kjør eksport
-                            app.ActiveDocument.SendCommand("_.-MAGIIFCEXPORT " + Export.Name + "\n"); //Venter ikke på at denne skal bli ferdig, må fikses.
-                            //app.ActiveDocument.SendCommand(".Zoom e ");
+                            DataStorage.app.ActiveDocument.SendCommand("_.-MAGIIFCEXPORT " + Export.Name + "\n"); //Venter ikke på at denne skal bli ferdig, må fikses.
+
 
                             //--Last opp IFC
 
                             string fromPath = Path.GetDirectoryName(DataStorage.ProjectInfo.TomIFC.To) + "\\" + Export.Name + ".ifc";
                             string toPath = DataStorage.ProjectInfo.TomIFC.Export + "\\" + Export.Name + ".ifc";
                             CP.CopySingleFile(fromPath, toPath);
-                            System.Windows.Forms.MessageBox.Show("ferdig");
                         }
                     }
                 }
             }
+            DataStorage.ExportInProgress = false;
         }
     }
 }
