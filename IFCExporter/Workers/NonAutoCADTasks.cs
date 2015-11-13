@@ -76,7 +76,7 @@ namespace IFCExporter.Workers
                 }
 
             }
-            Directory.CreateDirectory(ProjectInfo.TomIFC.To);
+            Directory.CreateDirectory(Path.GetDirectoryName(ProjectInfo.TomIFC.To));
         }
     }
 }

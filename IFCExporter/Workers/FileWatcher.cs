@@ -36,7 +36,7 @@ namespace IFCExporter.Workers
                         {
                             var date = System.IO.File.GetLastWriteTime(file);
 
-                            FileDateList.Add(new FileDate { Path = file, EditDate = date });                   
+                            FileDateList.Add(new FileDate { Path = file, EditDate = date });
 
                             if (date > MostRecent)
                             {
@@ -53,36 +53,57 @@ namespace IFCExporter.Workers
 
                     }
                 }
-                
+
             }
             return NewFolderDateList;
         }
 
-
-        public bool CompareFolderLists_ReturnTrueIfChanged(List<FolderDate> NewFolderDateList)
+        public List<FileDate> GetNewIfcFileDateList(string dir)
         {
-            var ChangesFound = false;
+            var NewIFCFileDateList = new List<FileDate>();
 
+
+            DateTime MostRecent = DateTime.MinValue;
+
+            var _files = Directory.GetFiles(dir, "*.ifc");
+            var Date = new List<FileDate>();
+
+            foreach (var file in _files)
+            {
+                NewIFCFileDateList.Add(new FileDate
+                {
+                    Path = file,
+                    EditDate = File.GetLastWriteTime(file)
+                });
+            }
+
+            return NewIFCFileDateList;
+        }
+
+        public List<string> CompareFolderLists(List<FolderDate> NewFolderDateList, List<FolderDate> OldFolderDateList)
+        {
             var exportsToRun = new List<string>();
 
-            DataStorage.ExportsToRun.Clear();
             foreach (var newFolder in NewFolderDateList)
             {
-                foreach (var oldFolder in DataStorage.OldFolderDateList)
+                foreach (var oldFolder in OldFolderDateList)
                 {
                     if (oldFolder.Export == newFolder.Export && oldFolder.LastUpdated < newFolder.LastUpdated)
                     {
                         exportsToRun.Add(newFolder.Export);
-                        ChangesFound = true;
                     }
                 }
             }
+            return exportsToRun;
+        }
 
-            if (ChangesFound)
+        public bool CheckForChanges(List<string> ComparedList)
+        {
+            if (ComparedList.Count > 0)
             {
-                DataStorage.ExportsToRun = exportsToRun;
+                return true; ;
             }
-            return ChangesFound;
+            return false;
         }
 
         public List<string> ReturnChangedFiles(List<FolderDate> OldFolderDateList, List<FolderDate> NewfolderDateList)

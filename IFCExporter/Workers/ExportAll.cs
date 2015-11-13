@@ -2,6 +2,7 @@
 using Autodesk.AutoCAD.Interop;
 using Autodesk.AutoCAD.Runtime;
 using IFCExporter.Helpers;
+using IFCExporter.Workers;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -26,6 +27,7 @@ namespace IFCExporter.Models
 
         public void Run()
         {
+            var Exports = DataStorage.ExportsToRun;
 
             foreach (var Discipline in DataStorage.ProjectInfo.Disciplines)
             {
@@ -33,7 +35,7 @@ namespace IFCExporter.Models
                 foreach (var Export in Discipline.Exports)
                 {
 
-                    foreach (var exp in DataStorage.ExportsToRun)
+                    foreach (var exp in Exports)
                     {
 
                         if (exp == Export.Name)
@@ -54,7 +56,6 @@ namespace IFCExporter.Models
                                     foreach (var _file in DataStorage.FilesWithChanges)
                                     {
                                         var ToPath = DataStorage.ProjectInfo.BaseFolder.To + _file.Substring(DataStorage.ProjectInfo.BaseFolder.From.Length);
-                                        //System.Windows.Forms.MessageBox.Show("Copy from: \"" + _file + "\" to \"" + ToPath + "\"");
                                         CP.CopySingleFile(_file, ToPath);
                                     }
                                     UAX.UnloadAllXref(DataStorage.FilesWithChanges, AutomaticBool);
@@ -66,7 +67,7 @@ namespace IFCExporter.Models
                                     UAX.UnloadAllXref(Directory.GetFiles(Folder.To).ToList(), AutomaticBool);
                                 }
                             }
-       
+
                             //Lag ny IFC for eksport
                             CP.TomIFCCopy(DataStorage.ProjectInfo.TomIFC, Export.Name);
 
@@ -83,18 +84,12 @@ namespace IFCExporter.Models
 
                             //--Kjør eksport
                             DataStorage.app.ActiveDocument.SendCommand("_.-MAGIIFCEXPORT " + Export.Name + "\n"); //Venter ikke på at denne skal bli ferdig, må fikses.
-
-
-                            //--Last opp IFC
-
-                            string fromPath = Path.GetDirectoryName(DataStorage.ProjectInfo.TomIFC.To) + "\\" + Export.Name + ".ifc";
-                            string toPath = DataStorage.ProjectInfo.TomIFC.Export + "\\" + Export.Name + ".ifc";
-                            CP.CopySingleFile(fromPath, toPath);
                         }
+                        DataStorage.ExportsToRun.RemoveAll(x => x == exp);
                     }
+
                 }
             }
-            DataStorage.ExportInProgress = false;
         }
     }
 }

@@ -5,6 +5,7 @@ using IFCExporter.Helpers;
 using IFCExporter.Models;
 using System.Windows.Forms;
 using System.Collections.Generic;
+using System.IO;
 
 namespace IFCExporterTest
 {
@@ -20,15 +21,14 @@ namespace IFCExporterTest
 
             DataStorage.ProjectInfo = reader.GetprojectInfo(@"H:\IFCEXPORT\XML\BUS2Test.xml");
 
-            var x = new FileWatcher();
+            var FW = new FileWatcher();
 
-            DataStorage.OldFolderDateList = x.GetNewFolderDateList();
+            var x = FW.GetNewFolderDateList();
+            var y = FW.GetNewFolderDateList();
 
-            var y = x.GetNewFolderDateList();
-
-            while (!x.CompareFolderLists_ReturnTrueIfChanged(y))
+            while (!FW.CheckForChanges(FW.CompareFolderLists(x, y)))
             {
-                y = x.GetNewFolderDateList();
+                x = FW.GetNewFolderDateList();
                 System.Threading.Thread.Sleep(50);
             }
 
@@ -49,10 +49,38 @@ namespace IFCExporterTest
 
             var FCA = new FileChangedActions(x);
 
-            //while (!FCA.CheckForChange())
-            //{
-            //    System.Threading.Thread.Sleep(50);
-            //}
+            FCA.startMonitoring();
+
+            while (!DataStorage.ExportInProgress)
+            {
+                System.Threading.Thread.Sleep(50);
+            }
+
+        }
+
+        [TestMethod]
+        public void IfcFileChangeTest()
+        {
+            DataStorage.ExportsToRun = new List<string>();
+
+            var reader = new XMLReader();
+
+            DataStorage.ProjectInfo = reader.GetprojectInfo(@"H:\IFCEXPORT\XML\MH2.xml");
+
+            var x = new FileWatcher();
+
+            DataStorage.IfcOldFolderDateList = x.GetNewIfcFileDateList(Path.GetDirectoryName(DataStorage.ProjectInfo.TomIFC.To));
+
+            var IUW = new IfcUpdateWatcher();
+
+            DataStorage.ExportInProgress = true;
+
+            IUW.StartIfcMonitoring();
+
+            while (DataStorage.ExportInProgress)
+            {
+                System.Threading.Thread.Sleep(50);
+            }
 
         }
     }
