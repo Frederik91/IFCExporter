@@ -39,12 +39,11 @@ namespace IFCExporter
             DataStorage.ExportsToRun = NAcadTask.ExportsToExecute;
             DataStorage.TempExportsToRun = new List<string>();
 
-            var IUW = new IfcUpdateWatcher();
-            IUW.StartIfcMonitoring();
-
             switch (AutomaticBool)
             {
                 case true:
+                    var IUW = new IfcUpdateWatcher();
+                    IUW.StartIfcMonitoring();
                     FileWatcher AE = new FileWatcher();
                     DataStorage.OldFolderDateList = AE.GetNewFolderDateList();
                     DataStorage.IfcOldFolderDateList = AE.GetNewIfcFileDateList(Path.GetDirectoryName(DataStorage.ProjectInfo.TomIFC.To));

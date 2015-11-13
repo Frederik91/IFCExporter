@@ -84,10 +84,23 @@ namespace IFCExporter.Models
 
                             //--Kjør eksport
                             DataStorage.app.ActiveDocument.SendCommand("_.-MAGIIFCEXPORT " + Export.Name + "\n"); //Venter ikke på at denne skal bli ferdig, må fikses.
-                        }
-                        DataStorage.ExportsToRun.RemoveAll(x => x == exp);
-                    }
 
+
+                            if (AutomaticBool)
+                            {
+                                DataStorage.ExportsToRun.RemoveAll(x => x == exp);
+                            }
+                            else
+                            {
+                                var IfcFromPath = Path.GetDirectoryName(DataStorage.ProjectInfo.TomIFC.To) + "\\" + exp + ".ifc";
+                                var IfcToPath = DataStorage.ProjectInfo.TomIFC.Export + "\\" + exp + ".ifc";
+
+                                CP.CopySingleFile(IfcFromPath, IfcToPath);
+                            }
+                        }
+
+
+                    }
                 }
             }
         }
