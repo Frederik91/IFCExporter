@@ -1,5 +1,4 @@
-﻿using IFCExporter.Helpers;
-using Microsoft.Win32;
+﻿using Microsoft.Win32;
 using Prism.Commands;
 using System;
 using System.Collections.Generic;
@@ -61,8 +60,6 @@ namespace IFCManager.ViewModel
             OpenFileDialog fileDialog = new OpenFileDialog();
 
             fileDialog.ShowDialog();
-            var reader = new XMLReader();
-            var ProjectInfo = reader.GetprojectInfo(fileDialog.FileName);
         }
 
     }

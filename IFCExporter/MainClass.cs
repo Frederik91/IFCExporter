@@ -26,6 +26,12 @@ namespace IFCExporter
         public IFCProjectInfo ProjectInfo = new IFCProjectInfo();
 
 
+        public MainClass()
+        {
+
+        }
+
+
         [CommandMethod("IFCExporter", CommandFlags.Session)]
         public void IFCExporter()
         {
@@ -59,6 +65,39 @@ namespace IFCExporter
             }
         }
 
+        [CommandMethod("IFCExporterFromManager", CommandFlags.Session)]
+        public void IFCExporterFromManager()
+        {
+            IFCManager.MainWindow test = new IFCManager.MainWindow();
+            test.ShowDialog();
+
+            DataStorage.app = Application.AcadApplication as AcadApplication;
+            var NAcadTask = new NonAutoCADTasks();
+
+            RunForeverBool = false;
+            AutomaticBool = false;
+            DataStorage.TempExportsToRun = new List<string>();
+
+
+            switch (AutomaticBool)
+            {
+                case true:
+                    var IUW = new IfcUpdateWatcher();
+                    IUW.StartIfcMonitoring();
+                    FileWatcher AE = new FileWatcher();
+                    DataStorage.OldFolderDateList = AE.GetNewFolderDateList();
+                    DataStorage.IfcOldFolderDateList = AE.GetNewIfcFileDateList(Path.GetDirectoryName(DataStorage.ProjectInfo.TomIFC.To));
+                    var FCA = new FileChangedActions(AE);
+
+                    FCA.startMonitoring();
+
+                    break;
+                case false:
+                    RunOnceIFC();
+                    break;
+
+            }
+        }
 
         [CommandMethod("AutoModeIFC", CommandFlags.Session)]
         public void AutoModeIFC()

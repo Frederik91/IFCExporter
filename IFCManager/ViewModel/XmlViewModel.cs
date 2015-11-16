@@ -55,6 +55,7 @@ namespace IFCManager.ViewModel
                 // functional and can be interacted with through code
                 acApp.Visible = true;
                 acApp.ActiveDocument.SendCommand("_NETLOAD ");
+                acApp.ActiveDocument.SendCommand("IFCExporterFromManager ");
             }
         }
 
