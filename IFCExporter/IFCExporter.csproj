@@ -44,12 +44,12 @@
       <HintPath>C:\Program Files\Autodesk\AutoCAD 2016\acmgd.dll</HintPath>
     </Reference>
     <Reference Include="Autodesk.AutoCAD.Interop">
-      <HintPath>C:\Program Files\Autodesk\AutoCAD 2016\Autodesk.AutoCAD.Interop.dll</HintPath>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
+      <HintPath>..\..\..\..\..\Program Files\AutoCAD 2016\Autodesk.AutoCAD.Interop.dll</HintPath>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
     </Reference>
     <Reference Include="Autodesk.AutoCAD.Interop.Common">
-      <HintPath>C:\Program Files\Autodesk\AutoCAD 2016\Autodesk.AutoCAD.Interop.Common.dll</HintPath>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
+      <HintPath>..\..\..\..\..\Program Files\AutoCAD 2016\Autodesk.AutoCAD.Interop.Common.dll</HintPath>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
     </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.3.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\CommonServiceLocator.1.3\lib\portable-net4+sl5+netcore45+wpa81+wp8\Microsoft.Practices.ServiceLocation.dll</HintPath>
@@ -59,10 +59,6 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\MvvmLightLibs.5.2.0.0\lib\net45\System.Windows.Interactivity.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -77,12 +73,6 @@
     <Compile Include="Models\FolderDate.cs" />
     <Compile Include="Workers\FileChangedActions.cs" />
     <Compile Include="Workers\FileWatcher.cs" />
-    <Compile Include="Forms\ControlForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\ControlForm.Designer.cs">
-      <DependentUpon>ControlForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="Forms\SelectProjectForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -116,9 +106,6 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Forms\ControlForm.resx">
-      <DependentUpon>ControlForm.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Forms\SelectProjectForm.resx">
       <DependentUpon>SelectProjectForm.cs</DependentUpon>
     </EmbeddedResource>

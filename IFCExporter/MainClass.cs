@@ -48,7 +48,7 @@ namespace IFCExporter
                     DataStorage.OldFolderDateList = AE.GetNewFolderDateList();
                     DataStorage.IfcOldFolderDateList = AE.GetNewIfcFileDateList(Path.GetDirectoryName(DataStorage.ProjectInfo.TomIFC.To));
                     var FCA = new FileChangedActions(AE);
- 
+
                     FCA.startMonitoring();
 
                     break;
