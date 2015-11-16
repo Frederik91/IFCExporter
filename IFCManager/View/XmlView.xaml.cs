@@ -12,20 +12,17 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using MahApps.Metro.Controls;
-using IFCManager.ViewModel;
 
-namespace IFCManager
+namespace IFCManager.View
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaction logic for XmlView.xaml
     /// </summary>
-    public partial class MainWindow : MetroWindow
+    public partial class XmlView : UserControl
     {
-        public MainWindow()
+        public XmlView()
         {
             InitializeComponent();
-            DataContext = new MainViewModel();
         }
     }
 }
