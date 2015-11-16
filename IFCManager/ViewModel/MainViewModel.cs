@@ -1,4 +1,5 @@
-﻿using Microsoft.Win32;
+﻿using IFCExporter.Helpers;
+using Microsoft.Win32;
 using Prism.Commands;
 using System;
 using System.Collections.Generic;
@@ -14,6 +15,8 @@ namespace IFCManager.ViewModel
         private bool m_isSettingsOpen;
         private ICommand m_openSettings;
         private ICommand m_fileExplorerCommand;
+        private ViewModelBase m_viewModelBase;
+        public ViewModelBase CurrentViewModel { get { return m_viewModelBase; } set { m_viewModelBase = value; OnPropertyChanged("CurrentViewModel"); } }
 
         public ICommand OpenSettings
         {
@@ -45,6 +48,7 @@ namespace IFCManager.ViewModel
         {
             m_openSettings = new DelegateCommand(flip);
             FileExplorerCommand = new DelegateCommand(OpenExplorerExecute);
+            CurrentViewModel = new XmlViewModel();
         }
 
         private void flip()
@@ -57,7 +61,8 @@ namespace IFCManager.ViewModel
             OpenFileDialog fileDialog = new OpenFileDialog();
 
             fileDialog.ShowDialog();
-
+            var reader = new XMLReader();
+            var ProjectInfo = reader.GetprojectInfo(fileDialog.FileName);
         }
 
     }

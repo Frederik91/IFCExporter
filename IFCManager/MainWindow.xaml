@@ -4,9 +4,18 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:IFCManager"
+        xmlns:ViewModel="clr-namespace:IFCManager.ViewModel"
+        xmlns:Views="clr-namespace:IFCManager.View"
         xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
         mc:Ignorable="d"
         Title="MainWindow" Height="350" Width="525">
+
+    <Controls:MetroWindow.Resources>
+        <DataTemplate DataType="{x:Type ViewModel:XmlViewModel}">
+            <Views:XmlView/>
+        </DataTemplate>
+    </Controls:MetroWindow.Resources>
+
     <Controls:MetroWindow.RightWindowCommands>
         <Controls:WindowCommands>
             <Button Content="settings" Command="{Binding OpenSettings}" />
@@ -18,9 +27,12 @@
             <Controls:Flyout Header="Settings" Position="Right" Width="300" Theme="Dark" IsOpen="{Binding IsSettingsOpen}">
                 <Grid>
                     <Separator Grid.Row="1" BorderThickness="4" BorderBrush="SlateGray"/>
-                    <Button Grid.Row="2" Margin="5" Content="Open existing project" Command="{Binding FileExplorerCommand}"/>
+                    <Button Grid.Row="2" Margin="5" Content="Open existing project" Height="100" Command="{Binding FileExplorerCommand}"/>
                 </Grid>
             </Controls:Flyout>
         </Controls:FlyoutsControl>
     </Controls:MetroWindow.Flyouts>
+
+    <ContentControl Content="{Binding CurrentViewModel}"/>
 </Controls:MetroWindow>
+    
