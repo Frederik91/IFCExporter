@@ -8,7 +8,7 @@
         xmlns:Views="clr-namespace:IFCManager.View"
         xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
+        Title="MainWindow" Height="650" Width="1050">
 
     <Controls:MetroWindow.Resources>
         <DataTemplate DataType="{x:Type ViewModel:XmlViewModel}">
@@ -33,7 +33,7 @@
         </Controls:FlyoutsControl>
     </Controls:MetroWindow.Flyouts>
     <Controls:TransitioningContentControl Transition="Right">
-        <ContentControl Content="{Binding CurrentViewModel}" Height="350" Width="525"/>
+        <ContentControl Content="{Binding CurrentViewModel}" Height="600" Width="1000"/>
     </Controls:TransitioningContentControl>    
 </Controls:MetroWindow>
     

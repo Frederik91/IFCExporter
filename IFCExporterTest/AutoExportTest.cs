@@ -7,7 +7,6 @@ using System.Windows.Forms;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Autodesk.AutoCAD.Interop;
 using System.Threading;
 
 namespace IFCExporterTest

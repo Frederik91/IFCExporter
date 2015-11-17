@@ -1,4 +1,7 @@
 ﻿using IFCExporter.Models;
+using IFCExporter.Workers;
+using IFCManager.Assets;
+using IFCManager.Models;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using Prism.Commands;
@@ -15,18 +18,22 @@ namespace IFCManager.ViewModel
 {
     public class XmlViewModel : ViewModelBase
     {
-        private List<FolderDate> m_folderLastUpdatedList;
-        private MainViewModel MainViewModel;
-        private bool monitorRunning = false;
+        private List<FileFolderDate> m_fileFolderLastUpdatedList;
+        private bool m_monitorRunning = false;
         private ICommand m_monitorToggleButtonCommand;
         private string m_monitorToggleButtonText = "Start monitoring";
 
         public XmlViewModel()
         {
-            TestCommand = new DelegateCommand(TestMethod);
             MonitorToggleButtonCommand = new DelegateCommand(ToggleMonitoring);
         }
         public ICommand TestCommand { get; set; }
+
+        public bool MonitorRunning
+        {
+            get { return m_monitorRunning; }
+            set { m_monitorRunning = value; OnPropertyChanged("MonitorRunning"); }
+        }
 
         public ICommand MonitorToggleButtonCommand
         {
@@ -40,18 +47,13 @@ namespace IFCManager.ViewModel
             set { m_monitorToggleButtonText = value; OnPropertyChanged("MonitorToggleButtonText"); }
         }
 
-        public void TestMethod()
+        public List<FileFolderDate> FileFolderLastUpdatedList
         {
-
-        }
-
-        public List<FolderDate> FolderLastUpdatedList
-        {
-            get { return m_folderLastUpdatedList; }
+            get { return m_fileFolderLastUpdatedList; }
             set
             {
-                m_folderLastUpdatedList = value;
-                OnPropertyChanged("FolderLastUpdatedList");
+                m_fileFolderLastUpdatedList = value;
+                OnPropertyChanged("FileFolderLastUpdatedList");
             }
         }
 
@@ -61,17 +63,23 @@ namespace IFCManager.ViewModel
             {
                 var window = Application.Current.MainWindow as MetroWindow;
                 await window.ShowMessageAsync("No project selected", "You need to select a project before you can start monitoring folders", MessageDialogStyle.Affirmative);
+                return;
             }
 
-            switch (monitorRunning)
+            switch (MonitorRunning)
             {
                 case (true):
                     MonitorToggleButtonText = "Start monitoring";
-                    monitorRunning = false;
+                    MonitorRunning = false;
                     break;
                 case (false):
                     MonitorToggleButtonText = "Stop monitoring";
-                    monitorRunning = true;
+                    var FDC = new FileDateComparer();
+                    var Conv = new ConvertToFileFolderDate();
+                    FileFolderLastUpdatedList = Conv.Convert(FDC.GetNewFolderDateList(), FDC.GetNewIfcFileDateList());
+                    var monitor = new Monitor(this);
+                    monitor.StartMonitoring();
+                    MonitorRunning = true;
                     break;
                 default:
                     break;

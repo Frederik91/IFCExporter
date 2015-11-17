@@ -31,8 +31,6 @@ namespace IFCManager.ViewModel
             }
         }
 
-
-
         public ICommand FileExplorerCommand
         {
             get { return m_fileExplorerCommand; }
@@ -72,7 +70,7 @@ namespace IFCManager.ViewModel
                 var reader = new XMLReader();
                 DataStorage.ProjectInfo = reader.GetprojectInfo(fileDialog.FileName);
                 var FDC = new FileDateComparer();
-                DataStorage.OldFolderDateList = FDC.GetNewFolderDateList();
+                DataStorage.OldFolderDateList = FDC.GetNewFolderDateList();                                
             }
         }
 
