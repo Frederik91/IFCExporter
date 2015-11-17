@@ -78,7 +78,7 @@
     <Compile Include="Workers\ExportAll.cs" />
     <Compile Include="Models\FolderDate.cs" />
     <Compile Include="Workers\FileChangedActions.cs" />
-    <Compile Include="Workers\FileWatcher.cs" />
+    <Compile Include="Workers\FileDateComparer.cs" />
     <Compile Include="Forms\SelectProjectForm.cs">
       <SubType>Form</SubType>
     </Compile>

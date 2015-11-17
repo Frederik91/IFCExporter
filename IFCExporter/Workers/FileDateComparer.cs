@@ -9,11 +9,11 @@ using System.Threading.Tasks;
 
 namespace IFCExporter.Workers
 {
-    public class FileWatcher
+    public class FileDateComparer
     {
         private IFCProjectInfo ProjectInfo = DataStorage.ProjectInfo;
 
-        public FileWatcher()
+        public FileDateComparer()
         {
         }
 
@@ -58,9 +58,10 @@ namespace IFCExporter.Workers
             return NewFolderDateList;
         }
 
-        public List<FileDate> GetNewIfcFileDateList(string dir)
+        public List<FileDate> GetNewIfcFileDateList()
         {
             var NewIFCFileDateList = new List<FileDate>();
+            var dir = Path.GetDirectoryName(ProjectInfo.TomIFC.To);
 
 
             DateTime MostRecent = DateTime.MinValue;
@@ -96,6 +97,30 @@ namespace IFCExporter.Workers
             }
             return exportsToRun;
         }
+
+        public List<string> CompareFolderIfcDateLists(List<FolderDate> NewFolderDateList, List<FileDate> IfcFileDateList)
+        {
+            var exportsToRun = new List<string>();
+
+            foreach (var newFolder in NewFolderDateList)
+            {
+                foreach (var ifcFile in IfcFileDateList)
+                {
+                    var f = new System.IO.FileInfo(ifcFile.Path);
+                    if (f.Length < 10240)
+                    {
+                        break;
+                    }
+
+                    if (Path.GetFileNameWithoutExtension(ifcFile.Path) == newFolder.Export && ifcFile.EditDate < newFolder.LastUpdated)
+                    {
+                        exportsToRun.Add(newFolder.Export);
+                    }
+                }
+            }
+            return exportsToRun;
+        }
+
 
         public bool CheckForChanges(List<string> ComparedList)
         {

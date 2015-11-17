@@ -28,45 +28,45 @@ namespace IFCExporter.Models
         public void Run()
         {
             var Exports = DataStorage.ExportsToRun;
+            var Disciplines = DataStorage.ProjectInfo.Disciplines;
 
-            foreach (var Discipline in DataStorage.ProjectInfo.Disciplines)
+            foreach (var Discipline in Disciplines)
             {
-
                 foreach (var Export in Discipline.Exports)
                 {
-
                     foreach (var exp in Exports)
                     {
-
                         if (exp == Export.Name)
                         {
-                            foreach (var Folder in Export.Folders)
-                            {
+                            //foreach (var Folder in Export.Folders)
+                            //{
 
-                                //--Last ned filer (modellfiler og tom.ifc)
+                            //    //--Last ned filer (modellfiler og tom.ifc)
 
-                                //Sjekk om tegning som er åpen skal overskrives, lukke så denne mens den kopieres
-                                DM.CloseIfOpen(Folder.From);
+                            //    //Sjekk om tegning som er åpen skal overskrives, lukke så denne mens den kopieres
+                            //    DM.CloseIfOpen(Folder.From);
 
-                                //Last ned mappe med modellfiler
+                            //    //Last ned mappe med modellfiler
 
-                                UnloadAllXrefs UAX = new UnloadAllXrefs();
-                                if (AutomaticBool)
-                                {
-                                    foreach (var _file in DataStorage.FilesWithChanges)
-                                    {
-                                        var ToPath = DataStorage.ProjectInfo.BaseFolder.To + _file.Substring(DataStorage.ProjectInfo.BaseFolder.From.Length);
-                                        CP.CopySingleFile(_file, ToPath);
-                                    }
-                                    UAX.UnloadAllXref(DataStorage.FilesWithChanges, AutomaticBool);
-                                }
-                                else
-                                {
-                                    CP.DirectoryCopy(Folder.From, Folder.To, false, ".dwg");
+                            //    UnloadAllXrefs UAX = new UnloadAllXrefs();
+                            //    if (AutomaticBool)
+                            //    {
+                            //        var FilesWithChanges = DataStorage.FilesWithChanges;
 
-                                    UAX.UnloadAllXref(Directory.GetFiles(Folder.To).ToList(), AutomaticBool);
-                                }
-                            }
+                            //        foreach (var _file in FilesWithChanges)
+                            //        {
+                            //            var ToPath = DataStorage.ProjectInfo.BaseFolder.To + _file.Substring(DataStorage.ProjectInfo.BaseFolder.From.Length);
+                            //            CP.CopySingleFile(_file, ToPath);
+                            //        }
+                            //        UAX.UnloadAllXref(FilesWithChanges, AutomaticBool);
+                            //    }
+                            //    else
+                            //    {
+                            //        CP.DirectoryCopy(Folder.From, Folder.To, false, ".dwg");
+
+                            //        UAX.UnloadAllXref(Directory.GetFiles(Folder.To).ToList(), AutomaticBool);
+                            //    }
+                            //}
 
                             //Lag ny IFC for eksport
                             CP.TomIFCCopy(DataStorage.ProjectInfo.TomIFC, Export.Name);
@@ -78,19 +78,15 @@ namespace IFCExporter.Models
                             }
 
                             //--Åpne starttegning og sett som aktiv
-                            var OAC = new DrawingManager();
-                            OAC.OpenDrawing(Discipline.StartFile.To);
-                            Application.DocumentManager.MdiActiveDocument = OAC.ReturnActivateDrawing(Discipline.StartFile.To);
+                            //var OAC = new DrawingManager();
+                            //OAC.OpenDrawing(Discipline.StartFile.To);
+                            //Application.DocumentManager.MdiActiveDocument = OAC.ReturnActivateDrawing(Discipline.StartFile.To);
 
                             //--Kjør eksport
-                            DataStorage.app.ActiveDocument.SendCommand("_.-MAGIIFCEXPORT " + Export.Name + "\n"); //Venter ikke på at denne skal bli ferdig, må fikses.
+                            //DataStorage.app.ActiveDocument.SendCommand("_.-MAGIIFCEXPORT " + Export.Name + "\n"); //Venter ikke på at denne skal bli ferdig, må fikses.
 
 
-                            if (AutomaticBool)
-                            {
-                                DataStorage.ExportsToRun.RemoveAll(x => x == exp);
-                            }
-                            else
+                            if (!AutomaticBool)
                             {
                                 var IfcFromPath = Path.GetDirectoryName(DataStorage.ProjectInfo.TomIFC.To) + "\\" + exp + ".ifc";
                                 var IfcToPath = DataStorage.ProjectInfo.TomIFC.Export + "\\" + exp + ".ifc";
@@ -98,11 +94,17 @@ namespace IFCExporter.Models
                                 CP.CopySingleFile(IfcFromPath, IfcToPath);
                             }
                         }
-
-
                     }
                 }
             }
+            if (AutomaticBool)
+            {
+                DataStorage.ExportsToRun.Clear();
+                DataStorage.ExportInProgress = false;
+                File.AppendAllText("c:\\IFCEXPORT\\log.txt", "ExportInProgress = " + DataStorage.ExportInProgress.ToString() + ", at " + DateTime.Now.ToString() + "\n");
+                var FCA = new FileChangedActions();
+                FCA.startMonitoring();
+            }    
         }
     }
 }

@@ -21,7 +21,7 @@ namespace IFCExporter.Workers
         {
             System.Timers.Timer aTimer = new System.Timers.Timer();
             aTimer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
-            aTimer.Interval = 500;
+            aTimer.Interval = 2000;
             aTimer.Enabled = true;
         }
 
@@ -35,22 +35,20 @@ namespace IFCExporter.Workers
         {
             //--Last opp IFC
 
-            var FW = new FileWatcher();
-
-            string IfcFromPath = Path.GetDirectoryName(DataStorage.ProjectInfo.TomIFC.To);
+            var FW = new FileDateComparer();
             var CP = new Copier();
-            var NewIfcFileDateList = FW.GetNewIfcFileDateList(IfcFromPath);
+            var NewIfcFileDateList = FW.GetNewIfcFileDateList();
 
             foreach (var NewIfcFile in NewIfcFileDateList)
             {
-                foreach (var OldIfcFile in DataStorage.IfcOldFolderDateList)
+                var OldIfcList = DataStorage.IfcOldFolderDateList;
+                foreach (var OldIfcFile in OldIfcList)
                 {
                     var size = new System.IO.FileInfo(NewIfcFile.Path).Length;
                     if (size > 1048576 && OldIfcFile.EditDate < NewIfcFile.EditDate && OldIfcFile.Path == NewIfcFile.Path)
                     {
                         CP.CopySingleFile(NewIfcFile.Path, DataStorage.ProjectInfo.TomIFC.Export + "\\" + Path.GetFileName(NewIfcFile.Path));
                         DataStorage.IfcOldFolderDateList = NewIfcFileDateList;
-                        DataStorage.ExportInProgress = false;
                         break;
                     }
                 }

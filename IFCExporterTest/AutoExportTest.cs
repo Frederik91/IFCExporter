@@ -6,6 +6,9 @@ using IFCExporter.Models;
 using System.Windows.Forms;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using Autodesk.AutoCAD.Interop;
+using System.Threading;
 
 namespace IFCExporterTest
 {
@@ -21,7 +24,7 @@ namespace IFCExporterTest
 
             DataStorage.ProjectInfo = reader.GetprojectInfo(@"H:\IFCEXPORT\XML\BUS2Test.xml");
 
-            var FW = new FileWatcher();
+            var FW = new FileDateComparer();
 
             var x = FW.GetNewFolderDateList();
             var y = FW.GetNewFolderDateList();
@@ -43,11 +46,11 @@ namespace IFCExporterTest
 
             DataStorage.ProjectInfo = reader.GetprojectInfo(@"H:\IFCEXPORT\XML\BUS2Test.xml");
 
-            var x = new FileWatcher();
+            var x = new FileDateComparer();
 
             DataStorage.OldFolderDateList = x.GetNewFolderDateList();
 
-            var FCA = new FileChangedActions(x);
+            var FCA = new FileChangedActions();
 
             FCA.startMonitoring();
 
@@ -65,11 +68,11 @@ namespace IFCExporterTest
 
             var reader = new XMLReader();
 
-            DataStorage.ProjectInfo = reader.GetprojectInfo(@"H:\IFCEXPORT\XML\MH2.xml");
+            DataStorage.ProjectInfo = reader.GetprojectInfo(@"H:\IFCEXPORT\XML\MH2Test.xml");
 
-            var x = new FileWatcher();
+            var x = new FileDateComparer();
 
-            DataStorage.IfcOldFolderDateList = x.GetNewIfcFileDateList(Path.GetDirectoryName(DataStorage.ProjectInfo.TomIFC.To));
+            DataStorage.IfcOldFolderDateList = x.GetNewIfcFileDateList();
 
             var IUW = new IfcUpdateWatcher();
 
@@ -82,6 +85,29 @@ namespace IFCExporterTest
                 System.Threading.Thread.Sleep(50);
             }
 
+        }
+
+        [TestMethod]
+        public void IfcOutOfDateTest()
+        {
+            DataStorage.ExportsToRun = new List<string>();
+
+            var reader = new XMLReader();
+
+            DataStorage.ProjectInfo = reader.GetprojectInfo(@"H:\IFCEXPORT\XML\BUS2.xml");
+
+            var FDC = new FileDateComparer();
+            DataStorage.OldFolderDateList = FDC.GetNewFolderDateList();
+
+            var FCA = new FileChangedActions();
+            FCA.startMonitoring();
+
+            while (DataStorage.ExportInProgress != true)
+            {
+                Thread.Sleep(500);
+            }
+            var expall = new ExportAll(true);
+            expall.Run();
         }
     }
 }

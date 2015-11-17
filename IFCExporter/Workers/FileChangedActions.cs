@@ -15,19 +15,14 @@ namespace IFCExporter.Workers
 {
     public class FileChangedActions
     {
-        private FileWatcher FW;
+        private FileDateComparer FDC = new FileDateComparer();
         private System.Timers.Timer DwgTimer;
-
-        public FileChangedActions(FileWatcher _FW)
-        {
-            FW = _FW;
-        }
 
         public void startMonitoring()
         {
             DwgTimer = new System.Timers.Timer();
             DwgTimer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
-            DwgTimer.Interval = 500;
+            DwgTimer.Interval = 2000;
             DwgTimer.Enabled = true;
         }
 
@@ -40,42 +35,38 @@ namespace IFCExporter.Workers
         private void OnTimedEvent(object source, ElapsedEventArgs e)
         {
             CheckForChangeDWG();
-           
         }
 
         private void CheckForChangeDWG()
         {
-            if (DataStorage.ExportInProgress || DataStorage.ExportsToRun.Count == 0)
+            stopMonitoring();
+            if (DataStorage.ExportInProgress)
             {
-                var newFolderList = FW.GetNewFolderDateList();
-                var newExportList = FW.CompareFolderLists(newFolderList, DataStorage.OldFolderDateList);
-                foreach (var Export in newExportList)
-                {
-                    DataStorage.ExportsToRun.Add(Export);
-                }
+                return;
+            }
 
-                DataStorage.ExportsToRun = DataStorage.ExportsToRun.Distinct().ToList();
+            var newFolderList = FDC.GetNewFolderDateList();
+            var newIfcFileList = FDC.GetNewIfcFileDateList();
+            var newExportList = FDC.CompareFolderIfcDateLists(newFolderList, newIfcFileList);
+            DataStorage.ExportsToRun = newExportList.Distinct().ToList();
 
+            if (DataStorage.ExportsToRun.Count != 0)
+            {                
+                RunExport();
             }
             else
             {
-                var x = FW.CheckForChanges(FW.CompareFolderLists(FW.GetNewFolderDateList(), DataStorage.OldFolderDateList));
-                if (x)
-                {
-                    RunExport();
-                }
+                startMonitoring();
             }
-
-
         }
 
         private void RunExport()
         {
-            var x = FW.GetNewFolderDateList();
-            DataStorage.FilesWithChanges = FW.ReturnChangedFiles(DataStorage.OldFolderDateList, x);
-            DataStorage.ExportsToRun = FW.CompareFolderLists(x, DataStorage.OldFolderDateList);
-            DataStorage.OldFolderDateList = FW.GetNewFolderDateList();
+            var x = FDC.GetNewFolderDateList();
+            DataStorage.FilesWithChanges = FDC.ReturnChangedFiles(DataStorage.OldFolderDateList, x);
+            DataStorage.OldFolderDateList = FDC.GetNewFolderDateList();
             DataStorage.ExportInProgress = true;
+            File.AppendAllText("c:\\IFCEXPORT\\log.txt", "ExportInProgress = " + DataStorage.ExportInProgress.ToString() + ", at " + DateTime.Now.ToString() + "\n");
             DataStorage.app.ActiveDocument.SendCommand("AutoModeIFC ");
         }
     }

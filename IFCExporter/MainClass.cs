@@ -36,68 +36,67 @@ namespace IFCExporter
         public void IFCExporter()
         {
             DataStorage.app = Application.AcadApplication as AcadApplication;
-
             var NAcadTask = new NonAutoCADTasks();
             DataStorage.ProjectInfo = NAcadTask.Prepare();
-
+            DataStorage.ExportsToRun = NAcadTask.ExportsToExecute;
             RunForeverBool = NAcadTask.RunForeverBool;
             AutomaticBool = NAcadTask.AutomaticMode;
-            DataStorage.ExportsToRun = NAcadTask.ExportsToExecute;
-            DataStorage.TempExportsToRun = new List<string>();
 
             switch (AutomaticBool)
             {
                 case true:
+                    var FCA = new FileChangedActions();
+                    var FDC = new FileDateComparer();
                     var IUW = new IfcUpdateWatcher();
                     IUW.StartIfcMonitoring();
-                    FileWatcher AE = new FileWatcher();
-                    DataStorage.OldFolderDateList = AE.GetNewFolderDateList();
-                    DataStorage.IfcOldFolderDateList = AE.GetNewIfcFileDateList(Path.GetDirectoryName(DataStorage.ProjectInfo.TomIFC.To));
-                    var FCA = new FileChangedActions(AE);
+                    DataStorage.OldFolderDateList = FDC.GetNewFolderDateList();
+                    DataStorage.IfcOldFolderDateList = FDC.GetNewIfcFileDateList();
+                    DataStorage.ExportsToRun.Clear();                   
 
                     FCA.startMonitoring();
 
                     break;
                 case false:
+
                     RunOnceIFC();
                     break;
 
             }
         }
 
-        [CommandMethod("IFCExporterFromManager", CommandFlags.Session)]
-        public void IFCExporterFromManager()
-        {
-            IFCManager.MainWindow test = new IFCManager.MainWindow();
-            test.ShowDialog();
+        //[CommandMethod("IFCExporterFromManager", CommandFlags.Session)]
+        //public void IFCExporterFromManager()
+        //{
+        //    IFCManager.MainWindow test = new IFCManager.MainWindow();
+        //    test.ShowDialog();
 
-            DataStorage.app = Application.AcadApplication as AcadApplication;
-            var NAcadTask = new NonAutoCADTasks();
+        //    DataStorage.app = Application.AcadApplication as AcadApplication;
+        //    var NAcadTask = new NonAutoCADTasks();
 
-            RunForeverBool = false;
-            AutomaticBool = false;
-            DataStorage.TempExportsToRun = new List<string>();
+        //    RunForeverBool = false;
+        //    AutomaticBool = false;
+        //    DataStorage.TempExportsToRun = new List<string>();
 
 
-            switch (AutomaticBool)
-            {
-                case true:
-                    var IUW = new IfcUpdateWatcher();
-                    IUW.StartIfcMonitoring();
-                    FileWatcher AE = new FileWatcher();
-                    DataStorage.OldFolderDateList = AE.GetNewFolderDateList();
-                    DataStorage.IfcOldFolderDateList = AE.GetNewIfcFileDateList(Path.GetDirectoryName(DataStorage.ProjectInfo.TomIFC.To));
-                    var FCA = new FileChangedActions(AE);
+        //    switch (AutomaticBool)
+        //    {
+        //        case true:
+        //            var IUW = new IfcUpdateWatcher();
+        //            IUW.StartIfcMonitoring();
+        //            FileWatcher AE = new FileWatcher();
+        //            DataStorage.OldFolderDateList = AE.GetNewFolderDateList();
+        //            DataStorage.IfcOldFolderDateList = AE.GetNewIfcFileDateList(Path.GetDirectoryName(DataStorage.ProjectInfo.TomIFC.To));
+        //            var FCA = new FileChangedActions(AE);
 
-                    FCA.startMonitoring();
+        //            FCA.startMonitoring();
 
-                    break;
-                case false:
-                    RunOnceIFC();
-                    break;
+        //            break;
+        //        case false:
+        //            RunOnceIFC();
+        //            break;
 
-            }
-        }
+        //    }
+        //}
 
         [CommandMethod("AutoModeIFC", CommandFlags.Session)]
         public void AutoModeIFC()
