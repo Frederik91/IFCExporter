@@ -1,4 +1,7 @@
-﻿using Microsoft.Win32;
+﻿using IFCExporter.Helpers;
+using IFCExporter.Models;
+using IFCExporter.Workers;
+using Microsoft.Win32;
 using Prism.Commands;
 using System;
 using System.Collections.Generic;
@@ -17,6 +20,7 @@ namespace IFCManager.ViewModel
         private ViewModelBase m_viewModelBase;
         public ViewModelBase CurrentViewModel { get { return m_viewModelBase; } set { m_viewModelBase = value; OnPropertyChanged("CurrentViewModel"); } }
 
+
         public ICommand OpenSettings
         {
             get { return m_openSettings; }
@@ -26,6 +30,8 @@ namespace IFCManager.ViewModel
                 OnPropertyChanged("OpenSettings");
             }
         }
+
+
 
         public ICommand FileExplorerCommand
         {
@@ -60,7 +66,17 @@ namespace IFCManager.ViewModel
             OpenFileDialog fileDialog = new OpenFileDialog();
 
             fileDialog.ShowDialog();
+
+            if (fileDialog.CheckFileExists)
+            {
+                var reader = new XMLReader();
+                DataStorage.ProjectInfo = reader.GetprojectInfo(fileDialog.FileName);
+                var FDC = new FileDateComparer();
+                DataStorage.OldFolderDateList = FDC.GetNewFolderDateList();
+            }
         }
+
+
 
     }
 }

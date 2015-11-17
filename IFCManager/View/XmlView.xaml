@@ -6,8 +6,9 @@
              xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
              xmlns:local="clr-namespace:IFCManager.View"
              mc:Ignorable="d" 
-             d:DesignHeight="150" d:DesignWidth="200">
+             d:DesignHeight="350" Width="525">
     <Grid>
-        <Button Content="Browse" Height="50" Width="100" Command="{Binding TestCommand}"/>
+        <Button Content="{Binding MonitorToggleButtonText}" Command="{Binding MonitorToggleButtonCommand}" Height ="20" Width="100" VerticalAlignment="top"/>
+        <ListView ItemsSource="{Binding FolderLastUpdatedList}"/>
     </Grid>
 </UserControl>

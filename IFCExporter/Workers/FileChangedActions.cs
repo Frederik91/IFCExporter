@@ -18,6 +18,10 @@ namespace IFCExporter.Workers
         private FileDateComparer FDC = new FileDateComparer();
         private System.Timers.Timer DwgTimer;
 
+        public FileChangedActions()
+        {
+        }
+
         public void startMonitoring()
         {
             DwgTimer = new System.Timers.Timer();
@@ -51,7 +55,7 @@ namespace IFCExporter.Workers
             DataStorage.ExportsToRun = newExportList.Distinct().ToList();
 
             if (DataStorage.ExportsToRun.Count != 0)
-            {                
+            {
                 RunExport();
             }
             else

@@ -61,7 +61,7 @@ namespace IFCExporter.Workers
         public List<FileDate> GetNewIfcFileDateList()
         {
             var NewIFCFileDateList = new List<FileDate>();
-            var dir = Path.GetDirectoryName(ProjectInfo.TomIFC.To);
+            var dir = ProjectInfo.TomIFC.Export;
 
 
             DateTime MostRecent = DateTime.MinValue;

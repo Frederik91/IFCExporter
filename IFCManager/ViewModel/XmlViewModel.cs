@@ -1,4 +1,6 @@
-﻿using Autodesk.AutoCAD.Interop;
+﻿using IFCExporter.Models;
+using MahApps.Metro.Controls;
+using MahApps.Metro.Controls.Dialogs;
 using Prism.Commands;
 using System;
 using System.Collections.Generic;
@@ -13,49 +15,66 @@ namespace IFCManager.ViewModel
 {
     public class XmlViewModel : ViewModelBase
     {
+        private List<FolderDate> m_folderLastUpdatedList;
+        private MainViewModel MainViewModel;
+        private bool monitorRunning = false;
+        private ICommand m_monitorToggleButtonCommand;
+        private string m_monitorToggleButtonText = "Start monitoring";
+
         public XmlViewModel()
         {
             TestCommand = new DelegateCommand(TestMethod);
+            MonitorToggleButtonCommand = new DelegateCommand(ToggleMonitoring);
         }
         public ICommand TestCommand { get; set; }
 
+        public ICommand MonitorToggleButtonCommand
+        {
+            get { return m_monitorToggleButtonCommand; }
+            set { m_monitorToggleButtonCommand = value; OnPropertyChanged("MonitorToggleButtonCommand"); }
+        }
+
+        public string MonitorToggleButtonText
+        {
+            get { return m_monitorToggleButtonText; }
+            set { m_monitorToggleButtonText = value; OnPropertyChanged("MonitorToggleButtonText"); }
+        }
+
         public void TestMethod()
         {
-            const string progID = "AutoCAD.Application";
 
-            AcadApplication acApp = null;
-            try
+        }
+
+        public List<FolderDate> FolderLastUpdatedList
+        {
+            get { return m_folderLastUpdatedList; }
+            set
             {
-                acApp =
-                  (AcadApplication)Marshal.GetActiveObject(progID);
+                m_folderLastUpdatedList = value;
+                OnPropertyChanged("FolderLastUpdatedList");
             }
-            catch
+        }
+
+        private async void ToggleMonitoring()
+        {
+            if (DataStorage.ProjectInfo == null)
             {
-                try
-                {
-                    Type acType =
-                      Type.GetTypeFromProgID(progID);
-                    acApp =
-                      (AcadApplication)Activator.CreateInstance(
-                        acType,
-                        true
-                      );
-                }
-                catch
-                {
-                    MessageBox.Show(
-                      "Cannot create object of type \"" +
-                      progID + "\""
-                    );
-                }
+                var window = Application.Current.MainWindow as MetroWindow;
+                await window.ShowMessageAsync("No project selected", "You need to select a project before you can start monitoring folders", MessageDialogStyle.Affirmative);
             }
-            if (acApp != null)
+
+            switch (monitorRunning)
             {
-                // By the time this is reached AutoCAD is fully
-                // functional and can be interacted with through code
-                acApp.Visible = true;
-                acApp.ActiveDocument.SendCommand("_NETLOAD ");
-                acApp.ActiveDocument.SendCommand("IFCExporterFromManager ");
+                case (true):
+                    MonitorToggleButtonText = "Start monitoring";
+                    monitorRunning = false;
+                    break;
+                case (false):
+                    MonitorToggleButtonText = "Stop monitoring";
+                    monitorRunning = true;
+                    break;
+                default:
+                    break;
             }
         }
 

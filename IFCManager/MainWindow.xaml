@@ -33,7 +33,7 @@
         </Controls:FlyoutsControl>
     </Controls:MetroWindow.Flyouts>
     <Controls:TransitioningContentControl Transition="Right">
-        <ContentControl Content="{Binding CurrentViewModel}"/>
+        <ContentControl Content="{Binding CurrentViewModel}" Height="350" Width="525"/>
     </Controls:TransitioningContentControl>    
 </Controls:MetroWindow>
     
