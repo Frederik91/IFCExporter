@@ -17,7 +17,7 @@ namespace IFCExporter.Workers
     {
         private DrawingManager DM = new DrawingManager();
         private Copier CP = new Copier();
-        public bool RunForeverBool;
+        public bool ContinuousMode;
         public List<string> ExportsToExecute;
         private string XMLFolder;
         public bool AutomaticMode;
@@ -35,6 +35,8 @@ namespace IFCExporter.Workers
             ExportsToExecute = x.ExportsToRun;
             XMLFolder = x.SelectedProjectPath;
             AutomaticMode = x.AutomaticMode;
+            ContinuousMode = x.ContinuousMode;
+
             if (!File.Exists(XMLFolder))
             {
                 System.Windows.Forms.MessageBox.Show("No project file selected, exiting.");

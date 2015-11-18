@@ -25,7 +25,21 @@ namespace IFCExporterWindows.ViewModel
         private List<SelectedExport> m_aviliableExports = new List<SelectedExport>();
         private bool m_automaticMode;
         private MainWindow MainWindow;
+        private bool m_continuousMode;
+        private bool m_continuousModeEnabled;
         public List<string> ExportsToRun = new List<string>();
+
+        public bool ContinuousMode
+        {
+            get { return m_continuousMode; }
+            set { m_continuousMode = value; OnPropertyChanged("ContinuousMode"); }
+        }
+
+        public bool ContinuousModeEnabled
+        {
+            get { return m_continuousModeEnabled; }
+            set { m_continuousModeEnabled = value; OnPropertyChanged("ContinuousModeEnabled"); }
+        }
 
         public string SelectedProjectPath
         {
@@ -36,19 +50,48 @@ namespace IFCExporterWindows.ViewModel
         public bool AutomaticMode
         {
             get { return m_automaticMode; }
-            set { m_automaticMode = value; OnPropertyChanged("AutomaticMode"); OnPropertyChanged("ManualMode"); }
+            set { m_automaticMode = value;
+                if (!m_automaticMode && m_projectSelected)
+                {
+                    ContinuousModeEnabled = true;
+                }
+                else
+                {
+                    ContinuousModeEnabled = false;
+                }
+                OnPropertyChanged("AutomaticMode");
+                OnPropertyChanged("ManualMode"); }
         }
 
         public bool ManualMode
         {
             get { return !m_automaticMode; }
-            set { m_automaticMode = !value; OnPropertyChanged("ManualMode"); OnPropertyChanged("AutomaticMode"); }
+            set { m_automaticMode = !value;
+                if (!m_automaticMode && ProjectSelected )
+                {
+                    ContinuousModeEnabled = true;
+                }
+                else
+                {
+                    ContinuousModeEnabled = false;
+                }
+                OnPropertyChanged("ManualMode");
+                OnPropertyChanged("AutomaticMode"); }
         }
 
         public bool ProjectSelected
         {
             get { return m_projectSelected; }
-            set { m_projectSelected = value; OnPropertyChanged("ProjectSelected"); }
+            set { m_projectSelected = value;
+                if (!m_automaticMode && ProjectSelected)
+                {
+                    ContinuousModeEnabled = true;
+                }
+                else
+                {
+                    ContinuousModeEnabled = false;
+                }
+                OnPropertyChanged("ProjectSelected"); }
         }
 
         public List<SelectedExport> AviliableExports

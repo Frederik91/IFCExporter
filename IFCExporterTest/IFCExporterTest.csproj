@@ -38,23 +38,26 @@
   <ItemGroup>
     <Reference Include="AcCoreMgd, Version=20.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\ObjectARX 2015\inc\AcCoreMgd.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\TestMappe\AutoCAD DLL\accoremgd.dll</HintPath>
     </Reference>
     <Reference Include="AcCui, Version=20.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\ObjectARX 2015\inc\AcCui.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\TestMappe\AutoCAD DLL\AcCui.dll</HintPath>
     </Reference>
     <Reference Include="AcDbMgd, Version=20.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\ObjectARX 2015\inc\AcDbMgd.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\TestMappe\AutoCAD DLL\acdbmgd.dll</HintPath>
     </Reference>
     <Reference Include="AcMgd, Version=20.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\ObjectARX 2015\inc\AcMgd.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\TestMappe\AutoCAD DLL\acmgd.dll</HintPath>
     </Reference>
     <Reference Include="Autodesk.AutoCAD.Interop, Version=20.1.0.0, Culture=neutral, PublicKeyToken=null">
       <EmbedInteropTypes>False</EmbedInteropTypes>
       <HintPath>..\..\..\..\..\..\Program Files\Autodesk\AutoCAD 2016\Autodesk.AutoCAD.Interop.dll</HintPath>
+    </Reference>
+    <Reference Include="MahApps.Metro">
+      <HintPath>..\..\..\..\..\..\TestMappe\AutoCAD DLL\MahApps.Metro.dll</HintPath>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />

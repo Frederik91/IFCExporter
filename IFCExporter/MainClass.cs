@@ -53,7 +53,7 @@ namespace IFCExporter
             }
 
             DataStorage.ExportsToRun = NAcadTask.ExportsToExecute;
-            RunForeverBool = NAcadTask.RunForeverBool;
+            RunForeverBool = NAcadTask.ContinuousMode;
             AutomaticBool = NAcadTask.AutomaticMode;
 
             switch (AutomaticBool)

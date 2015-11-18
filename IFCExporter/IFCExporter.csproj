@@ -32,27 +32,30 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="accoremgd">
-      <HintPath>C:\Program Files\Autodesk\AutoCAD 2016\accoremgd.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\TestMappe\AutoCAD DLL\accoremgd.dll</HintPath>
     </Reference>
     <Reference Include="AcCui">
-      <HintPath>C:\Program Files\Autodesk\AutoCAD 2016\AcCui.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\TestMappe\AutoCAD DLL\AcCui.dll</HintPath>
     </Reference>
     <Reference Include="acdbmgd">
-      <HintPath>C:\Program Files\Autodesk\AutoCAD 2016\acdbmgd.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\TestMappe\AutoCAD DLL\acdbmgd.dll</HintPath>
     </Reference>
     <Reference Include="acmgd">
-      <HintPath>C:\Program Files\Autodesk\AutoCAD 2016\acmgd.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\TestMappe\AutoCAD DLL\acmgd.dll</HintPath>
+    </Reference>
+    <Reference Include="AcTcMgd">
+      <HintPath>..\..\..\..\..\..\TestMappe\AutoCAD DLL\AcTcMgd.dll</HintPath>
     </Reference>
     <Reference Include="Autodesk.AutoCAD.Interop">
-      <HintPath>..\..\..\..\..\..\Program Files\Autodesk\AutoCAD 2016\Autodesk.AutoCAD.Interop.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\TestMappe\AutoCAD DLL\Autodesk.AutoCAD.Interop.dll</HintPath>
       <EmbedInteropTypes>False</EmbedInteropTypes>
     </Reference>
     <Reference Include="Autodesk.AutoCAD.Interop.Common">
-      <HintPath>..\..\..\..\..\..\Program Files\Autodesk\AutoCAD 2016\Autodesk.AutoCAD.Interop.Common.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\TestMappe\AutoCAD DLL\Autodesk.AutoCAD.Interop.Common.dll</HintPath>
       <EmbedInteropTypes>False</EmbedInteropTypes>
     </Reference>
     <Reference Include="MahApps.Metro, Version=1.1.2.0, Culture=neutral, PublicKeyToken=f4fb5a3c4d1e5b4f, processorArchitecture=MSIL">
-      <HintPath>..\packages\MahApps.Metro.1.1.2.0\lib\net45\MahApps.Metro.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\TestMappe\AutoCAD DLL\MahApps.Metro.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.3.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
