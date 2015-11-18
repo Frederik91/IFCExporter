@@ -1,0 +1,29 @@
+﻿<UserControl x:Class="IFCManager.View.FolderMonitorView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:IFCManager.View"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="500">
+    <Grid>
+        <ListView ItemsSource="{Binding Path=FileFolderLastUpdatedList}" IsEnabled="{Binding MonitorRunning}">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn DisplayMemberBinding="{Binding Export}" 
+                                        Header="Export" 
+                                        Width="50"/>
+                    <GridViewColumn DisplayMemberBinding="{Binding FolderUpdate}" 
+                                        Header="Last drawing update" 
+                                        Width="150"/>
+                    <GridViewColumn DisplayMemberBinding="{Binding IfcUpdate}" 
+                                        Header="Last IFC update" 
+                                        Width="150"/>
+                    <GridViewColumn DisplayMemberBinding="{Binding Difference}" 
+                                        Header="Difference" 
+                                        Width="150"/>
+                </GridView>
+            </ListView.View>
+        </ListView>
+    </Grid>
+</UserControl>

@@ -9,6 +9,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IFCExporterTest", "IFCExpor
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IFCManager", "IFCManager\IFCManager.csproj", "{3E09CF59-502F-451F-9451-43A17FD0CC23}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IFCExporterWindows", "IFCExporterWindows\IFCExporterWindows.csproj", "{9930AC57-A890-405F-9154-0C378E5E2DC5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IFCExporterAPI", "IFCExporterAPI\IFCExporterAPI.csproj", "{6E194667-CC15-4ECC-BFE2-732DF77E8977}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +31,14 @@ Global
 		{3E09CF59-502F-451F-9451-43A17FD0CC23}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3E09CF59-502F-451F-9451-43A17FD0CC23}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3E09CF59-502F-451F-9451-43A17FD0CC23}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9930AC57-A890-405F-9154-0C378E5E2DC5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9930AC57-A890-405F-9154-0C378E5E2DC5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9930AC57-A890-405F-9154-0C378E5E2DC5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9930AC57-A890-405F-9154-0C378E5E2DC5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6E194667-CC15-4ECC-BFE2-732DF77E8977}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6E194667-CC15-4ECC-BFE2-732DF77E8977}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6E194667-CC15-4ECC-BFE2-732DF77E8977}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6E194667-CC15-4ECC-BFE2-732DF77E8977}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,4 +1,5 @@
 ﻿using Autodesk.AutoCAD.Interop;
+using IFCExporterAPI.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +11,7 @@ namespace IFCExporter.Models
 {
     public static class DataStorage
     {
-        public static IFCProjectInfo ProjectInfo { get; set; }
+        public static IfcProjectInfo ProjectInfo { get; set; }
         public static List<string> ExportsToRun { get; set; }
         public static bool ExportInProgress { get; set; }
         public static List<FolderDate> OldFolderDateList { get; set; }

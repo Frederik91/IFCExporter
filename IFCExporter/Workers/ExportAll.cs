@@ -38,35 +38,35 @@ namespace IFCExporter.Models
                     {
                         if (exp == Export.Name)
                         {
-                            //foreach (var Folder in Export.Folders)
-                            //{
+                            foreach (var Folder in Export.Folders)
+                            {
 
-                            //    //--Last ned filer (modellfiler og tom.ifc)
+                                //--Last ned filer (modellfiler og tom.ifc)
 
-                            //    //Sjekk om tegning som er åpen skal overskrives, lukke så denne mens den kopieres
-                            //    DM.CloseIfOpen(Folder.From);
+                                //Sjekk om tegning som er åpen skal overskrives, lukke så denne mens den kopieres
+                                DM.CloseIfOpen(Folder.From);
 
-                            //    //Last ned mappe med modellfiler
+                                //Last ned mappe med modellfiler
 
-                            //    UnloadAllXrefs UAX = new UnloadAllXrefs();
-                            //    if (AutomaticBool)
-                            //    {
-                            //        var FilesWithChanges = DataStorage.FilesWithChanges;
+                                UnloadAllXrefs UAX = new UnloadAllXrefs();
+                                if (AutomaticBool)
+                                {
+                                    var FilesWithChanges = DataStorage.FilesWithChanges;
 
-                            //        foreach (var _file in FilesWithChanges)
-                            //        {
-                            //            var ToPath = DataStorage.ProjectInfo.BaseFolder.To + _file.Substring(DataStorage.ProjectInfo.BaseFolder.From.Length);
-                            //            CP.CopySingleFile(_file, ToPath);
-                            //        }
-                            //        UAX.UnloadAllXref(FilesWithChanges, AutomaticBool);
-                            //    }
-                            //    else
-                            //    {
-                            //        CP.DirectoryCopy(Folder.From, Folder.To, false, ".dwg");
+                                    foreach (var _file in FilesWithChanges)
+                                    {
+                                        var ToPath = DataStorage.ProjectInfo.BaseFolder.To + _file.Substring(DataStorage.ProjectInfo.BaseFolder.From.Length);
+                                        CP.CopySingleFile(_file, ToPath);
+                                    }
+                                    UAX.UnloadAllXref(FilesWithChanges, AutomaticBool);
+                                }
+                                else
+                                {
+                                    CP.DirectoryCopy(Folder.From, Folder.To, false, ".dwg");
 
-                            //        UAX.UnloadAllXref(Directory.GetFiles(Folder.To).ToList(), AutomaticBool);
-                            //    }
-                            //}
+                                    UAX.UnloadAllXref(Directory.GetFiles(Folder.To).ToList(), AutomaticBool);
+                                }
+                            }
 
                             //Lag ny IFC for eksport
                             CP.TomIFCCopy(DataStorage.ProjectInfo.TomIFC, Export.Name);
@@ -78,12 +78,12 @@ namespace IFCExporter.Models
                             }
 
                             //--Åpne starttegning og sett som aktiv
-                            //var OAC = new DrawingManager();
-                            //OAC.OpenDrawing(Discipline.StartFile.To);
-                            //Application.DocumentManager.MdiActiveDocument = OAC.ReturnActivateDrawing(Discipline.StartFile.To);
+                            var OAC = new DrawingManager();
+                            OAC.OpenDrawing(Discipline.StartFile.To);
+                            Application.DocumentManager.MdiActiveDocument = OAC.ReturnActivateDrawing(Discipline.StartFile.To);
 
                             //--Kjør eksport
-                            //DataStorage.app.ActiveDocument.SendCommand("_.-MAGIIFCEXPORT " + Export.Name + "\n"); //Venter ikke på at denne skal bli ferdig, må fikses.
+                            DataStorage.app.ActiveDocument.SendCommand("_.-MAGIIFCEXPORT " + Export.Name + "\n"); //Venter ikke på at denne skal bli ferdig, må fikses.
 
 
                             if (!AutomaticBool)

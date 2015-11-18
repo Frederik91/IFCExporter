@@ -11,12 +11,13 @@ namespace IFCManager.Assets
 {
     public class Monitor
     {
-        private XmlViewModel XmlViewModel;
+        private FolderMonitorViewModel FolderMonitorViewModel;
         private System.Timers.Timer aTimer = new System.Timers.Timer();
 
-        public Monitor(XmlViewModel _xmlViewModel)
+        public Monitor(FolderMonitorViewModel _folderMonitorViewModel)
         {
-            XmlViewModel = _xmlViewModel;
+            FolderMonitorViewModel = _folderMonitorViewModel;
+
         }
 
         public void StartMonitoring()
@@ -28,12 +29,6 @@ namespace IFCManager.Assets
 
         private void OnTimedEvent(object source, ElapsedEventArgs e)
         {
-            if (!XmlViewModel.MonitorRunning)
-            {
-                aTimer.Enabled = false;
-                return;
-            }
-
             CheckChangesIFC();
         }
 
@@ -42,7 +37,7 @@ namespace IFCManager.Assets
         {
             var FDC = new FileDateComparer();
             var Conv = new ConvertToFileFolderDate();
-            XmlViewModel.FileFolderLastUpdatedList = Conv.Convert(FDC.GetNewFolderDateList(), FDC.GetNewIfcFileDateList());
+            FolderMonitorViewModel.FileFolderLastUpdatedList = Conv.Convert(FDC.GetNewFolderDateList(), FDC.GetNewIfcFileDateList());
         }
 
     }

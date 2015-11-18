@@ -4,12 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IFCExporter.Models
+namespace IFCExporterAPI.Models
 {
-    public class Discipline
+    public class Export
     {
         public string Name { get; set; }
-        public List<Export> Exports { get; set; }
-        public FileInfo StartFile { get; set; }
+        public List<Folder> Folders { get; set; }
     }
 }

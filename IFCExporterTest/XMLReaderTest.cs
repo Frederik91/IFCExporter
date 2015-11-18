@@ -4,6 +4,7 @@ using IFCExporter.Helpers;
 using System.IO;
 using System.Collections.Generic;
 using IFCExporter.Workers;
+using IFCExporterAPI.Assets;
 
 namespace IFCExporterTest
 {
@@ -14,7 +15,7 @@ namespace IFCExporterTest
         public void GetprojectInfo_CheckContent()
         {
             var CP = new Copier();
-            var reader = new XMLReader();
+            var reader = new XmlReader();
             var ProjectInfo = reader.GetprojectInfo(@"H:\IFCEXPORT\XML\BUS2.xml");
 
             List<string> RIEFOLDERS = new List<string>();

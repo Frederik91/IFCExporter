@@ -1,4 +1,4 @@
-﻿using IFCExporter.Models;
+﻿using IFCExporterAPI.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,14 +6,14 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
-namespace IFCExporter.Helpers
+namespace IFCExporterAPI.Assets
 {
-    public class XMLReader
+    public class XmlReader
     {
-        public IFCProjectInfo GetprojectInfo(string path)
+        public IfcProjectInfo GetprojectInfo(string path)
         {
 
-            var ProjectInfo = new IFCProjectInfo { Disciplines = new List<Discipline>(), Files = new List<FileInfo>(), TomIFC = new IFCFile(), BaseFolder = new FileInfo() } ;
+            var ProjectInfo = new IfcProjectInfo { Disciplines = new List<Discipline>(), Files = new List<FileInfo>(), TomIFC = new IFCFile(), BaseFolder = new FileInfo() };
             XElement xdoc = XElement.Load(path);
             ProjectInfo.ProjectName = xdoc.Attribute("Name").Value;
             var Dicsiplines = xdoc.Elements("Discipline");
@@ -27,7 +27,7 @@ namespace IFCExporter.Helpers
                 var exps = dis.Elements("Export");
                 foreach (var exp in exps)
                 {
-                    var _export = new Export {Folders = new List<Folder>() };
+                    var _export = new Export { Folders = new List<Folder>() };
                     _export.Name = exp.Attribute("Value").Value;
 
                     var folders = exp.Elements("Folder");
@@ -48,13 +48,13 @@ namespace IFCExporter.Helpers
 
             var BaseFolder = xdoc.Element("BaseFolder");
             ProjectInfo.BaseFolder.From = BaseFolder.Attribute("From").Value;
-            ProjectInfo.BaseFolder.To = BaseFolder.Attribute("To").Value;          
-            
-               
+            ProjectInfo.BaseFolder.To = BaseFolder.Attribute("To").Value;
+
+
             var files = xdoc.Element("Files").Elements("File");
             foreach (var file in files)
             {
-                ProjectInfo.Files.Add(new FileInfo { From = file.Attribute("From").Value, To = file.Attribute("To").Value });                
+                ProjectInfo.Files.Add(new FileInfo { From = file.Attribute("From").Value, To = file.Attribute("To").Value });
             }
 
             var ifc = xdoc.Element("IFC");

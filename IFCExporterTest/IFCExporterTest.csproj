@@ -25,7 +25,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <PlatformTarget>x64</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -56,8 +56,11 @@
       <EmbedInteropTypes>False</EmbedInteropTypes>
       <HintPath>..\..\..\..\..\..\Program Files\Autodesk\AutoCAD 2016\Autodesk.AutoCAD.Interop.dll</HintPath>
     </Reference>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <Choose>
     <When Condition="('$(VisualStudioVersion)' == '10.0' or '$(VisualStudioVersion)' == '') and '$(TargetFrameworkVersion)' == 'v3.5'">
@@ -77,11 +80,20 @@
     <Compile Include="AutoExportTest.cs" />
     <Compile Include="FolderMonitorTest.cs" />
     <Compile Include="FormsTest.cs" />
+    <Compile Include="MainClassTest.cs" />
     <Compile Include="XMLReaderTest.cs" />
     <Compile Include="CopyDetailsTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\IFCExporterAPI\IFCExporterAPI.csproj">
+      <Project>{6e194667-cc15-4ecc-bfe2-732df77e8977}</Project>
+      <Name>IFCExporterAPI</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\IFCExporterWindows\IFCExporterWindows.csproj">
+      <Project>{9930ac57-a890-405f-9154-0c378e5e2dc5}</Project>
+      <Name>IFCExporterWindows</Name>
+    </ProjectReference>
     <ProjectReference Include="..\IFCExporter\IFCExporter.csproj">
       <Project>{c5c71ac0-4946-429d-a1a4-0943e6d0c47d}</Project>
       <Name>IFCExporter</Name>

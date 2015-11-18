@@ -8,16 +8,11 @@
         xmlns:Views="clr-namespace:IFCManager.View"
         xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
         mc:Ignorable="d"
-        Title="MainWindow" Height="650" Width="1050">
-
-    <Controls:MetroWindow.Resources>
-        <DataTemplate DataType="{x:Type ViewModel:XmlViewModel}">
-            <Views:XmlView/>
-        </DataTemplate>
-    </Controls:MetroWindow.Resources>
+        Title="MainWindow" Height="650" Width="600">
 
     <Controls:MetroWindow.RightWindowCommands>
         <Controls:WindowCommands>
+            <Button Content="new project" Command="{Binding NewProjectCommand}" />
             <Button Content="settings" Command="{Binding OpenSettings}" />
         </Controls:WindowCommands>
     </Controls:MetroWindow.RightWindowCommands>
@@ -33,7 +28,7 @@
         </Controls:FlyoutsControl>
     </Controls:MetroWindow.Flyouts>
     <Controls:TransitioningContentControl Transition="Right">
-        <ContentControl Content="{Binding CurrentViewModel}" Height="600" Width="1000"/>
+        <ContentControl Content="{Binding XmlViewModel}" Height="600" Width="600"/>
     </Controls:TransitioningContentControl>    
 </Controls:MetroWindow>
     

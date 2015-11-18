@@ -11,6 +11,7 @@ using System;
 using System.Runtime.InteropServices;
 using IFCExporter.Models;
 using System.Timers;
+using IFCExporterAPI.Models;
 
 namespace IFCExporter
 {
@@ -23,12 +24,19 @@ namespace IFCExporter
         private Document Doc = Autodesk.AutoCAD.ApplicationServices.Core.Application.DocumentManager.MdiActiveDocument;
         public bool RunForeverBool = false;
         public bool AutomaticBool = false;
-        public IFCProjectInfo ProjectInfo = new IFCProjectInfo();
+        public IfcProjectInfo ProjectInfo = new IfcProjectInfo();
 
 
         public MainClass()
         {
 
+        }
+
+        [CommandMethod("TestMethod", CommandFlags.Session)]
+        public void TestMethod()
+        {
+            var x = new IFCExporterWindows.MainWindow();
+            x.ShowDialog();
         }
 
 
@@ -38,6 +46,12 @@ namespace IFCExporter
             DataStorage.app = Application.AcadApplication as AcadApplication;
             var NAcadTask = new NonAutoCADTasks();
             DataStorage.ProjectInfo = NAcadTask.Prepare();
+
+            if (DataStorage.ProjectInfo == null)
+            {
+                return;
+            }
+
             DataStorage.ExportsToRun = NAcadTask.ExportsToExecute;
             RunForeverBool = NAcadTask.RunForeverBool;
             AutomaticBool = NAcadTask.AutomaticMode;
@@ -63,40 +77,6 @@ namespace IFCExporter
 
             }
         }
-
-        //[CommandMethod("IFCExporterFromManager", CommandFlags.Session)]
-        //public void IFCExporterFromManager()
-        //{
-        //    IFCManager.MainWindow test = new IFCManager.MainWindow();
-        //    test.ShowDialog();
-
-        //    DataStorage.app = Application.AcadApplication as AcadApplication;
-        //    var NAcadTask = new NonAutoCADTasks();
-
-        //    RunForeverBool = false;
-        //    AutomaticBool = false;
-        //    DataStorage.TempExportsToRun = new List<string>();
-
-
-        //    switch (AutomaticBool)
-        //    {
-        //        case true:
-        //            var IUW = new IfcUpdateWatcher();
-        //            IUW.StartIfcMonitoring();
-        //            FileWatcher AE = new FileWatcher();
-        //            DataStorage.OldFolderDateList = AE.GetNewFolderDateList();
-        //            DataStorage.IfcOldFolderDateList = AE.GetNewIfcFileDateList(Path.GetDirectoryName(DataStorage.ProjectInfo.TomIFC.To));
-        //            var FCA = new FileChangedActions(AE);
-
-        //            FCA.startMonitoring();
-
-        //            break;
-        //        case false:
-        //            RunOnceIFC();
-        //            break;
-
-        //    }
-        //}
 
         [CommandMethod("AutoModeIFC", CommandFlags.Session)]
         public void AutoModeIFC()

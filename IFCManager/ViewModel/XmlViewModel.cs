@@ -7,6 +7,7 @@ using MahApps.Metro.Controls.Dialogs;
 using Prism.Commands;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -17,15 +18,32 @@ using System.Windows.Input;
 namespace IFCManager.ViewModel
 {
     public class XmlViewModel : ViewModelBase
-    {
-        private List<FileFolderDate> m_fileFolderLastUpdatedList;
+    {            
         private bool m_monitorRunning = false;
-        private ICommand m_monitorToggleButtonCommand;
-        private string m_monitorToggleButtonText = "Start monitoring";
+        private ObservableCollection<FolderMonitorViewModel> m_folderMonitorViewModels;
+        private int m_selectedTabIndex;
+
+        public ObservableCollection<FolderMonitorViewModel> FolderMonitorViewModels { get { return m_folderMonitorViewModels; } set { m_folderMonitorViewModels = value; OnPropertyChanged("FolderMonitorViewModels"); } }
+
+
+
+        public int SelectedTabIndex
+        {
+            get
+            {
+                return m_selectedTabIndex;
+            }
+            set
+            {
+
+                m_selectedTabIndex = value;
+                OnPropertyChanged("SelectedTabIndex");
+            }
+        }
 
         public XmlViewModel()
         {
-            MonitorToggleButtonCommand = new DelegateCommand(ToggleMonitoring);
+            FolderMonitorViewModels = InitialSetupXmlViewModel();
         }
         public ICommand TestCommand { get; set; }
 
@@ -35,56 +53,17 @@ namespace IFCManager.ViewModel
             set { m_monitorRunning = value; OnPropertyChanged("MonitorRunning"); }
         }
 
-        public ICommand MonitorToggleButtonCommand
+
+        private ObservableCollection<FolderMonitorViewModel> InitialSetupXmlViewModel()
         {
-            get { return m_monitorToggleButtonCommand; }
-            set { m_monitorToggleButtonCommand = value; OnPropertyChanged("MonitorToggleButtonCommand"); }
+
+            var xmlVM = new FolderMonitorViewModel();
+            xmlVM.ProjectName = "Project1";
+
+
+            ObservableCollection<FolderMonitorViewModel> xmlVms = new ObservableCollection<FolderMonitorViewModel>();
+            xmlVms.Add(xmlVM);
+            return xmlVms;
         }
-
-        public string MonitorToggleButtonText
-        {
-            get { return m_monitorToggleButtonText; }
-            set { m_monitorToggleButtonText = value; OnPropertyChanged("MonitorToggleButtonText"); }
-        }
-
-        public List<FileFolderDate> FileFolderLastUpdatedList
-        {
-            get { return m_fileFolderLastUpdatedList; }
-            set
-            {
-                m_fileFolderLastUpdatedList = value;
-                OnPropertyChanged("FileFolderLastUpdatedList");
-            }
-        }
-
-        private async void ToggleMonitoring()
-        {
-            if (DataStorage.ProjectInfo == null)
-            {
-                var window = Application.Current.MainWindow as MetroWindow;
-                await window.ShowMessageAsync("No project selected", "You need to select a project before you can start monitoring folders", MessageDialogStyle.Affirmative);
-                return;
-            }
-
-            switch (MonitorRunning)
-            {
-                case (true):
-                    MonitorToggleButtonText = "Start monitoring";
-                    MonitorRunning = false;
-                    break;
-                case (false):
-                    MonitorToggleButtonText = "Stop monitoring";
-                    var FDC = new FileDateComparer();
-                    var Conv = new ConvertToFileFolderDate();
-                    FileFolderLastUpdatedList = Conv.Convert(FDC.GetNewFolderDateList(), FDC.GetNewIfcFileDateList());
-                    var monitor = new Monitor(this);
-                    monitor.StartMonitoring();
-                    MonitorRunning = true;
-                    break;
-                default:
-                    break;
-            }
-        }
-
     }
 }

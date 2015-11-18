@@ -1,5 +1,6 @@
 ﻿using Autodesk.AutoCAD.ApplicationServices.Core;
 using IFCExporter.Models;
+using IFCExporterAPI.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -11,7 +12,7 @@ namespace IFCExporter.Workers
 {
     public class FileDateComparer
     {
-        private IFCProjectInfo ProjectInfo = DataStorage.ProjectInfo;
+        private IfcProjectInfo ProjectInfo = DataStorage.ProjectInfo;
 
         public FileDateComparer()
         {

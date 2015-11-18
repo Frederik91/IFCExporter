@@ -1,6 +1,9 @@
 ﻿using IFCExporter.Forms;
 using IFCExporter.Helpers;
 using IFCExporter.Models;
+using IFCExporterAPI.Assets;
+using IFCExporterAPI.Models;
+using IFCExporterWindows.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -19,28 +22,28 @@ namespace IFCExporter.Workers
         private string XMLFolder;
         public bool AutomaticMode;
 
-        public IFCProjectInfo Prepare()
+        public IfcProjectInfo Prepare()
         {
             //Finn prosjektmappe
 
             //Velg prosjekt
 
-            using (var form = new SelectProjectForm())
+            var window = new IFCExporterWindows.MainWindow();
+            window.ShowDialog();
+            var x = window.MainViewModel;
+
+            ExportsToExecute = x.ExportsToRun;
+            XMLFolder = x.SelectedProjectPath;
+            AutomaticMode = x.AutomaticMode;
+            if (!File.Exists(XMLFolder))
             {
-                var result = form.ShowDialog();
-                RunForeverBool = form.RunForeverBool;
-                ExportsToExecute = form.ExportsToRun;
-                XMLFolder = form.XMLPath;
-                AutomaticMode = form.AutomaticMode;
-                if (form.SelectedProject == "")
-                {
-                    System.Windows.Forms.MessageBox.Show("No project file selected, exiting.");
-                }
+                System.Windows.Forms.MessageBox.Show("No project file selected, exiting.");
+                return null;
             }
 
 
             //Les inn XMLfil
-            var reader = new XMLReader();
+            var reader = new XmlReader();
             var ProjectInfo = reader.GetprojectInfo(XMLFolder);
 
             try
@@ -51,11 +54,12 @@ namespace IFCExporter.Workers
             catch (System.Exception e)
             {
                 System.Windows.Forms.MessageBox.Show("Failed first time setup: " + e.Message);
+                return null;
             }
             return ProjectInfo;
         }
 
-        public void prepareFirstTime(IFCProjectInfo ProjectInfo)
+        public void prepareFirstTime(IfcProjectInfo ProjectInfo)
         {
             foreach (var Discipline in ProjectInfo.Disciplines)
             {

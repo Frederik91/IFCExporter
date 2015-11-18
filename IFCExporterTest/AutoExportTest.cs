@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using IFCExporterAPI.Assets;
 
 namespace IFCExporterTest
 {
@@ -19,7 +20,7 @@ namespace IFCExporterTest
         {
             DataStorage.ExportsToRun = new List<string>();
 
-            var reader = new XMLReader();
+            var reader = new XmlReader();
 
             DataStorage.ProjectInfo = reader.GetprojectInfo(@"H:\IFCEXPORT\XML\BUS2Test.xml");
 
@@ -41,7 +42,7 @@ namespace IFCExporterTest
         {
             DataStorage.ExportsToRun = new List<string>();
 
-            var reader = new XMLReader();
+            var reader = new XmlReader();
 
             DataStorage.ProjectInfo = reader.GetprojectInfo(@"H:\IFCEXPORT\XML\BUS2Test.xml");
 
@@ -65,7 +66,7 @@ namespace IFCExporterTest
         {
             DataStorage.ExportsToRun = new List<string>();
 
-            var reader = new XMLReader();
+            var reader = new XmlReader();
 
             DataStorage.ProjectInfo = reader.GetprojectInfo(@"H:\IFCEXPORT\XML\MH2Test.xml");
 
@@ -91,7 +92,7 @@ namespace IFCExporterTest
         {
             DataStorage.ExportsToRun = new List<string>();
 
-            var reader = new XMLReader();
+            var reader = new XmlReader();
 
             DataStorage.ProjectInfo = reader.GetprojectInfo(@"H:\IFCEXPORT\XML\BUS2.xml");
 

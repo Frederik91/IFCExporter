@@ -1,5 +1,7 @@
 ﻿using IFCExporter.Helpers;
 using IFCExporter.Models;
+using IFCExporterAPI.Assets;
+using IFCExporterAPI.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -18,7 +20,7 @@ namespace IFCExporter.Forms
         public List<string> ExportsToRun { get; set; }
         public string SelectedProject { get; set; }
         public bool RunForeverBool { get; set; }
-        private IFCProjectInfo projectInfo;
+        private IfcProjectInfo projectInfo;
         public string XMLPath { get; set; }
         public bool AutomaticMode { get; set; }
 
@@ -82,7 +84,7 @@ namespace IFCExporter.Forms
 
             try
             {
-                XMLReader reader = new XMLReader();
+                XmlReader reader = new XmlReader();
                 projectInfo = reader.GetprojectInfo(FD.FileName);
 
                 checkedListBox1.Items.Clear();

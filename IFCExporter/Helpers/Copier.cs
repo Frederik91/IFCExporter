@@ -1,4 +1,5 @@
 ﻿using IFCExporter.Models;
+using IFCExporterAPI.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;

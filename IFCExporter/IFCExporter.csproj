@@ -20,7 +20,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <PlatformTarget>x64</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -69,6 +69,7 @@
       <HintPath>..\packages\MahApps.Metro.1.1.2.0\lib\net45\System.Windows.Interactivity.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -93,14 +94,7 @@
     <Compile Include="Helpers\Copier.cs" />
     <Compile Include="Helpers\UnloadAllXrefs.cs" />
     <Compile Include="Helpers\DrawingManager.cs" />
-    <Compile Include="Helpers\XMLReader.cs" />
     <Compile Include="MainClass.cs" />
-    <Compile Include="Models\Folder.cs" />
-    <Compile Include="Models\Discipline.cs" />
-    <Compile Include="Models\Export.cs" />
-    <Compile Include="Models\FileInfo.cs" />
-    <Compile Include="Models\IFCFile.cs" />
-    <Compile Include="Models\IFCProjectInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Workers\IfcUpdateWatcher.cs" />
     <Compile Include="Workers\NonAutoCADTasks.cs" />
@@ -123,6 +117,16 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\IFCExporterAPI\IFCExporterAPI.csproj">
+      <Project>{6e194667-cc15-4ecc-bfe2-732df77e8977}</Project>
+      <Name>IFCExporterAPI</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\IFCExporterWindows\IFCExporterWindows.csproj">
+      <Project>{9930ac57-a890-405f-9154-0c378e5e2dc5}</Project>
+      <Name>IFCExporterWindows</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

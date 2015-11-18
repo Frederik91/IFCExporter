@@ -6,30 +6,16 @@
              xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
              xmlns:local="clr-namespace:IFCManager.View"
              mc:Ignorable="d" 
-             d:DesignHeight="600" Width="1000">
+             d:DesignHeight="600" Width="550">
     <StackPanel>
-        <Button Content="{Binding MonitorToggleButtonText}" Command="{Binding MonitorToggleButtonCommand}" Height ="20" Width="150" VerticalAlignment="top"/>
         <StackPanel Orientation="Horizontal">
-            <Controls:TransitioningContentControl Transition="Right" IsEnabled="{Binding MonitorRunning}">
-                <ListView ItemsSource="{Binding Path=FileFolderLastUpdatedList}">
-                    <ListView.View>
-                        <GridView>
-                            <GridViewColumn DisplayMemberBinding="{Binding Export}" 
-                                        Header="Export" 
-                                        Width="50"/>
-                            <GridViewColumn DisplayMemberBinding="{Binding FolderUpdate}" 
-                                        Header="Last drawing update" 
-                                        Width="150"/>
-                            <GridViewColumn DisplayMemberBinding="{Binding IfcUpdate}" 
-                                        Header="Last IFC update" 
-                                        Width="150"/>
-                            <GridViewColumn DisplayMemberBinding="{Binding Difference}" 
-                                        Header="Difference" 
-                                        Width="150"/>
-                        </GridView>
-                    </ListView.View>
-                </ListView>
-            </Controls:TransitioningContentControl>
+            <TabControl ItemsSource="{Binding FolderMonitorViewModels}" SelectedIndex="{Binding SelectedTabIndex}">
+                <TabControl.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding ProjectName}"/>
+                    </DataTemplate>
+                </TabControl.ItemTemplate>
+            </TabControl>
         </StackPanel>
     </StackPanel>
 </UserControl>
