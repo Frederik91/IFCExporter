@@ -1,6 +1,7 @@
 ﻿using IFCExporterAPI.Assets;
 using IFCExporterAPI.Models;
 using IFCExporterWindows.Models;
+using MahApps.Metro.Controls;
 using Microsoft.Win32;
 using Prism.Commands;
 using System;
@@ -27,12 +28,20 @@ namespace IFCExporterWindows.ViewModel
         private MainWindow MainWindow;
         private bool m_continuousMode;
         private bool m_continuousModeEnabled;
+        private bool ContinuousModeWarning;
         public List<string> ExportsToRun = new List<string>();
 
         public bool ContinuousMode
         {
             get { return m_continuousMode; }
-            set { m_continuousMode = value; OnPropertyChanged("ContinuousMode"); }
+            set { m_continuousMode = value;
+                if (value == true && !ContinuousModeWarning)
+                {
+                    MessageBox.Show("Warning, continuous mode can only be stopped by terminating the AutoCAD session using the Task Manager, use with caution.");
+                    ContinuousModeWarning = true;
+                }
+                
+                OnPropertyChanged("ContinuousMode"); }
         }
 
         public bool ContinuousModeEnabled
