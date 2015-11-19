@@ -88,12 +88,6 @@
     <Compile Include="Models\FolderDate.cs" />
     <Compile Include="Workers\FileChangedActions.cs" />
     <Compile Include="Workers\FileDateComparer.cs" />
-    <Compile Include="Forms\SelectProjectForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\SelectProjectForm.Designer.cs">
-      <DependentUpon>SelectProjectForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="Helpers\Copier.cs" />
     <Compile Include="Helpers\UnloadAllXrefs.cs" />
     <Compile Include="Helpers\DrawingManager.cs" />
@@ -112,11 +106,6 @@
       <Isolated>False</Isolated>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Forms\SelectProjectForm.resx">
-      <DependentUpon>SelectProjectForm.cs</DependentUpon>
-    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

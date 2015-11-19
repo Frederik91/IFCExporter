@@ -8,6 +8,7 @@ namespace IFCManager.Models
 {
     public class FileFolderDate
     {
+        public string FileName { get; set; }
         public string Export { get; set; }
         public DateTime FolderUpdate { get; set; }
         public DateTime IfcUpdate { get; set; }

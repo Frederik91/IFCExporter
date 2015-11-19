@@ -89,9 +89,10 @@ namespace IFCManager.ViewModel
                 var FDC = new FileDateComparer();
                 DataStorage.OldFolderDateList = FDC.GetNewFolderDateList();
                 XmlViewModel.FolderMonitorViewModels[XmlViewModel.SelectedTabIndex].StartMonitoring();
-                IsSettingsOpen = false;                 
+                IsSettingsOpen = false;      
             }
         }
+
 
         private void AddNewProject()
         {

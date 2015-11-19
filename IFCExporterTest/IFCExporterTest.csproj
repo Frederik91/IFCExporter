@@ -82,7 +82,6 @@
   <ItemGroup>
     <Compile Include="AutoExportTest.cs" />
     <Compile Include="FolderMonitorTest.cs" />
-    <Compile Include="FormsTest.cs" />
     <Compile Include="MainClassTest.cs" />
     <Compile Include="XMLReaderTest.cs" />
     <Compile Include="CopyDetailsTest.cs" />

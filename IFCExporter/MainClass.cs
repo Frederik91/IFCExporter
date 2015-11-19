@@ -3,7 +3,6 @@ using Autodesk.AutoCAD.Runtime;
 using IFCExporter.Helpers;
 using System.IO;
 using Autodesk.AutoCAD.Interop;
-using IFCExporter.Forms;
 using System.Collections.Generic;
 using IFCExporter.Workers;
 using Autodesk.AutoCAD.EditorInput;

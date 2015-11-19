@@ -21,7 +21,19 @@ namespace IFCManager.Assets
                 {
                     if (Path.GetFileNameWithoutExtension(File.Path) == Folder.Export)
                     {
-                        FileFolderList.Add(new FileFolderDate {Export = Folder.Export, FolderUpdate = Folder.LastUpdated, IfcUpdate = File.EditDate });
+                        var inList = false;
+                        foreach (var FileFolder in FileFolderList)
+                        {
+                            if (FileFolder.FileName == Folder.Export)
+                            {
+                                inList = true;
+                                break;
+                            }
+                        }
+                        if (!inList)
+                        {
+                            FileFolderList.Add(new FileFolderDate { FileName = Path.GetFileNameWithoutExtension(File.Path), Export = Folder.Export, FolderUpdate = Folder.LastUpdated, IfcUpdate = File.EditDate });
+                        }
                     }
                 }
             }

@@ -3,7 +3,6 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using IFCExporter.Helpers;
 using System.IO;
 using System.Collections.Generic;
-using IFCExporter.Forms;
 using IFCExporter.Workers;
 
 namespace IFCExporterTest

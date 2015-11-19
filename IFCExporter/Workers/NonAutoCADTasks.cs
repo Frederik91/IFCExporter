@@ -1,5 +1,4 @@
-﻿using IFCExporter.Forms;
-using IFCExporter.Helpers;
+﻿using IFCExporter.Helpers;
 using IFCExporter.Models;
 using IFCExporterAPI.Assets;
 using IFCExporterAPI.Models;

@@ -1,4 +1,5 @@
-﻿using IFCExporter.Workers;
+﻿using IFCExporter.Models;
+using IFCExporter.Workers;
 using IFCManager.Assets;
 using IFCManager.Models;
 using System;
@@ -48,7 +49,6 @@ namespace IFCManager.ViewModel
 
         public FolderMonitorViewModel()
         {
-
         }
 
         public void StartMonitoring()
@@ -57,6 +57,8 @@ namespace IFCManager.ViewModel
             var Conv = new ConvertToFileFolderDate();
             FileFolderLastUpdatedList = Conv.Convert(FDC.GetNewFolderDateList(), FDC.GetNewIfcFileDateList());
             var monitor = new Monitor(this);
+            ProjectName = DataStorage.ProjectInfo.ProjectName;
+            monitor.StartMonitoring();
         }
     }
 }

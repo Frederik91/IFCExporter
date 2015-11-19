@@ -12,7 +12,7 @@
 
     <Controls:MetroWindow.RightWindowCommands>
         <Controls:WindowCommands>
-            <Button Content="new project" Command="{Binding NewProjectCommand}" />
+            <!--<Button Content="new project" Command="{Binding NewProjectCommand}" />-->
             <Button Content="settings" Command="{Binding OpenSettings}" />
         </Controls:WindowCommands>
     </Controls:MetroWindow.RightWindowCommands>
@@ -28,7 +28,7 @@
         </Controls:FlyoutsControl>
     </Controls:MetroWindow.Flyouts>
     <Controls:TransitioningContentControl Transition="Right">
-        <ContentControl Content="{Binding XmlViewModel}" Height="600" Width="600"/>
+        <ContentControl Content="{Binding XmlViewModel}"/>
     </Controls:TransitioningContentControl>    
 </Controls:MetroWindow>
     

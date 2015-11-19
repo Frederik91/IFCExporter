@@ -58,8 +58,7 @@ namespace IFCManager.ViewModel
         {
 
             var xmlVM = new FolderMonitorViewModel();
-            xmlVM.ProjectName = "Project1";
-
+            xmlVM.ProjectName = "No project selected";
 
             ObservableCollection<FolderMonitorViewModel> xmlVms = new ObservableCollection<FolderMonitorViewModel>();
             xmlVms.Add(xmlVM);
