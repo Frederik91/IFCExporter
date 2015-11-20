@@ -11,6 +11,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Timers;
 
 namespace IFCExporter.Models
 {
@@ -19,6 +20,7 @@ namespace IFCExporter.Models
         private Copier CP = new Copier();
         private DrawingManager DM = new DrawingManager();
         private bool AutomaticBool;
+        private System.Timers.Timer SleepTimer;
 
         public ExportAll(bool automaticBool)
         {
@@ -85,28 +87,41 @@ namespace IFCExporter.Models
                             //--Kjør eksport
                             DataStorage.app.ActiveDocument.SendCommand("_.-MAGIIFCEXPORT " + Export.Name + "\n"); //Venter ikke på at denne skal bli ferdig, må fikses.
 
+                            var IfcFromPath = Path.GetDirectoryName(DataStorage.ProjectInfo.TomIFC.To) + "\\" + Export.IFC + ".ifc";
+                            var IfcToPath = DataStorage.ProjectInfo.TomIFC.Export + "\\" + Export.IFC + ".ifc";
 
-                            if (!AutomaticBool)
-                            {
-                                var IfcFromPath = Path.GetDirectoryName(DataStorage.ProjectInfo.TomIFC.To) + "\\" + exp + ".ifc";
-                                var IfcToPath = DataStorage.ProjectInfo.TomIFC.Export + "\\" + exp + ".ifc";
-
-                                CP.CopySingleFile(IfcFromPath, IfcToPath);
-                            }
+                            CP.CopySingleFile(IfcFromPath, IfcToPath);
                         }
                     }
                 }
             }
             if (AutomaticBool)
             {
-                DataStorage.ExportsToRun.Clear();
-                DataStorage.ExportInProgress = false;
-                File.AppendAllText("c:\\IFCEXPORT\\log.txt", "ExportInProgress = " + DataStorage.ExportInProgress.ToString() + ", at " + DateTime.Now.ToString() + "\n");
-                var FCA = new FileChangedActions();
-                FCA.startMonitoring();
-            }    
+                SleepBeforeReset();
+            }
+        }
+
+
+        public void SleepBeforeReset()
+        {
+            SleepTimer = new System.Timers.Timer();
+            SleepTimer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
+            SleepTimer.Interval = 15000;
+            SleepTimer.Enabled = true;
+        }
+
+        // Specify what you want to happen when the Elapsed event is raised.
+        private void OnTimedEvent(object source, ElapsedEventArgs e)
+        {
+            SleepTimer.Enabled = false;
+            DataStorage.ExportsToRun.Clear();
+            DataStorage.ExportInProgress = false;
+            File.AppendAllText("c:\\IFCEXPORT\\log.txt", "ExportInProgress = " + DataStorage.ExportInProgress.ToString() + ", at " + DateTime.Now.ToString() + "\n");
+            var FCA = new FileChangedActions();
+            FCA.startMonitoring();
         }
     }
+
 }
 
 

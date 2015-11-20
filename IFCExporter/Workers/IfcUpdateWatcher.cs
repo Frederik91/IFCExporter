@@ -12,6 +12,8 @@ namespace IFCExporter.Workers
 {
     public class IfcUpdateWatcher
     {
+        private System.Timers.Timer aTimer = new System.Timers.Timer();
+
         public IfcUpdateWatcher()
         {
 
@@ -19,9 +21,8 @@ namespace IFCExporter.Workers
 
         public void StartIfcMonitoring()
         {
-            System.Timers.Timer aTimer = new System.Timers.Timer();
             aTimer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
-            aTimer.Interval = 2000;
+            aTimer.Interval = 500;
             aTimer.Enabled = true;
         }
 
@@ -34,25 +35,27 @@ namespace IFCExporter.Workers
         private void CheckChangesIFC()
         {
             //--Last opp IFC
+            aTimer.Enabled = false;
 
             var FW = new FileDateComparer();
             var CP = new Copier();
-            var NewIfcFileDateList = FW.GetNewIfcFileDateList();
+            var ExportIfcFileDateList = FW.GetIfcFileDateList(DataStorage.ProjectInfo.TomIFC.Export);
 
-            foreach (var NewIfcFile in NewIfcFileDateList)
+            foreach (var ExportIfcFile in ExportIfcFileDateList)
             {
-                var OldIfcList = DataStorage.IfcOldFolderDateList;
-                foreach (var OldIfcFile in OldIfcList)
+                var LocalIfcList = DataStorage.LocalIfcFolderDateList;
+                foreach (var LocalIfcFile in LocalIfcList)
                 {
-                    var size = new System.IO.FileInfo(NewIfcFile.Path).Length;
-                    if (size > 1048576 && OldIfcFile.EditDate < NewIfcFile.EditDate && OldIfcFile.Path == NewIfcFile.Path)
+                    var size = new System.IO.FileInfo(LocalIfcFile.Path).Length;
+                    if (size > 1048576 && LocalIfcFile.EditDate > ExportIfcFile.EditDate && Path.GetFileName(LocalIfcFile.Path) == Path.GetFileName(ExportIfcFile.Path))
                     {
-                        CP.CopySingleFile(NewIfcFile.Path, DataStorage.ProjectInfo.TomIFC.Export + "\\" + Path.GetFileName(NewIfcFile.Path));
-                        DataStorage.IfcOldFolderDateList = NewIfcFileDateList;
+                        CP.CopySingleFile(ExportIfcFile.Path, DataStorage.ProjectInfo.TomIFC.Export + "\\" + Path.GetFileName(ExportIfcFile.Path));
+                        DataStorage.LocalIfcFolderDateList = ExportIfcFileDateList;
                         break;
                     }
                 }
             }
+            aTimer.Enabled = true;
         }
     }
 }

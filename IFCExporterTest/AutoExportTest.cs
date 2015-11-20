@@ -72,7 +72,7 @@ namespace IFCExporterTest
 
             var x = new FileDateComparer();
 
-            DataStorage.IfcOldFolderDateList = x.GetNewIfcFileDateList();
+            DataStorage.LocalIfcFolderDateList = x.GetIfcFileDateList(Path.GetFileNameWithoutExtension(DataStorage.ProjectInfo.TomIFC.To));
 
             var IUW = new IfcUpdateWatcher();
 
@@ -97,17 +97,16 @@ namespace IFCExporterTest
             DataStorage.ProjectInfo = reader.GetprojectInfo(@"H:\IFCEXPORT\XML\BUS2.xml");
 
             var FDC = new FileDateComparer();
-            DataStorage.OldFolderDateList = FDC.GetNewFolderDateList();
+            DataStorage.LocalIfcFolderDateList = FDC.GetIfcFileDateList(Path.GetDirectoryName(DataStorage.ProjectInfo.TomIFC.To));
 
-            var FCA = new FileChangedActions();
-            FCA.startMonitoring();
+            var IUW = new IfcUpdateWatcher();
+            IUW.StartIfcMonitoring();
 
             while (DataStorage.ExportInProgress != true)
             {
                 Thread.Sleep(500);
-            }
-            var expall = new ExportAll(true);
-            expall.Run();
+            }           
         }
+
     }
 }

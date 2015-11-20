@@ -29,15 +29,14 @@ namespace IFCExporterAPI.Assets
                 {
                     var _export = new Export { Folders = new List<Folder>() };
                     _export.Name = exp.Attribute("Value").Value;
-
+                    _export.IFC = exp.Attribute("IFC").Value;
                     var folders = exp.Elements("Folder");
                     foreach (var folder in folders)
                     {
                         var From = folder.Attribute("From").Value;
                         var To = folder.Attribute("To").Value;
-                        var IFC = folder.Attribute("IFC").Value;
 
-                        var f = new Folder { From = From, To = To, IFC = IFC };
+                        var f = new Folder { From = From, To = To};
                         _export.Folders.Add(f);
                     }
                     _discipline.Exports.Add(_export);

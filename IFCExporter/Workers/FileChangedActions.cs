@@ -50,7 +50,7 @@ namespace IFCExporter.Workers
             }
 
             var newFolderList = FDC.GetNewFolderDateList();
-            var newIfcFileList = FDC.GetNewIfcFileDateList();
+            var newIfcFileList = FDC.GetIfcFileDateList(DataStorage.ProjectInfo.TomIFC.Export);
             var newExportList = FDC.CompareFolderIfcDateLists(newFolderList, newIfcFileList);
             DataStorage.ExportsToRun = newExportList.Distinct().ToList();
 

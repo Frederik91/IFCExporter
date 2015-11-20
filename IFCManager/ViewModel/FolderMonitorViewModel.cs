@@ -4,6 +4,7 @@ using IFCManager.Assets;
 using IFCManager.Models;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -55,7 +56,7 @@ namespace IFCManager.ViewModel
         {
             var FDC = new FileDateComparer();
             var Conv = new ConvertToFileFolderDate();
-            FileFolderLastUpdatedList = Conv.Convert(FDC.GetNewFolderDateList(), FDC.GetNewIfcFileDateList());
+            FileFolderLastUpdatedList = Conv.Convert(FDC.GetNewFolderDateList(), FDC.GetIfcFileDateList(DataStorage.ProjectInfo.TomIFC.Export));
             var monitor = new Monitor(this);
             ProjectName = DataStorage.ProjectInfo.ProjectName;
             monitor.StartMonitoring();

@@ -10,5 +10,6 @@ namespace IFCExporterAPI.Models
     {
         public string Name { get; set; }
         public List<Folder> Folders { get; set; }
+        public string IFC { get; set; }
     }
 }

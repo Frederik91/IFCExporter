@@ -1,7 +1,9 @@
-﻿using IFCExporter.Workers;
+﻿using IFCExporter.Models;
+using IFCExporter.Workers;
 using IFCManager.ViewModel;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -37,7 +39,7 @@ namespace IFCManager.Assets
         {
             var FDC = new FileDateComparer();
             var Conv = new ConvertToFileFolderDate();
-            FolderMonitorViewModel.FileFolderLastUpdatedList = Conv.Convert(FDC.GetNewFolderDateList(), FDC.GetNewIfcFileDateList());
+            FolderMonitorViewModel.FileFolderLastUpdatedList = Conv.Convert(FDC.GetNewFolderDateList(), FDC.GetIfcFileDateList(DataStorage.ProjectInfo.TomIFC.Export));
         }
 
     }
