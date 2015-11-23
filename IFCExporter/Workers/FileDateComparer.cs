@@ -107,12 +107,6 @@ namespace IFCExporter.Workers
             {
                 foreach (var ifcFile in IfcFileDateList)
                 {
-                    var f = new System.IO.FileInfo(ifcFile.Path);
-                    if (f.Length < 10240)
-                    {
-                        break;
-                    }
-
                     if (Path.GetFileNameWithoutExtension(ifcFile.Path) == newFolder.Export && ifcFile.EditDate < newFolder.LastUpdated)
                     {
                         exportsToRun.Add(newFolder.Export);

@@ -60,8 +60,6 @@ namespace IFCExporter
                 case true:
                     var FCA = new FileChangedActions();
                     var FDC = new FileDateComparer();
-                    //var IUW = new IfcUpdateWatcher();
-                    //IUW.StartIfcMonitoring();
                     DataStorage.OldFolderDateList = FDC.GetNewFolderDateList();
                     DataStorage.LocalIfcFolderDateList = FDC.GetIfcFileDateList(Path.GetDirectoryName(DataStorage.ProjectInfo.TomIFC.To));
                     DataStorage.ExportsToRun.Clear();                   

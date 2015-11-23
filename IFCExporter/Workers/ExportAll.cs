@@ -1,4 +1,4 @@
-﻿using Autodesk.AutoCAD.ApplicationServices.Core;
+﻿using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.Interop;
 using Autodesk.AutoCAD.Runtime;
 using IFCExporter.Helpers;
@@ -40,6 +40,10 @@ namespace IFCExporter.Models
                     {
                         if (exp == Export.Name)
                         {
+                            var text = new List<string>();
+                            text.Add("Running export: " + Export.Name + "\n");
+                            File.AppendAllLines("c:\\IFCEXPORT\\log.txt", text);
+
                             foreach (var Folder in Export.Folders)
                             {
 
@@ -85,7 +89,7 @@ namespace IFCExporter.Models
                             Application.DocumentManager.MdiActiveDocument = OAC.ReturnActivateDrawing(Discipline.StartFile.To);
 
                             //--Kjør eksport
-                            DataStorage.app.ActiveDocument.SendCommand("_.-MAGIIFCEXPORT " + Export.Name + "\n"); //Venter ikke på at denne skal bli ferdig, må fikses.
+                            DataStorage.app.ActiveDocument.SendCommand("_.-MAGIIFCEXPORT " + Export.Name + "\n");
 
                             var IfcFromPath = Path.GetDirectoryName(DataStorage.ProjectInfo.TomIFC.To) + "\\" + Export.IFC + ".ifc";
                             var IfcToPath = DataStorage.ProjectInfo.TomIFC.Export + "\\" + Export.IFC + ".ifc";
@@ -97,6 +101,8 @@ namespace IFCExporter.Models
             }
             if (AutomaticBool)
             {
+                Document doc = Application.DocumentManager.MdiActiveDocument;
+                doc.CloseAndDiscard();                
                 SleepBeforeReset();
             }
         }
@@ -116,7 +122,9 @@ namespace IFCExporter.Models
             SleepTimer.Enabled = false;
             DataStorage.ExportsToRun.Clear();
             DataStorage.ExportInProgress = false;
-            File.AppendAllText("c:\\IFCEXPORT\\log.txt", "ExportInProgress = " + DataStorage.ExportInProgress.ToString() + ", at " + DateTime.Now.ToString() + "\n");
+            var text = new List<string>();
+            text.Add("Export ended at " + DateTime.Now.ToString() + "\n");
+            File.AppendAllLines("c:\\IFCEXPORT\\log.txt", text);
             var FCA = new FileChangedActions();
             FCA.startMonitoring();
         }

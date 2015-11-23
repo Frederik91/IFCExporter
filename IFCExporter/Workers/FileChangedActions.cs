@@ -1,14 +1,8 @@
-﻿using Autodesk.AutoCAD.ApplicationServices;
-using Autodesk.AutoCAD.Interop;
-using IFCExporter.Helpers;
-using IFCExporter.Models;
+﻿using IFCExporter.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Timers;
 
 namespace IFCExporter.Workers
@@ -20,11 +14,16 @@ namespace IFCExporter.Workers
 
         public FileChangedActions()
         {
+            var text = new List<string>();
+            text.Add("New FileDateComparer created at: " + DateTime.Now.ToShortTimeString() + "\n");
+
+            File.AppendAllLines(@"C:\IFCEXPORT\log.txt", text);
+
         }
 
         public void startMonitoring()
         {
-            DwgTimer = new System.Timers.Timer();
+            DwgTimer = new Timer();
             DwgTimer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
             DwgTimer.Interval = 2000;
             DwgTimer.Enabled = true;
@@ -37,7 +36,7 @@ namespace IFCExporter.Workers
 
         // Specify what you want to happen when the Elapsed event is raised.
         private void OnTimedEvent(object source, ElapsedEventArgs e)
-        {
+        {           
             CheckForChangeDWG();
         }
 
@@ -70,7 +69,14 @@ namespace IFCExporter.Workers
             DataStorage.FilesWithChanges = FDC.ReturnChangedFiles(DataStorage.OldFolderDateList, x);
             DataStorage.OldFolderDateList = FDC.GetNewFolderDateList();
             DataStorage.ExportInProgress = true;
-            File.AppendAllText("c:\\IFCEXPORT\\log.txt", "ExportInProgress = " + DataStorage.ExportInProgress.ToString() + ", at " + DateTime.Now.ToString() + "\n");
+            var text = new List<string>();
+            text.Add("Export started at " + DateTime.Now.ToString());
+            text.Add("Following exports will be run");
+            foreach (var exp in DataStorage.ExportsToRun)
+            {
+                text.Add(exp);
+            }
+            File.AppendAllLines("c:\\IFCEXPORT\\log.txt", text);
             DataStorage.app.ActiveDocument.SendCommand("AutoModeIFC ");
         }
     }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,7 +22,11 @@ namespace IFCManager.Models
         {
             if (FolderUpdate != null && IfcUpdate != null)
             {
-                return FolderUpdate - IfcUpdate;
+                var diff = FolderUpdate - IfcUpdate;
+
+                diff.ToString(@"hh\:mm");
+
+                return diff;
             }
             return TimeSpan.Zero;
             

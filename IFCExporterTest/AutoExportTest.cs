@@ -62,47 +62,24 @@ namespace IFCExporterTest
         }
 
         [TestMethod]
-        public void IfcFileChangeTest()
-        {
-            DataStorage.ExportsToRun = new List<string>();
-
-            var reader = new XmlReader();
-
-            DataStorage.ProjectInfo = reader.GetprojectInfo(@"H:\IFCEXPORT\XML\MH2Test.xml");
-
-            var x = new FileDateComparer();
-
-            DataStorage.LocalIfcFolderDateList = x.GetIfcFileDateList(Path.GetFileNameWithoutExtension(DataStorage.ProjectInfo.TomIFC.To));
-
-            var IUW = new IfcUpdateWatcher();
-
-            DataStorage.ExportInProgress = true;
-
-            IUW.StartIfcMonitoring();
-
-            while (DataStorage.ExportInProgress)
-            {
-                System.Threading.Thread.Sleep(50);
-            }
-
-        }
-
-        [TestMethod]
         public void IfcOutOfDateTest()
         {
             DataStorage.ExportsToRun = new List<string>();
 
             var reader = new XmlReader();
 
-            DataStorage.ProjectInfo = reader.GetprojectInfo(@"H:\IFCEXPORT\XML\BUS2.xml");
+            DataStorage.ProjectInfo = reader.GetprojectInfo(@"H:\IFCEXPORT\XML\BUS1.xml");
 
-            var FDC = new FileDateComparer();
-            DataStorage.LocalIfcFolderDateList = FDC.GetIfcFileDateList(Path.GetDirectoryName(DataStorage.ProjectInfo.TomIFC.To));
+            var x = new FileDateComparer();
 
-            var IUW = new IfcUpdateWatcher();
-            IUW.StartIfcMonitoring();
+            var y = x.GetNewFolderDateList();
+            DataStorage.OldFolderDateList = x.GetNewFolderDateList();
+            DataStorage.FilesWithChanges = x.ReturnChangedFiles(DataStorage.OldFolderDateList, y);
 
-            while (DataStorage.ExportInProgress != true)
+            var FCA = new FileChangedActions();
+            FCA.startMonitoring();
+
+            while (DataStorage.ExportsToRun.Count == 0)
             {
                 Thread.Sleep(500);
             }           

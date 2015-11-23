@@ -12,7 +12,7 @@
                 <GridView>
                     <GridViewColumn DisplayMemberBinding="{Binding FileName}" 
                                         Header="File name" 
-                                        Width="60"/>
+                                        Width="70"/>
                     <GridViewColumn DisplayMemberBinding="{Binding Export}" 
                                         Header="Export" 
                                         Width="50"/>
