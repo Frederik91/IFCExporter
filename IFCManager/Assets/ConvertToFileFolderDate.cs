@@ -19,24 +19,34 @@ namespace IFCManager.Assets
             {
                 foreach (var Folder in FolderList)
                 {
-                    if (Path.GetFileNameWithoutExtension(File.Path) == Folder.Export)
+                    foreach (var discipline in DataStorage.ProjectInfo.Disciplines)
                     {
-                        var inList = false;
-                        foreach (var FileFolder in FileFolderList)
+                        foreach (var export in discipline.Exports)
                         {
-                            if (FileFolder.FileName == Folder.Export)
+                            if (export.IFC == Path.GetFileNameWithoutExtension(File.Path))
                             {
-                                inList = true;
-                                break;
+
+
+
+                                var inList = false;
+                                foreach (var FileFolder in FileFolderList)
+                                {
+                                    if (FileFolder.FileName == Folder.Export)
+                                    {
+                                        inList = true;
+                                        break;
+                                    }
+                                }
+                                if (!inList)
+                                {
+                                    FileFolderList.Add(new FileFolderDate { FileName = Path.GetFileNameWithoutExtension(File.Path), Export = Folder.Export, FolderUpdate = Folder.LastUpdated, IfcUpdate = File.EditDate });
+                                }
                             }
-                        }
-                        if (!inList)
-                        {
-                            FileFolderList.Add(new FileFolderDate { FileName = Path.GetFileNameWithoutExtension(File.Path), Export = Folder.Export, FolderUpdate = Folder.LastUpdated, IfcUpdate = File.EditDate });
                         }
                     }
                 }
             }
+            FileFolderList.Distinct();
 
             return FileFolderList;
         }

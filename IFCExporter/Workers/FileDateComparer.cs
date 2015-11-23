@@ -56,6 +56,8 @@ namespace IFCExporter.Workers
                 }
 
             }
+            
+
             return NewFolderDateList;
         }
 
