@@ -12,19 +12,19 @@
                 <GridView>
                     <GridViewColumn DisplayMemberBinding="{Binding FileName}" 
                                         Header="File name" 
-                                        Width="70"/>
+                                        Width="Auto"/>
                     <GridViewColumn DisplayMemberBinding="{Binding Export}" 
                                         Header="Export" 
-                                        Width="50"/>
+                                        Width="Auto"/>
                     <GridViewColumn DisplayMemberBinding="{Binding FolderUpdate}" 
                                         Header="Last drawing update" 
-                                        Width="150"/>
+                                        Width="Auto"/>
                     <GridViewColumn DisplayMemberBinding="{Binding IfcUpdate}" 
                                         Header="Last IFC update" 
-                                        Width="150"/>
+                                        Width="Auto"/>
                     <GridViewColumn DisplayMemberBinding="{Binding Difference}" 
                                         Header="Difference" 
-                                        Width="150"/>
+                                        Width="Auto"/>
                 </GridView>
             </ListView.View>
         </ListView>

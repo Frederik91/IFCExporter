@@ -15,38 +15,55 @@ namespace IFCManager.Assets
         {
             var FileFolderList = new List<FileFolderDate>();
 
-            foreach (var File in FileList)
+            foreach (var discipline in DataStorage.ProjectInfo.Disciplines)
             {
-                foreach (var Folder in FolderList)
+                foreach (var export in discipline.Exports)
                 {
-                    foreach (var discipline in DataStorage.ProjectInfo.Disciplines)
-                    {
-                        foreach (var export in discipline.Exports)
-                        {
-                            if (export.IFC == Path.GetFileNameWithoutExtension(File.Path))
-                            {
-
-
-
-                                var inList = false;
-                                foreach (var FileFolder in FileFolderList)
-                                {
-                                    if (FileFolder.FileName == Folder.Export)
-                                    {
-                                        inList = true;
-                                        break;
-                                    }
-                                }
-                                if (!inList)
-                                {
-                                    FileFolderList.Add(new FileFolderDate { FileName = Path.GetFileNameWithoutExtension(File.Path), Export = Folder.Export, FolderUpdate = Folder.LastUpdated, IfcUpdate = File.EditDate });
-                                }
-                            }
-                        }
-                    }
+                    FileFolderList.Add(new FileFolderDate { Export = export.Name, FileName = export.IFC });
                 }
             }
-            FileFolderList.Distinct();
+
+            foreach (var fileFolder in FileFolderList)
+            {
+                if (FileList.Exists(x => Path.GetFileNameWithoutExtension(x.Path) == fileFolder.FileName))
+                {
+                    fileFolder.IfcUpdate = FileList.Find(x => Path.GetFileNameWithoutExtension(x.Path) == fileFolder.FileName).EditDate;
+                }
+
+
+                if (FolderList.Exists(x => Path.GetFileNameWithoutExtension(x.Export) == fileFolder.Export))
+                {
+                    fileFolder.FolderUpdate = FolderList.Find(x => Path.GetFileNameWithoutExtension(x.Export) == fileFolder.Export).LastUpdated;
+                }
+            }
+
+
+
+            //foreach (var discipline in DataStorage.ProjectInfo.Disciplines)
+            //{
+            //    foreach (var export in discipline.Exports)
+            //    {
+            //        foreach (var folder in export.Folders)
+            //        {
+            //            foreach (var _folder in FolderList)
+            //            {
+            //                if (_folder.Export == export.Name)
+            //                {
+            //                    foreach (var file in FileList)
+            //                    {
+            //                        if (Path.GetFileNameWithoutExtension(file.Path) == export.IFC)
+            //                        {
+            //                            FileFolderList.Add(new FileFolderDate { Export = export.Name, FileName = export.IFC, FolderUpdate = _folder.LastUpdated, IfcUpdate = file.EditDate });
+            //                            continue;
+            //                        }
+            //                    }
+            //                }
+            //            }
+            //        }
+            //    }
+            //}
+
+
 
             return FileFolderList;
         }

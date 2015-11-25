@@ -35,18 +35,14 @@ namespace IFCExporter.Helpers
                 LocalFilePaths = OriginalFilePaths;
             }
 
-            ed.WriteMessage("\nScanning " + LocalFilePaths.Count + " files");
-
             foreach (var file in LocalFilePaths)
             {
-                ed.WriteMessage("\n File Name : " + file);
                 //create a database and try to load the file
                 Database db = new Database(false, true);
                 using (db)
                 {
                     try
                     {
-                        ed.WriteMessage("\nOpening file: " + Path.GetFileName(file));
                         db.ReadDwgFile(file, FileShare.ReadWrite, false, "");
                     }
                     catch (System.Exception)
@@ -56,32 +52,24 @@ namespace IFCExporter.Helpers
                     }
                     using (Transaction tr = db.TransactionManager.StartTransaction())
                     {
-                        ed.WriteMessage("\n--------Xrefs Details--------");
                         db.ResolveXrefs(true, false);
 
                         XrefGraph xg = db.GetHostDwgXrefGraph(true);
                         int xrefcount = xg.NumNodes - 1;
 
-                        if (xrefcount == 0)
-                        {
-                            ed.WriteMessage("\nNo xrefs found in the drawing");
-                        }
-                        else
+                        if (xrefcount != 0)                        
                         {
                             ObjectIdCollection XrefColl = new ObjectIdCollection();
+
                             for (int r = 1; r < (xrefcount + 1); r++)
                             {
-                                ed.WriteMessage("\nXref Name: " + xg.GetXrefNode(r).Name);
                                 XrefGraphNode xrefNode = xg.GetXrefNode(r);
                                 ObjectId xrefId = xrefNode.BlockTableRecordId;
-                                ed.WriteMessage("\nXref NodeID: " + xrefId.ToString());
                                 XrefColl.Add(xrefId);                               
 
                             }
                             db.UnloadXrefs(XrefColl);
-                            ed.WriteMessage("\nCommitting");
                             tr.Commit();
-                            ed.WriteMessage("\nCommitted");
                         }
                     }
                     // Overwrite the current drawing file with new updated XRef paths

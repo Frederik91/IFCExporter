@@ -12,7 +12,7 @@
 
     <Controls:MetroWindow.RightWindowCommands>
         <Controls:WindowCommands>
-            <!--<Button Content="new project" Command="{Binding NewProjectCommand}" />-->
+            <Button Content="new project" Command="{Binding NewProjectCommand}" />
             <Button Content="settings" Command="{Binding OpenSettings}" />
         </Controls:WindowCommands>
     </Controls:MetroWindow.RightWindowCommands>
