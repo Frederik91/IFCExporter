@@ -8,7 +8,7 @@
         xmlns:Views="clr-namespace:IFCManager.View"
         xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
         mc:Ignorable="d"
-        Title="MainWindow" Height="650" Width="600">
+        Title="IFC Update Viewer" Height="650" Width="600">
 
     <Controls:MetroWindow.RightWindowCommands>
         <Controls:WindowCommands>

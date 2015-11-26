@@ -39,7 +39,21 @@ namespace IFCManager.Assets
         {
             var FDC = new FileDateComparer();
             var Conv = new ConvertToFileFolderDate();
-            FolderMonitorViewModel.FileFolderLastUpdatedList = Conv.Convert(FDC.GetNewFolderDateList(), FDC.GetIfcFileDateList(DataStorage.ProjectInfo.TomIFC.Export));
+            var newList = Conv.Convert(FDC.GetNewFolderDateList(), FDC.GetIfcFileDateList(DataStorage.ProjectInfo.TomIFC.Export));
+            foreach (var currentFileFolder in FolderMonitorViewModel.FileFolderLastUpdatedList)
+            {
+                foreach (var newFileFolder in newList)
+                {
+                    if (currentFileFolder.Export == newFileFolder.Export)
+                    {
+                        if (currentFileFolder.IfcUpdate != newFileFolder.IfcUpdate || currentFileFolder.FolderUpdate != newFileFolder.FolderUpdate || currentFileFolder.FileName != newFileFolder.FileName || currentFileFolder.Difference != newFileFolder.Difference)
+                        {
+                            FolderMonitorViewModel.FileFolderLastUpdatedList = newList;
+                            return;
+                        }
+                    }
+                }
+            }
         }
 
     }

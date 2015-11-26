@@ -64,6 +64,7 @@ namespace IFCExporter.Helpers
                             for (int r = 1; r < (xrefcount + 1); r++)
                             {
                                 XrefGraphNode xrefNode = xg.GetXrefNode(r);
+
                                 ObjectId xrefId = xrefNode.BlockTableRecordId;
                                 XrefColl.Add(xrefId);                               
 
