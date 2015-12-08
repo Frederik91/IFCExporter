@@ -5,6 +5,7 @@ using System.IO;
 using System.Collections.Generic;
 using IFCExporter.Workers;
 using IFCExporterAPI.Assets;
+using IFCExporter.Models;
 
 namespace IFCExporterTest
 {
@@ -16,12 +17,12 @@ namespace IFCExporterTest
         {
             var CP = new Copier();
             var reader = new XmlReader();
-            var ProjectInfo = reader.GetprojectInfo(@"H:\IFCEXPORT\XML\MH2.xml");
+            DataStorage.ProjectInfo = reader.GetprojectInfo(@"H:\IFCEXPORT\XML\MH2.xml");
 
             List<string> RIEFOLDERS = new List<string>();
             List<string> RIVFOLDERS = new List<string>();
 
-            foreach (var Discipline in ProjectInfo.Disciplines)
+            foreach (var Discipline in DataStorage.ProjectInfo.Disciplines)
             {
                 foreach (var Export in Discipline.Exports)
                 {
@@ -41,6 +42,29 @@ namespace IFCExporterTest
                 }
 
             }
+
+            var UAX = new UnloadAllXrefs();
+
+            var FileList = new List<string>();
+
+            foreach (var Discipline in DataStorage.ProjectInfo.Disciplines)
+            {
+                foreach (var Export in Discipline.Exports)
+                {
+                    foreach (var Folder in Export.Folders)
+                    {
+                        var files = Directory.GetFiles(Folder.To, "*.dwg");
+
+                        foreach (var file in files)
+                        {
+                            FileList.Add(file);
+                        }
+                    }
+                }
+            }
+
+            UAX.UnloadAllXref(FileList, false);
+
 
             Assert.AreNotEqual(0, RIEFOLDERS.Count);
         }

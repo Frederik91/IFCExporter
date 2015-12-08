@@ -15,25 +15,11 @@ namespace IFCExporter.Helpers
     public class UnloadAllXrefs
     {
         [CommandMethod("DetachAllXref")]
-        public void UnloadAllXref(List<string> OriginalFilePaths, bool Automatic) 
+        public void UnloadAllXref(List<string> LocalFilePaths, bool Automatic) 
         {
             //Get the document
             Document Doc = Application.DocumentManager.MdiActiveDocument;
             Editor ed = Doc.Editor;
-
-            var LocalFilePaths = new List<string>();
-            //Locate files in base folders
-            if (Automatic)
-            {
-                foreach (var file in LocalFilePaths)
-                {
-                    LocalFilePaths.Add(Directory.GetFiles(DataStorage.ProjectInfo.BaseFolder.To, Path.GetFileName(file)).First());
-                }
-            }
-            else
-            {
-                LocalFilePaths = OriginalFilePaths;
-            }
 
             foreach (var file in LocalFilePaths)
             {

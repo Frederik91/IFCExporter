@@ -58,10 +58,31 @@ namespace IFCExporter
             switch (AutomaticBool)
             {
                 case true:
+
+                    var UAX = new UnloadAllXrefs();
+
+                    var FileList = new List<string>();
+
+                    foreach (var Discipline in DataStorage.ProjectInfo.Disciplines)
+                    {
+                        foreach (var Export in Discipline.Exports)
+                        {
+                            foreach (var Folder in Export.Folders)
+                            {
+                                var files = Directory.GetFiles(Folder.To, "*.dwg");
+
+                                foreach (var file in files)
+                                {
+                                    FileList.Add(file);
+                                }
+                            }
+                        }
+                    }
+
+                    UAX.UnloadAllXref(FileList, false);
+
                     var FCA = new FileChangedActions();
                     var FDC = new FileDateComparer();
-                    DataStorage.OldFolderDateList = FDC.GetNewFolderDateList();
-                    DataStorage.LocalIfcFolderDateList = FDC.GetIfcFileDateList(Path.GetDirectoryName(DataStorage.ProjectInfo.TomIFC.To));
                     DataStorage.ExportsToRun.Clear();                   
 
                     FCA.startMonitoring();

@@ -14,10 +14,8 @@ namespace IFCExporter.Models
         public static IfcProjectInfo ProjectInfo { get; set; }
         public static List<string> ExportsToRun { get; set; }
         public static bool ExportInProgress { get; set; }
-        public static List<FolderDate> OldFolderDateList { get; set; }
         public static List<string> FilesWithChanges { get; set; }
         public static List<string> AllFiles { get; set; }
         public static AcadApplication app { get; set; }
-        public static List<FileDate> LocalIfcFolderDateList { get; set; }
     }
 }

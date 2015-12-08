@@ -58,13 +58,17 @@ namespace IFCExporter.Models
                                 if (AutomaticBool)
                                 {
                                     var FilesWithChanges = DataStorage.FilesWithChanges;
+                                    var FilesToUnload = new List<string>();
 
                                     foreach (var _file in FilesWithChanges)
                                     {
                                         var ToPath = DataStorage.ProjectInfo.BaseFolder.To + _file.Substring(DataStorage.ProjectInfo.BaseFolder.From.Length);
                                         CP.CopySingleFile(_file, ToPath);
+                                        FilesToUnload.Add(ToPath);
                                     }
-                                    UAX.UnloadAllXref(FilesWithChanges, AutomaticBool);
+                                    UAX.UnloadAllXref(FilesToUnload, AutomaticBool);
+
+
                                 }
                                 else
                                 {

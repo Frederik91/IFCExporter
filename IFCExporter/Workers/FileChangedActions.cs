@@ -52,8 +52,9 @@ namespace IFCExporter.Workers
             var newIfcFileList = FDC.GetIfcFileDateList(DataStorage.ProjectInfo.TomIFC.Export);
             var newExportList = FDC.CompareFolderIfcDateLists(newFolderList, newIfcFileList);
             DataStorage.ExportsToRun = newExportList.Distinct().ToList();
+            var x = FDC.GetNewFolderDateList();
 
-            if (DataStorage.ExportsToRun.Count != 0)
+            if (DataStorage.ExportsToRun.Count != 0 && FDC.ReturnChangedFiles(x).Count() != 0)
             {
                 RunExport();
             }
@@ -66,8 +67,7 @@ namespace IFCExporter.Workers
         private void RunExport()
         {
             var x = FDC.GetNewFolderDateList();
-            DataStorage.FilesWithChanges = FDC.ReturnChangedFiles(DataStorage.OldFolderDateList, x);
-            DataStorage.OldFolderDateList = FDC.GetNewFolderDateList();
+            DataStorage.FilesWithChanges = FDC.ReturnChangedFiles(x);
             DataStorage.ExportInProgress = true;
             var text = new List<string>();
             text.Add("Export started at " + DateTime.Now.ToString());

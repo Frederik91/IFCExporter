@@ -86,8 +86,6 @@ namespace IFCManager.ViewModel
             {
                 var reader = new XmlReader();
                 DataStorage.ProjectInfo = reader.GetprojectInfo(fileDialog.FileName);
-                var FDC = new FileDateComparer();
-                DataStorage.OldFolderDateList = FDC.GetNewFolderDateList();
                 XmlViewModel.FolderMonitorViewModels[XmlViewModel.SelectedTabIndex].StartMonitoring();
                 IsSettingsOpen = false;      
             }

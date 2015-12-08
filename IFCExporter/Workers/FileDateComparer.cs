@@ -56,7 +56,7 @@ namespace IFCExporter.Workers
                 }
 
             }
-            
+
 
             return NewFolderDateList;
         }
@@ -128,25 +128,50 @@ namespace IFCExporter.Workers
             return false;
         }
 
-        public List<string> ReturnChangedFiles(List<FolderDate> OldFolderDateList, List<FolderDate> NewfolderDateList)
+        public List<string> ReturnChangedFiles(List<FolderDate> FolderDateList)
         {
             var changedFileList = new List<string>();
 
-            foreach (var oldFolder in OldFolderDateList)
+            List<FileDate> ifcFileDate = new List<FileDate>();
+
+            foreach (var exp in DataStorage.ExportsToRun)
             {
-                foreach (var newFolder in NewfolderDateList)
+                foreach (var ifcFilePath in Directory.GetFiles(DataStorage.ProjectInfo.TomIFC.Export, "*.ifc"))
                 {
-                    foreach (var oldFile in oldFolder.Files)
+                    var ifcFile = new System.IO.FileInfo(ifcFilePath);
+
+                    foreach (var discipline in DataStorage.ProjectInfo.Disciplines)
                     {
-                        foreach (var newFile in newFolder.Files)
+                        foreach (var export in discipline.Exports)
                         {
-                            if (oldFile.Path == newFile.Path && newFile.EditDate > oldFile.EditDate)
+                            var expName = Path.GetFileNameWithoutExtension(ifcFile.FullName);
+
+                            if (export.IFC == expName && exp == expName)
                             {
-                                changedFileList.Add(newFile.Path);
+                                foreach (var folder in export.Folders)
+                                {
+                                    ifcFileDate.Add(new FileDate { Path = folder.From, EditDate = ifcFile.LastWriteTime });
+                                }
                             }
                         }
                     }
+
                 }
+            }
+
+            foreach (var Folder in FolderDateList)
+            {
+                foreach (var File in Folder.Files)
+                {
+                    foreach (var ifcFile in ifcFileDate)
+                    {
+                        if (ifcFile.Path == Path.GetDirectoryName(File.Path) && ifcFile.EditDate > File.EditDate)
+                        {
+                            changedFileList.Add(File.Path);
+                        }
+                    }
+                }
+
             }
 
             return changedFileList;

@@ -48,10 +48,6 @@ namespace IFCExporterTest
 
             DataStorage.ProjectInfo = reader.GetprojectInfo(@"H:\IFCEXPORT\XML\BUS2Test.xml");
 
-            var x = new FileDateComparer();
-
-            DataStorage.OldFolderDateList = x.GetNewFolderDateList();
-
             var FCA = new FileChangedActions();
 
             FCA.startMonitoring();
@@ -70,21 +66,31 @@ namespace IFCExporterTest
 
             var reader = new XmlReader();
 
-            DataStorage.ProjectInfo = reader.GetprojectInfo(@"H:\IFCEXPORT\XML\BUS1.xml");
+            DataStorage.ProjectInfo = reader.GetprojectInfo(@"H:\IFCEXPORT\XML\MH2.xml");
 
             var x = new FileDateComparer();
 
             var y = x.GetNewFolderDateList();
-            DataStorage.OldFolderDateList = x.GetNewFolderDateList();
-            DataStorage.FilesWithChanges = x.ReturnChangedFiles(DataStorage.OldFolderDateList, y);
 
             var FCA = new FileChangedActions();
             FCA.startMonitoring();
 
-            while (DataStorage.ExportsToRun.Count == 0)
+            while (DataStorage.ExportsToRun.Count == 0 || DataStorage.FilesWithChanges.Count == 0)
             {
+                DataStorage.FilesWithChanges = x.ReturnChangedFiles(y);
                 Thread.Sleep(500);
-            }           
+            }
+
+            var NewPathList = new List<string>();
+
+            var FilesWithChanges = DataStorage.FilesWithChanges;
+            var FilesToUnload = new List<string>();
+
+            foreach (var _file in FilesWithChanges)
+            {
+                var ToPath = DataStorage.ProjectInfo.BaseFolder.To + _file.Substring(DataStorage.ProjectInfo.BaseFolder.From.Length);
+                FilesToUnload.Add(ToPath);
+            }
         }
 
     }
