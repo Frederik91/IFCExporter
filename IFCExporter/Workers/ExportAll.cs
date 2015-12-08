@@ -102,7 +102,9 @@ namespace IFCExporter.Models
                 }
             }
             if (AutomaticBool)
-            {               
+            {
+                Document doc = Application.DocumentManager.MdiActiveDocument;
+                doc.CloseAndDiscard();
                 SleepBeforeReset();
             }
         }
@@ -120,10 +122,6 @@ namespace IFCExporter.Models
         private void OnTimedEvent(object source, ElapsedEventArgs e)
         {
             SleepTimer.Enabled = false;
-
-            Document doc = Application.DocumentManager.MdiActiveDocument;
-            doc.CloseAndDiscard();
-
             DataStorage.ExportsToRun.Clear();
             DataStorage.ExportInProgress = false;
             var text = new List<string>();
