@@ -91,6 +91,8 @@ namespace IFCExporter.Models
                             //--Kjør eksport
                             DataStorage.app.ActiveDocument.SendCommand("_.-MAGIIFCEXPORT " + Export.Name + "\n");
 
+
+                            //--Last opp IFC
                             var IfcFromPath = Path.GetDirectoryName(DataStorage.ProjectInfo.TomIFC.To) + "\\" + Export.IFC + ".ifc";
                             var IfcToPath = DataStorage.ProjectInfo.TomIFC.Export + "\\" + Export.IFC + ".ifc";
 
@@ -100,9 +102,7 @@ namespace IFCExporter.Models
                 }
             }
             if (AutomaticBool)
-            {
-                Document doc = Application.DocumentManager.MdiActiveDocument;
-                doc.CloseAndDiscard();                
+            {               
                 SleepBeforeReset();
             }
         }
@@ -120,6 +120,10 @@ namespace IFCExporter.Models
         private void OnTimedEvent(object source, ElapsedEventArgs e)
         {
             SleepTimer.Enabled = false;
+
+            Document doc = Application.DocumentManager.MdiActiveDocument;
+            doc.CloseAndDiscard();
+
             DataStorage.ExportsToRun.Clear();
             DataStorage.ExportInProgress = false;
             var text = new List<string>();

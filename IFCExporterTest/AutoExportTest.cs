@@ -16,25 +16,27 @@ namespace IFCExporterTest
     public class AutoExportTest
     {
         [TestMethod]
-        public void TestFileWatcher()
+        public void TestFileChangedActions()
         {
             DataStorage.ExportsToRun = new List<string>();
 
             var reader = new XmlReader();
 
-            DataStorage.ProjectInfo = reader.GetprojectInfo(@"H:\IFCEXPORT\XML\BUS2Test.xml");
+            DataStorage.ProjectInfo = reader.GetprojectInfo(@"H:\IFCEXPORT\XML\BUS1.xml");
 
-            var FW = new FileDateComparer();
+            var FDC = new FileDateComparer();
 
-            var x = FW.GetNewFolderDateList();
-            var y = FW.GetNewFolderDateList();
+            DataStorage.ExportsToRun = new List<string>();
 
-            while (!FW.CheckForChanges(FW.CompareFolderLists(x, y)))
+            while (DataStorage.ExportsToRun.Count == 0)
             {
-                x = FW.GetNewFolderDateList();
-                System.Threading.Thread.Sleep(50);
+                var newFolderList = FDC.GetNewFolderDateList();
+                var newIfcFileList = FDC.GetIfcFileDateList(DataStorage.ProjectInfo.TomIFC.Export);
+                var newExportList = FDC.CompareFolderIfcDateLists(newFolderList, newIfcFileList);
+                DataStorage.ExportsToRun = newExportList.Distinct().ToList();
             }
 
+            MessageBox.Show("lol");
         }
 
         [TestMethod]
