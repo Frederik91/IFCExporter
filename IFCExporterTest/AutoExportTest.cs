@@ -66,7 +66,7 @@ namespace IFCExporterTest
 
             var reader = new XmlReader();
 
-            DataStorage.ProjectInfo = reader.GetprojectInfo(@"H:\IFCEXPORT\XML\MH2.xml");
+            DataStorage.ProjectInfo = reader.GetprojectInfo(@"H:\IFCEXPORT\XML\BUS2.xml");
 
             var x = new FileDateComparer();
 
@@ -75,7 +75,7 @@ namespace IFCExporterTest
             var FCA = new FileChangedActions();
             FCA.startMonitoring();
 
-            while (DataStorage.ExportsToRun.Count == 0 || DataStorage.FilesWithChanges.Count == 0)
+            while (!DataStorage.ExportInProgress)
             {
                 DataStorage.FilesWithChanges = x.ReturnChangedFiles(y);
                 Thread.Sleep(500);

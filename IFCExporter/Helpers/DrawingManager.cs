@@ -15,7 +15,7 @@ namespace IFCExporter.Helpers
         {
             var DocMgr = Application.DocumentManager;
 
-            foreach (Document Doc  in DocMgr)
+            foreach (Document Doc in DocMgr)
             {
                 if (Doc.Name == FileName)
                 {
@@ -65,10 +65,25 @@ namespace IFCExporter.Helpers
                     var FileName = Path.GetFileName(File.Name);
 
                     if (DrawingName == FileName)
-                    {                        
+                    {
                         drawing.CloseAndDiscard();
                     }
                 }
+            }
+        }
+
+        public void CloseAndDiscardDrawing(string DrawingName)
+        {
+            var OpenDrawings = Autodesk.AutoCAD.ApplicationServices.Core.Application.DocumentManager;
+
+            foreach (Document drawing in OpenDrawings)
+            {
+                if (DrawingName == drawing.Name)
+                {
+                    drawing.CloseAndDiscard();
+                    return;
+                }
+
             }
         }
 

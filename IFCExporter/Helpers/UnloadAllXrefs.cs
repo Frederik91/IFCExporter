@@ -34,7 +34,7 @@ namespace IFCExporter.Helpers
                     catch (System.Exception)
                     {
                         ed.WriteMessage("\nUnable to read the drawingfile.");
-                        return;
+                        continue;
                     }
                     using (Transaction tr = db.TransactionManager.StartTransaction())
                     {

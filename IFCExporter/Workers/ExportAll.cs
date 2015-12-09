@@ -29,6 +29,7 @@ namespace IFCExporter.Models
 
         public void Run()
         {
+            var OAC = new DrawingManager();
             var Exports = DataStorage.ExportsToRun;
             var Disciplines = DataStorage.ProjectInfo.Disciplines;
 
@@ -46,12 +47,6 @@ namespace IFCExporter.Models
 
                             foreach (var Folder in Export.Folders)
                             {
-
-                                //--Last ned filer (modellfiler og tom.ifc)
-
-                                //Sjekk om tegning som er åpen skal overskrives, lukke så denne mens den kopieres
-                                DM.CloseIfOpen(Folder.From);
-
                                 //Last ned mappe med modellfiler
 
                                 UnloadAllXrefs UAX = new UnloadAllXrefs();
@@ -88,13 +83,15 @@ namespace IFCExporter.Models
                             }
 
                             //--Åpne starttegning og sett som aktiv
-                            var OAC = new DrawingManager();
                             OAC.OpenDrawing(Discipline.StartFile.To);
                             Application.DocumentManager.MdiActiveDocument = OAC.ReturnActivateDrawing(Discipline.StartFile.To);
 
                             //--Kjør eksport
                             DataStorage.app.ActiveDocument.SendCommand("_.-MAGIIFCEXPORT " + Export.Name + "\n");
 
+                            //--Lukk tegning
+                            Document doc = Application.DocumentManager.MdiActiveDocument;
+                            doc.CloseAndDiscard();
 
                             //--Last opp IFC
                             var IfcFromPath = Path.GetDirectoryName(DataStorage.ProjectInfo.TomIFC.To) + "\\" + Export.IFC + ".ifc";
@@ -107,8 +104,6 @@ namespace IFCExporter.Models
             }
             if (AutomaticBool)
             {
-                Document doc = Application.DocumentManager.MdiActiveDocument;
-                doc.CloseAndDiscard();
                 SleepBeforeReset();
             }
         }
