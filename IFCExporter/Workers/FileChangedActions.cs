@@ -77,7 +77,7 @@ namespace IFCExporter.Workers
                 text.Add(exp);
             }
             File.AppendAllLines("c:\\IFCEXPORT\\log.txt", text);
-            //DataStorage.app.ActiveDocument.SendCommand("AutoModeIFC ");
+            DataStorage.app.ActiveDocument.SendCommand("AutoModeIFC ");
         }
     }
 }
