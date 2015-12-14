@@ -47,7 +47,7 @@ namespace IFCExporter.Workers
 
                         NewFolderDateList.Add(new FolderDate
                         {
-                            Export = Export.Name,
+                            Export = Export.IFC,
                             LastUpdated = MostRecent,
                             Files = FileDateList
                         });
@@ -165,7 +165,7 @@ namespace IFCExporter.Workers
                 {
                     foreach (var ifcFile in ifcFileDate)
                     {
-                        if (ifcFile.Path == Path.GetDirectoryName(File.Path) && ifcFile.EditDate > File.EditDate)
+                        if (ifcFile.Path == Path.GetDirectoryName(File.Path) && ifcFile.EditDate < File.EditDate)
                         {
                             changedFileList.Add(File.Path);
                         }

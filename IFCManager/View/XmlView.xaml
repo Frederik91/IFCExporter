@@ -6,7 +6,7 @@
              xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
              xmlns:local="clr-namespace:IFCManager.View"
              mc:Ignorable="d" 
-             d:DesignHeight="600" Width="550">
+             d:DesignHeight="600" Height="Auto" Width="Auto">
     <StackPanel>
         <StackPanel Orientation="Horizontal">
             <TabControl ItemsSource="{Binding FolderMonitorViewModels}" SelectedIndex="{Binding SelectedTabIndex}">

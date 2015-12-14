@@ -66,7 +66,7 @@ namespace IFCExporterTest
 
             var reader = new XmlReader();
 
-            DataStorage.ProjectInfo = reader.GetprojectInfo(@"H:\IFCEXPORT\XML\BUS2.xml");
+            DataStorage.ProjectInfo = reader.GetprojectInfo(@"H:\IFCEXPORT\XML\MH2.xml");
 
             var x = new FileDateComparer();
 

@@ -94,7 +94,7 @@ namespace IFCExporter.Models
                             doc.CloseAndDiscard();
 
                             //--Last opp IFC
-                            var IfcFromPath = Path.GetDirectoryName(DataStorage.ProjectInfo.TomIFC.To) + "\\" + Export.IFC + ".ifc";
+                            var IfcFromPath = Path.GetDirectoryName(DataStorage.ProjectInfo.TomIFC.To) + "\\" + Export.Name + ".ifc";
                             var IfcToPath = DataStorage.ProjectInfo.TomIFC.Export + "\\" + Export.IFC + ".ifc";
 
                             CP.CopySingleFile(IfcFromPath, IfcToPath);
