@@ -31,38 +31,11 @@ namespace IFCManager.Assets
                 }
 
 
-                if (FolderList.Exists(x => Path.GetFileNameWithoutExtension(x.Export) == fileFolder.Export))
+                if (FolderList.Exists(x => Path.GetFileNameWithoutExtension(x.Export) == fileFolder.FileName))
                 {
-                    fileFolder.FolderUpdate = FolderList.Find(x => Path.GetFileNameWithoutExtension(x.Export) == fileFolder.Export).LastUpdated;
+                    fileFolder.FolderUpdate = FolderList.Find(x => Path.GetFileNameWithoutExtension(x.Export) == fileFolder.FileName).LastUpdated;
                 }
             }
-
-
-
-            //foreach (var discipline in DataStorage.ProjectInfo.Disciplines)
-            //{
-            //    foreach (var export in discipline.Exports)
-            //    {
-            //        foreach (var folder in export.Folders)
-            //        {
-            //            foreach (var _folder in FolderList)
-            //            {
-            //                if (_folder.Export == export.Name)
-            //                {
-            //                    foreach (var file in FileList)
-            //                    {
-            //                        if (Path.GetFileNameWithoutExtension(file.Path) == export.IFC)
-            //                        {
-            //                            FileFolderList.Add(new FileFolderDate { Export = export.Name, FileName = export.IFC, FolderUpdate = _folder.LastUpdated, IfcUpdate = file.EditDate });
-            //                            continue;
-            //                        }
-            //                    }
-            //                }
-            //            }
-            //        }
-            //    }
-            //}
-
 
 
             return FileFolderList;
