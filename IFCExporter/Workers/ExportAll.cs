@@ -39,7 +39,7 @@ namespace IFCExporter.Models
                 {
                     foreach (var exp in Exports)
                     {
-                        if (exp == Export.Name)
+                        if (exp == Export.IFC)
                         {
                             var text = new List<string>();
                             text.Add("Running export: " + Export.Name + "\n");
