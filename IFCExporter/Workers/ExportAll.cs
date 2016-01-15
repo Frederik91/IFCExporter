@@ -97,7 +97,28 @@ namespace IFCExporter.Models
                             var IfcFromPath = Path.GetDirectoryName(DataStorage.ProjectInfo.TomIFC.To) + "\\" + Export.Name + ".ifc";
                             var IfcToPath = DataStorage.ProjectInfo.TomIFC.Export + "\\" + Export.IFC + ".ifc";
 
-                            CP.CopySingleFile(IfcFromPath, IfcToPath);
+                            bool fileCopied = true;
+                            int Attempts = 0;
+
+                            while (fileCopied)
+                            {
+                                Attempts++;
+                                try
+                                {
+                                    CP.CopySingleFile(IfcFromPath, IfcToPath);
+                                    fileCopied = false;
+                                }
+                                catch (System.Exception e)
+                                {
+                                    if (Attempts == 10)
+                                    {
+                                        Application.DocumentManager.MdiActiveDocument.Editor.WriteMessage("Unable to upload IFC-file, error: " + e.Message);
+                                        break;
+                                    }
+                                    Thread.Sleep(2000);
+                                    fileCopied = true;
+                                }
+                            }
                         }
                     }
                 }

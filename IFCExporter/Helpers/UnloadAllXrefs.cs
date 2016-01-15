@@ -38,7 +38,7 @@ namespace IFCExporter.Helpers
                     }
                     using (Transaction tr = db.TransactionManager.StartTransaction())
                     {
-                        db.ResolveXrefs(true, false);
+                        //db.ResolveXrefs(true, false);
 
                         XrefGraph xg = db.GetHostDwgXrefGraph(true);
                         int xrefcount = xg.NumNodes - 1;
