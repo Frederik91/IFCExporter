@@ -31,9 +31,9 @@ namespace IFCManager.Assets
                 }
 
 
-                if (FolderList.Exists(x => Path.GetFileNameWithoutExtension(x.Export) == fileFolder.FileName))
+                if (FolderList.Exists(x => Path.GetFileNameWithoutExtension(x.IfcName) == fileFolder.FileName))
                 {
-                    fileFolder.FolderUpdate = FolderList.Find(x => Path.GetFileNameWithoutExtension(x.Export) == fileFolder.FileName).LastUpdated;
+                    fileFolder.FolderUpdate = FolderList.Find(x => Path.GetFileNameWithoutExtension(x.IfcName) == fileFolder.FileName).LastUpdated;
                 }
             }
 

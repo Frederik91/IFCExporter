@@ -59,31 +59,31 @@ namespace IFCExporter
             {
                 case true:
 
-                    var UAX = new UnloadAllXrefs();
+                    //var UAX = new UnloadAllXrefs();
 
-                    var FileList = new List<string>();
+                    //var FileList = new List<string>();
 
-                    foreach (var Discipline in DataStorage.ProjectInfo.Disciplines)
-                    {
-                        foreach (var Export in Discipline.Exports)
-                        {
-                            foreach (var Folder in Export.Folders)
-                            {
-                                var files = Directory.GetFiles(Folder.To, "*.dwg");
+                    //foreach (var Discipline in DataStorage.ProjectInfo.Disciplines)
+                    //{
+                    //    foreach (var Export in Discipline.Exports)
+                    //    {
+                    //        foreach (var Folder in Export.Folders)
+                    //        {
+                    //            var files = Directory.GetFiles(Folder.To, "*.dwg");
 
-                                foreach (var file in files)
-                                {
-                                    FileList.Add(file);
-                                }
-                            }
-                        }
-                    }
+                    //            foreach (var file in files)
+                    //            {
+                    //                FileList.Add(file);
+                    //            }
+                    //        }
+                    //    }
+                    //}
 
-                    UAX.UnloadAllXref(FileList, false);
+                    //UAX.UnloadAllXref(FileList, false);
 
                     var FCA = new FileChangedActions();
                     var FDC = new FileDateComparer();
-                    DataStorage.ExportsToRun.Clear();                   
+                    DataStorage.ExportsToRun.Clear();
 
                     FCA.startMonitoring();
 
@@ -119,6 +119,14 @@ namespace IFCExporter
             }
             else
             {
+                var text = new List<string>();
+                text.Add("Starting one-time IFC-export at: " + DateTime.Now);
+                text.Add("Will be running the following exports: ");
+                foreach (var exp in DataStorage.ExportsToRun)
+                {
+                    text.Add(exp);
+                }
+                File.AppendAllLines("c:\\IFCEXPORT\\log.txt", text);
                 var expAll = new ExportAll(AutomaticBool);
                 expAll.Run();
             }

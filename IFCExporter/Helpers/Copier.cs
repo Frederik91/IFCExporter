@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Security.AccessControl;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace IFCExporter.Helpers
@@ -56,13 +57,53 @@ namespace IFCExporter.Helpers
         public void CopySingleFile_NewName(string SourceDir, string DestDir, string NewName)
         {
             System.IO.FileInfo file = new System.IO.FileInfo(SourceDir);
-            file.CopyTo(DestDir + NewName, true);
+
+            for (int i = 0; i < 10; i++)
+            {
+                try
+                {
+                    file.CopyTo(DestDir + NewName, true);
+                    break;
+                }
+                catch (Exception)
+                {
+                    if (i == 10)
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        Thread.Sleep(1000);
+                    }                    
+                }
+            }
+
+
         }
 
         public void CopySingleFile(string SourceDir, string DestDir)
         {
             System.IO.FileInfo file = new System.IO.FileInfo(SourceDir);
-            file.CopyTo(DestDir, true);
+
+            for (int i = 0; i < 10; i++)
+            {            
+                try
+                {
+                    file.CopyTo(DestDir, true);
+                    break;
+                }
+                catch (Exception)
+                {
+                    if (i == 10)
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        Thread.Sleep(1000);
+                    }
+                }
+            }          
         }
 
         public void TomIFCCopy(IFCFile TomIFC, string NewName)

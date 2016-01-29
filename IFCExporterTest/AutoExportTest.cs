@@ -22,7 +22,7 @@ namespace IFCExporterTest
 
             var reader = new XmlReader();
 
-            DataStorage.ProjectInfo = reader.GetprojectInfo(@"H:\IFCEXPORT\XML\BUS1.xml");
+            DataStorage.ProjectInfo = reader.GetprojectInfo(@"H:\IFCEXPORT\XML\MH2.xml");
 
             var FDC = new FileDateComparer();
 
@@ -42,20 +42,24 @@ namespace IFCExporterTest
         [TestMethod]
         public void FileChangedActionsTest()
         {
-            DataStorage.ExportsToRun = new List<string>();
+            DataStorage.ExportsToRun = new List<string>();           
 
             var reader = new XmlReader();
 
-            DataStorage.ProjectInfo = reader.GetprojectInfo(@"H:\IFCEXPORT\XML\BUS2Test.xml");
+            DataStorage.ProjectInfo = reader.GetprojectInfo(@"H:\IFCEXPORT\XML\MH2.xml");
 
-            var FCA = new FileChangedActions();
 
-            FCA.startMonitoring();
 
-            while (!DataStorage.ExportInProgress)
-            {
-                System.Threading.Thread.Sleep(50);
-            }
+            var FDC = new FileDateComparer();
+
+            var newFolderList = FDC.GetNewFolderDateList();
+            var newIfcFileList = FDC.GetIfcFileDateList(DataStorage.ProjectInfo.TomIFC.Export);
+            var newExportList = FDC.CompareFolderIfcDateLists(newFolderList, newIfcFileList);
+            DataStorage.ExportsToRun = newExportList.Distinct().ToList();
+
+            var x = FDC.ReturnDwgsInChangedExports();
+
+            var y = x;
 
         }
 
@@ -66,7 +70,7 @@ namespace IFCExporterTest
 
             var reader = new XmlReader();
 
-            DataStorage.ProjectInfo = reader.GetprojectInfo(@"H:\IFCEXPORT\XML\MH2.xml");
+            DataStorage.ProjectInfo = reader.GetprojectInfo(@"H:\IFCEXPORT\XML\BUS2.xml");
 
             var x = new FileDateComparer();
 

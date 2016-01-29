@@ -47,7 +47,8 @@ namespace IFCExporter.Workers
 
                         NewFolderDateList.Add(new FolderDate
                         {
-                            Export = Export.IFC,
+                            Export = Export.Name,
+                            IfcName = Export.IFC,
                             LastUpdated = MostRecent,
                             Files = FileDateList
                         });
@@ -109,7 +110,7 @@ namespace IFCExporter.Workers
             {
                 foreach (var ifcFile in IfcFileDateList)
                 {
-                    if (Path.GetFileNameWithoutExtension(ifcFile.Path) == newFolder.Export && ifcFile.EditDate < newFolder.LastUpdated)
+                    if (Path.GetFileNameWithoutExtension(ifcFile.Path) == newFolder.IfcName && ifcFile.EditDate < newFolder.LastUpdated)
                     {
                         exportsToRun.Add(newFolder.Export);
                     }
@@ -159,6 +160,20 @@ namespace IFCExporter.Workers
                 }
             }
 
+            //foreach (var Folder in FolderDateList)
+            //{
+            //    foreach (var File in Folder.Files)
+            //    {
+            //        foreach (var ifcFile in ifcFileDate)
+            //        {
+            //            if (ifcFile.Path == Path.GetDirectoryName(File.Path) && ifcFile.EditDate < File.EditDate)
+            //            {
+            //                changedFileList.Add(File.Path);
+            //            }
+            //        }
+            //    }
+            //}
+
             foreach (var Folder in FolderDateList)
             {
                 foreach (var File in Folder.Files)
@@ -167,15 +182,47 @@ namespace IFCExporter.Workers
                     {
                         if (ifcFile.Path == Path.GetDirectoryName(File.Path) && ifcFile.EditDate < File.EditDate)
                         {
-                            changedFileList.Add(File.Path);
+                            foreach (var _file in Folder.Files)
+                            {
+                                changedFileList.Add(_file.Path);
+                            }                                
                         }
                     }
                 }
-
             }
 
-            return changedFileList;
+            return changedFileList.Distinct().ToList();
         }
 
+
+        public List<string> ReturnDwgsInChangedExports()
+        {
+            var list = new List<string>();
+
+            foreach (var Exp in DataStorage.ExportsToRun)
+            {
+                foreach (var discipline in DataStorage.ProjectInfo.Disciplines)
+                {
+                    foreach (var Export in discipline.Exports)
+                    {
+                        if (Export.Name == Exp)
+                        {
+                            foreach (var folder in Export.Folders)
+                            {
+                                foreach (var file in Directory.GetFiles(folder.From).ToList())
+                                {
+                                    var _file = Path.GetExtension(file);
+                                    if (Path.GetExtension(file) == ".dwg")
+                                    {
+                                        list.Add(file);
+                                    }                                    
+                                }                                
+                            }                            
+                        }
+                    }
+                }
+            }
+            return list.Distinct().ToList();
+        }
     }
 }
