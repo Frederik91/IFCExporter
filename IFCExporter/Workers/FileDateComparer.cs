@@ -102,7 +102,7 @@ namespace IFCExporter.Workers
             return exportsToRun;
         }
 
-        public List<string> CompareFolderIfcDateLists(List<FolderDate> NewFolderDateList, List<FileDate> IfcFileDateList)
+        public List<string> ReturnExpiredExports(List<FolderDate> NewFolderDateList, List<FileDate> IfcFileDateList)
         {
             var exportsToRun = new List<string>();
 

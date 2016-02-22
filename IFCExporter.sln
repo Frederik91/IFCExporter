@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IFCExporter", "IFCExporter\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IFCExporterTest", "IFCExporterTest\IFCExporterTest.csproj", "{1CE30634-DF86-4D16-99F1-E119982D9D92}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IFCManager", "IFCManager\IFCManager.csproj", "{3E09CF59-502F-451F-9451-43A17FD0CC23}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IFCMonitor", "IFCManager\IFCMonitor.csproj", "{3E09CF59-502F-451F-9451-43A17FD0CC23}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IFCExporterWindows", "IFCExporterWindows\IFCExporterWindows.csproj", "{9930AC57-A890-405F-9154-0C378E5E2DC5}"
 EndProject

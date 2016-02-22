@@ -18,6 +18,8 @@ namespace IFCExporterTest
         [TestMethod]
         public void TestFileChangedActions()
         {
+            DataStorage.logFileLocation = @"C:\IFCEXPORT\Log - MH2.xml";
+
             DataStorage.ExportsToRun = new List<string>();
 
             var reader = new XmlReader();
@@ -27,13 +29,18 @@ namespace IFCExporterTest
             var FDC = new FileDateComparer();
 
             DataStorage.ExportsToRun = new List<string>();
+            DataStorage.SelectedExports = new List<string>();
+
+            DataStorage.SelectedExports.Add("V31");
+            DataStorage.SelectedExports.Add("V33");
+            DataStorage.SelectedExports.Add("V34");
+            DataStorage.SelectedExports.Add("V36");
+
 
             while (DataStorage.ExportsToRun.Count == 0)
             {
-                var newFolderList = FDC.GetNewFolderDateList();
-                var newIfcFileList = FDC.GetIfcFileDateList(DataStorage.ProjectInfo.TomIFC.Export);
-                var newExportList = FDC.CompareFolderIfcDateLists(newFolderList, newIfcFileList);
-                DataStorage.ExportsToRun = newExportList.Distinct().ToList();
+                var FCA = new FileChangedActions();
+                FCA.CheckForChanges();
             }
 
             MessageBox.Show("lol");
@@ -54,7 +61,7 @@ namespace IFCExporterTest
 
             var newFolderList = FDC.GetNewFolderDateList();
             var newIfcFileList = FDC.GetIfcFileDateList(DataStorage.ProjectInfo.TomIFC.Export);
-            var newExportList = FDC.CompareFolderIfcDateLists(newFolderList, newIfcFileList);
+            var newExportList = FDC.ReturnExpiredExports(newFolderList, newIfcFileList);
             DataStorage.ExportsToRun = newExportList.Distinct().ToList();
 
             var x = FDC.ReturnDwgsInChangedExports();
@@ -79,7 +86,7 @@ namespace IFCExporterTest
             var FCA = new FileChangedActions();
             FCA.startMonitoring();
 
-            while (!DataStorage.ExportInProgress)
+            while (DataStorage.FilesWithChanges.Count == 0)
             {
                 DataStorage.FilesWithChanges = x.ReturnChangedFiles(y);
                 Thread.Sleep(500);

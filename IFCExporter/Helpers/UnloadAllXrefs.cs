@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace IFCExporter.Helpers
@@ -15,7 +16,7 @@ namespace IFCExporter.Helpers
     public class UnloadAllXrefs
     {
         [CommandMethod("DetachAllXref")]
-        public void UnloadAllXref(List<string> LocalFilePaths, bool Automatic) 
+        public void UnloadAllXref(List<string> LocalFilePaths, bool Automatic)
         {
             //Get the document
             Document Doc = Application.DocumentManager.MdiActiveDocument;
@@ -43,7 +44,7 @@ namespace IFCExporter.Helpers
                         XrefGraph xg = db.GetHostDwgXrefGraph(true);
                         int xrefcount = xg.NumNodes - 1;
 
-                        if (xrefcount != 0)                        
+                        if (xrefcount != 0)
                         {
                             ObjectIdCollection XrefColl = new ObjectIdCollection();
 
@@ -52,7 +53,7 @@ namespace IFCExporter.Helpers
                                 XrefGraphNode xrefNode = xg.GetXrefNode(r);
 
                                 ObjectId xrefId = xrefNode.BlockTableRecordId;
-                                XrefColl.Add(xrefId);                               
+                                XrefColl.Add(xrefId);
 
                             }
                             db.UnloadXrefs(XrefColl);
@@ -60,8 +61,14 @@ namespace IFCExporter.Helpers
                         }
                     }
                     // Overwrite the current drawing file with new updated XRef paths
-                    db.SaveAs(file, false, DwgVersion.Current, null);
-
+                    try
+                    {
+                        db.SaveAs(file, false, DwgVersion.Current, null);
+                    }
+                    catch (System.Exception)
+                    {
+                        continue;
+                    }
                 }
             }
         }

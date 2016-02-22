@@ -54,6 +54,50 @@ namespace IFCExporter.Helpers
             }
         }
 
+        public void DirectoryCopyWithoutOverwrite(string SourceDir, string DestDir, bool copySubDir, string FileType)
+        {
+            //Finn undermapper
+            DirectoryInfo dir = new DirectoryInfo(SourceDir);
+
+            if (!dir.Exists)
+            {
+                throw new DirectoryNotFoundException("Fant ikke mappen \"" + SourceDir + "\"");
+            }
+
+            DirectoryInfo[] dirs = dir.GetDirectories();
+
+            //Sjekk om desitnasjonsmappe eksisterer, hvis ikke lag den.
+            if (!Directory.Exists(DestDir))
+            {
+                Directory.CreateDirectory(DestDir);
+            }
+
+            //Finn filene i kildemappen og kopier dem til destinasjonsmappen
+            System.IO.FileInfo[] files = dir.GetFiles();
+            foreach (System.IO.FileInfo file in files)
+            {
+                string temppath = Path.Combine(DestDir, file.Name);
+
+                if (Path.GetExtension(file.Name) == FileType)
+                {
+                    if (!File.Exists(temppath))
+                    {
+                        file.CopyTo(temppath, true);
+                    }
+                }
+            }
+
+            //Hvis undermapper skal kopieres, kopier dem med innhold til destinasjonsmappen
+            if (copySubDir)
+            {
+                foreach (DirectoryInfo subdir in dirs)
+                {
+                    string temppath = Path.Combine(DestDir, subdir.Name);
+                    DirectoryCopyWithoutOverwrite(subdir.FullName, temppath, copySubDir, FileType);
+                }
+            }
+        }
+
         public void CopySingleFile_NewName(string SourceDir, string DestDir, string NewName)
         {
             System.IO.FileInfo file = new System.IO.FileInfo(SourceDir);

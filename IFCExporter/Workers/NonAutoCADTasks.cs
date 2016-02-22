@@ -71,7 +71,7 @@ namespace IFCExporter.Workers
                         try
                         {
                             DM.CloseIfOpen(Folder.From);
-                            CP.DirectoryCopy(Folder.From, Folder.To, false, ".dwg");
+                            CP.DirectoryCopyWithoutOverwrite(Folder.From, Folder.To, false, ".dwg");
                         }
                         catch (System.Exception e)
                         {

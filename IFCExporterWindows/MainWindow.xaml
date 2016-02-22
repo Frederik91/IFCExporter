@@ -32,8 +32,8 @@
             <CheckBox IsEnabled="{Binding ProjectSelected}" IsChecked="{Binding AutomaticMode}" Content="Automatic Mode" HorizontalAlignment="Right"/>
         </StackPanel>
 
-        <Button Grid.Row="2" Content="{Binding ToggleSelectedExportsText}" Command="{Binding ToggleSelectedExportsCommand}" Width="100" Height="30" HorizontalAlignment="Left" IsEnabled="{Binding ManualMode}"/>
-        <ListBox Grid.Row="3" ItemsSource="{Binding AviliableExports}" ScrollViewer.VerticalScrollBarVisibility="Auto" Height="Auto" Width="150" HorizontalAlignment="left" IsEnabled="{Binding ManualMode}">
+        <Button Grid.Row="2" Content="{Binding ToggleSelectedExportsText}" Command="{Binding ToggleSelectedExportsCommand}" Width="100" Height="30" HorizontalAlignment="Left"/>
+        <ListBox Grid.Row="3" ItemsSource="{Binding AviliableExports}" ScrollViewer.VerticalScrollBarVisibility="Auto" Height="Auto" Width="150" HorizontalAlignment="left">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <CheckBox IsChecked="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged}" Content="{Binding Export}"/>

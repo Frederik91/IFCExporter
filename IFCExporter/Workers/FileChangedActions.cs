@@ -1,4 +1,6 @@
-﻿using IFCExporter.Models;
+﻿using Autodesk.AutoCAD.ApplicationServices;
+using IFCExporter.Helpers;
+using IFCExporter.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -10,14 +12,12 @@ namespace IFCExporter.Workers
     public class FileChangedActions
     {
         private FileDateComparer FDC = new FileDateComparer();
-        private System.Timers.Timer DwgTimer;
+        private Timer DwgTimer;
+        private Writer writer = new Writer();
 
         public FileChangedActions()
         {
-            var text = new List<string>();
-            text.Add("New FileDateComparer created at: " + DateTime.Now.ToShortTimeString() + "\n");
-
-            File.AppendAllLines(@"C:\IFCEXPORT\log.txt", text);
+            writer.writeLine("New FileDateComparer created");
 
         }
 
@@ -36,55 +36,55 @@ namespace IFCExporter.Workers
 
         // Specify what you want to happen when the Elapsed event is raised.
         private void OnTimedEvent(object source, ElapsedEventArgs e)
-        {           
-            CheckForChangeDWG();
-        }
-
-        private void CheckForChangeDWG()
         {
             stopMonitoring();
-            if (DataStorage.ExportInProgress)
-            {
-                var text = new List<string>();
-                text.Add("Export already in progress, waiting...");
 
-                File.AppendAllLines(@"C:\IFCEXPORT\log.txt", text);
-                return;
-            }
+            CheckForChanges();
+        }
 
+        public void CheckForChanges()
+        {
             var newFolderList = FDC.GetNewFolderDateList();
             var newIfcFileList = FDC.GetIfcFileDateList(DataStorage.ProjectInfo.TomIFC.Export);
-            var newExportList = FDC.CompareFolderIfcDateLists(newFolderList, newIfcFileList);
-            DataStorage.ExportsToRun = newExportList.Distinct().ToList();
+            var newExportList = FDC.ReturnExpiredExports(newFolderList, newIfcFileList).Distinct().ToList();
 
-            if (DataStorage.ExportsToRun.Count != 0)
+            foreach (var Export in newExportList)
             {
+                if (DataStorage.SelectedExports.Contains(Export))
+                {
+                    DataStorage.ExportsToRun.Add(Export);
+                }
+            }
+
+            if (DataStorage.ExportsToRun.Count > 0)
+            {
+                writer.writeLine("Filechange detected, starting new export");
                 RunExport();
             }
             else
             {
-                var text = new List<string>();
-                text.Add("No change detected, waiting...");
+                var textfile = File.ReadAllLines(DataStorage.logFileLocation);
+                var length = textfile.Length;
+                if (textfile[length - 1].Contains("No change detected"))
+                {
+                    writer.removeLastLine(textfile);
+                }
 
-                File.AppendAllLines(@"C:\IFCEXPORT\log.txt", text);
+                writer.writeLine("No change detected, waiting...");
                 startMonitoring();
             }
         }
 
         private void RunExport()
         {
-
-
             DataStorage.FilesWithChanges = FDC.ReturnDwgsInChangedExports();
-            DataStorage.ExportInProgress = true;
             var text = new List<string>();
-            text.Add("Export started at " + DateTime.Now.ToString());
             text.Add("Following exports will be run");
             foreach (var exp in DataStorage.ExportsToRun)
             {
                 text.Add(exp);
             }
-            File.AppendAllLines("c:\\IFCEXPORT\\log.txt", text);
+            writer.writeArray(text.ToArray());
             DataStorage.app.ActiveDocument.SendCommand("AutoModeIFC ");
         }
     }

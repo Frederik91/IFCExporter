@@ -24,18 +24,12 @@ namespace IFCExporter
         public bool RunForeverBool = false;
         public bool AutomaticBool = false;
         public IfcProjectInfo ProjectInfo = new IfcProjectInfo();
+        private Writer writer = new Writer();
 
 
         public MainClass()
         {
 
-        }
-
-        [CommandMethod("TestMethod", CommandFlags.Session)]
-        public void TestMethod()
-        {
-            var x = new IFCExporterWindows.MainWindow();
-            x.ShowDialog();
         }
 
 
@@ -51,7 +45,9 @@ namespace IFCExporter
                 return;
             }
 
-            DataStorage.ExportsToRun = NAcadTask.ExportsToExecute;
+            DataStorage.logFileLocation = "c:\\IFCEXPORT\\log-" + DataStorage.ProjectInfo.ProjectName + ".txt";
+            DataStorage.SelectedExports = NAcadTask.ExportsToExecute;
+            DataStorage.ExportsToRun = new List<string>();
             RunForeverBool = NAcadTask.ContinuousMode;
             AutomaticBool = NAcadTask.AutomaticMode;
 
@@ -59,32 +55,7 @@ namespace IFCExporter
             {
                 case true:
 
-                    //var UAX = new UnloadAllXrefs();
-
-                    //var FileList = new List<string>();
-
-                    //foreach (var Discipline in DataStorage.ProjectInfo.Disciplines)
-                    //{
-                    //    foreach (var Export in Discipline.Exports)
-                    //    {
-                    //        foreach (var Folder in Export.Folders)
-                    //        {
-                    //            var files = Directory.GetFiles(Folder.To, "*.dwg");
-
-                    //            foreach (var file in files)
-                    //            {
-                    //                FileList.Add(file);
-                    //            }
-                    //        }
-                    //    }
-                    //}
-
-                    //UAX.UnloadAllXref(FileList, false);
-
                     var FCA = new FileChangedActions();
-                    var FDC = new FileDateComparer();
-                    DataStorage.ExportsToRun.Clear();
-
                     FCA.startMonitoring();
 
                     break;
@@ -122,11 +93,12 @@ namespace IFCExporter
                 var text = new List<string>();
                 text.Add("Starting one-time IFC-export at: " + DateTime.Now);
                 text.Add("Will be running the following exports: ");
+                DataStorage.ExportsToRun = DataStorage.SelectedExports;
                 foreach (var exp in DataStorage.ExportsToRun)
                 {
                     text.Add(exp);
                 }
-                File.AppendAllLines("c:\\IFCEXPORT\\log.txt", text);
+                writer.writeArray(text.ToArray());
                 var expAll = new ExportAll(AutomaticBool);
                 expAll.Run();
             }
