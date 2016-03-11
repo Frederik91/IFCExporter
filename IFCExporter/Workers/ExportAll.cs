@@ -35,19 +35,13 @@ namespace IFCExporter.Models
             var Disciplines = DataStorage.ProjectInfo.Disciplines;
             var UAX = new UnloadAllXrefs();
 
+            #region prepare drawing files
+
             //Last ned mappe med modellfiler og unload xrefer (kun ved automatisk modus)
             if (AutomaticBool)
             {
-                //--Åpne ny tegning hvis alle tegningene ble lukket
-
-                if (DataStorage.app.Documents.Count == 0)
-                {
-                    var newDrawing = DataStorage.app.Documents.Add("acad.dwt");
-                    DataStorage.app.ActiveDocument = newDrawing;
-                }
-
                 writer.writeLine("Automatic Mode: Gathering files to unload xref");
-                var FilesWithChanges = DataStorage.FilesWithChanges;
+                var FilesWithChanges = DataStorage.FilesWithChanges.Distinct().ToList();
                 var FilesToUnload = new List<string>();
 
                 writer.writeLine("Found " + FilesWithChanges.Count + " files");
@@ -57,167 +51,155 @@ namespace IFCExporter.Models
                     CP.CopySingleFile(_file, ToPath);
                     FilesToUnload.Add(ToPath);
                 }
-                UAX.UnloadAllXref(FilesToUnload, AutomaticBool);
+                UAX.UnloadAllXref(FilesToUnload);
                 writer.writeLine("Xrefs successfully unloaded");
             }
+            else
+            {
+                foreach (var discipline in Disciplines)
+                {
+                    foreach (var export in discipline.Exports)
+                    {
+                        if (Exports.Contains(export.Name))
+                        {
+                            //Last ned mappe med modellfiler og unload xrefer (kun ved manuell modus)
+                            writer.writeLine("Manual Mode: Gathering files to unload xref in export " + export.Name);
+
+                            foreach (var Folder in export.Folders)
+                            {
+                                CP.DirectoryCopy(Folder.From, Folder.To, false, ".dwg");
+                                UAX.UnloadAllXref(Directory.GetFiles(Folder.To).ToList());
+                            }
+                        }
+                    }
+                }
+
+            }
+            #endregion
 
             foreach (var Discipline in Disciplines)
             {
-                //Kun ved automatisk modus pga. måten filene kopieres ned på. 
-                if (AutomaticBool)
-                {
-                    //--Åpne starttegning og sett som aktiv
-                    writer.writeLine("Opening startfile");
-                    DM.OpenDrawing(Discipline.StartFile.To);
-                    Application.DocumentManager.MdiActiveDocument = DM.ReturnActivateDrawing(Discipline.StartFile.To);
-                }
+                var ActiveExport = Discipline.Exports.FindAll(export => Exports.Contains(export.Name));
 
-                foreach (var Export in Discipline.Exports)
+                foreach (var Export in ActiveExport)
                 {
-                    foreach (var exp in Exports)
+                    if (Exports.Contains(Export.Name))
                     {
-                        if (exp == Export.Name)
+                        writer.writeLine("Preparing export: " + Export.Name + "\n");
+
+                        //Lag ny IFC for eksport
+                        writer.writeLine("Creating new IFC");
+                        CP.TomIFCCopy(DataStorage.ProjectInfo.TomIFC, Export.Name);
+
+                        //Last ned single filer
+                        writer.writeLine("Downloading " + DataStorage.ProjectInfo.Files.Count + " single files");
+                        foreach (var File in DataStorage.ProjectInfo.Files)
                         {
-                            writer.writeLine("Running export: " + Export.Name + "\n");
+                            CP.CopySingleFile(File.From, File.To);
+                        }
 
-                            //Lag ny IFC for eksport
-                            writer.writeLine("Creating new IFC");
-                            CP.TomIFCCopy(DataStorage.ProjectInfo.TomIFC, Export.Name);
+                        //--Åpne starttegning
+                        writer.writeLine("Opening startfile");
+                        DM.OpenDrawingReadOnly(Discipline.StartFile.To);
 
-                            //Last ned single filer
-                            writer.writeLine("Downloading " + DataStorage.ProjectInfo.Files.Count + " single files");
-                            foreach (var File in DataStorage.ProjectInfo.Files)
+                        //--Kjør eksport
+                        if (Application.DocumentManager.MdiActiveDocument.Name != Discipline.StartFile.To)
+                        {
+                            writer.writeLine("Setting active document");
+                            Application.DocumentManager.MdiActiveDocument = DM.GetDrawingByName(Discipline.StartFile.To);
+                        }
+
+                        if (Application.DocumentManager.MdiActiveDocument == null || Application.DocumentManager.MdiActiveDocument.Name != Discipline.StartFile.To)
+                        {
+                            writer.writeLine("Unable to get application data");
+                            writer.writeLine("Export failed");
+                            continue;
+                        }
+
+                        var ifcLogFile = Path.GetDirectoryName(DataStorage.ProjectInfo.TomIFC.To) + "\\" + Export.Name + ".ifc.txt";
+
+                        writer.writeLine("Running export: " + Export.Name + "\n");
+
+                        bool exportError = false;
+
+                        for (int i = 0; i < 5; i++)
+                        {
+                            try
                             {
-                                CP.CopySingleFile(File.From, File.To);
-                            }
-
-                            //Ved automatisk modus lastes alle filene ned og xrefer unloades først. Ved manuell modus gjøres dette før hver individuelle eksport. Det er derfor nødvendig å åpne/lukke tegningene mellom hver eksport.
-                            if (!AutomaticBool)
-                            {
-                                //Last ned mappe med modellfiler og unload xrefer (kun ved manuell modus)
-                                writer.writeLine("Manual Mode: Gathering files to unload xref in export " + Export.Name);
-
-                                foreach (var Folder in Export.Folders)
+                                using (DocumentLock docLock = Application.DocumentManager.MdiActiveDocument.LockDocument())
                                 {
-                                    CP.DirectoryCopy(Folder.From, Folder.To, false, ".dwg");
-                                    UAX.UnloadAllXref(Directory.GetFiles(Folder.To).ToList(), AutomaticBool);
+                                    var app = Application.AcadApplication as AcadApplication;
+                                    app.ActiveDocument.SendCommand("_.-MAGIIFCEXPORT " + Export.Name + "\n");
+                                    break;
                                 }
 
-                                writer.writeLine("Xrefs successfully unloaded");
-
-                                //--Åpne starttegning og sett som aktiv
-                                writer.writeLine("Opening startfile");
-                                DM.OpenDrawing(Discipline.StartFile.To);
-                                Application.DocumentManager.MdiActiveDocument = DM.ReturnActivateDrawing(Discipline.StartFile.To);
                             }
-
-
-                            //--Kjør eksport
-                            writer.writeLine("Running export");
-                            DataStorage.app.ActiveDocument.SendCommand("_.-MAGIIFCEXPORT " + Export.Name + "\n");
-
-                            if (!AutomaticBool)
+                            catch (System.Exception e)
                             {
-                                //--Lukk tegning
-                                writer.writeLine("Closing drawing");
+                                if (i==4)
+                                {
+                                    writer.writeLine("Error: " + e.Message);
+                                    writer.writeLine("Failed to run export");
+                                    exportError = true;
+                                    break;
+                                }
+                                Thread.Sleep(2000);
+                            }
+                        }
+
+                        if (exportError)
+                        {
+                            continue;
+                        }
+
+
+                        //--Last opp IFC
+                        writer.writeLine("Uploading IFC");
+                        var IfcFromPath = Path.GetDirectoryName(DataStorage.ProjectInfo.TomIFC.To) + "\\" + Export.Name + ".ifc";
+                        var IfcToPath = DataStorage.ProjectInfo.TomIFC.Export + "\\" + Export.IFC + ".ifc";
+
+                        var emptyIfc = new FileInfo(DataStorage.ProjectInfo.TomIFC.From);
+                        var exportedIfc = new FileInfo(IfcFromPath);
+
+                        if (emptyIfc.LastWriteTime != exportedIfc.LastWriteTime || emptyIfc.Length != exportedIfc.Length)
+                        {
+                            for (int i = 0; i < 10; i++)
+                            {
                                 try
                                 {
-                                    DataStorage.app.ActiveDocument.Close(false, Discipline.StartFile);
+                                    CP.CopySingleFile(IfcFromPath, IfcToPath);
+                                    writer.writeLine("IFC successfully uploaded");
+                                    break;
                                 }
                                 catch (System.Exception e)
                                 {
-                                    System.Windows.MessageBox.Show(e.Message);
-                                    //DataStorage.app.Documents.Close();
-                                }
-
-                            }
-
-                            //--Last opp IFC
-                            writer.writeLine("Uploading IFC");
-                            var IfcFromPath = Path.GetDirectoryName(DataStorage.ProjectInfo.TomIFC.To) + "\\" + Export.Name + ".ifc";
-                            var IfcToPath = DataStorage.ProjectInfo.TomIFC.Export + "\\" + Export.IFC + ".ifc";
-
-                            bool fileCopied = false;
-                            int Attempts = 0;
-
-                            var emptyIfc = new FileInfo(Discipline.StartFile.From);
-                            var exportedIfc = new FileInfo(IfcFromPath);
-
-                            if (emptyIfc.Length != exportedIfc.Length)
-                            {
-                                while (!fileCopied)
-                                {
-                                    Attempts++;
-                                    try
+                                    if (i == 9)
                                     {
-                                        CP.CopySingleFile(IfcFromPath, IfcToPath);
-                                        fileCopied = true;
-                                        writer.writeLine("IFC successfully uploaded");
+                                        Application.DocumentManager.MdiActiveDocument.Editor.WriteMessage("Unable to upload IFC-file, error: " + e.Message);
+                                        break;
                                     }
-                                    catch (System.Exception e)
-                                    {
-                                        if (Attempts == 10)
-                                        {
-                                            Application.DocumentManager.MdiActiveDocument.Editor.WriteMessage("Unable to upload IFC-file, error: " + e.Message);
-                                            break;
-                                        }
-                                        Thread.Sleep(2000);
-                                        fileCopied = false;
-                                    }
+                                    Thread.Sleep(2000);
                                 }
-                            }                            
-                        }
-                    }
-                }
-                if (AutomaticBool)
-                {
-                    //--Lukk tegning
-                    writer.writeLine("Closing drawings");
-
-                    for (int i = 0; i < 10; i++)
-                    {
-                        try
-                        {
-                            DataStorage.app.Documents.Close();
-                            writer.writeLine("Drawings closed");
-                        }
-                        catch (System.Exception e)
-                        {
-                            if (e.HResult.Equals("0x8021006F"))
-                            {
-                                writer.writeLine("Failed to close drawings");
-                                Thread.Sleep(1000);
-                            }
-                            else
-                            {
-                                break;
                             }
                         }
+                        else
+                        {
+                            writer.writeLine("IFC-file is empty, skipping upload");
+                        }
+
                     }
-
-
-
-                    //--Åpne ny tegning hvis alle tegningene ble lukket
-
-                    if (DataStorage.app.Documents.Count == 0)
-                    {
-                        writer.writeLine("Creating new drawing");
-                        var newDrawing = DataStorage.app.Documents.Add("acad.dwt");
-                        DataStorage.app.ActiveDocument = newDrawing;
-                        writer.writeLine("Drawing successfully created");
-                    }
-
-
-
                 }
             }
+
+            //-- Lukker eventuelle tegninger som ikke ble lukket av MagiCAD
+            writer.writeLine("Closing other files");
+            DM.CloseNotReadOnlyDrawings();
+
             if (AutomaticBool)
             {
                 SleepBeforeReset();
             }
         }
-
-
 
         public void SleepBeforeReset()
         {

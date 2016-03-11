@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using IFCExporter;
+using System;
 
 namespace IFCExporterTest
 {
@@ -9,10 +10,8 @@ namespace IFCExporterTest
         [TestMethod]
         public void TestMethod_Test()
         {
-            var window = new IFCExporterWindows.MainWindow();
-            window.ShowDialog();
-            var x = window.MainViewModel;
-
+            string n = string.Format("text-{0:yyyy-MM-dd_hh-mm-ss-tt}.bin",
+    DateTime.Now);
         }
 
     }

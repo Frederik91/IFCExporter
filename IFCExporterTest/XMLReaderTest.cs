@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using IFCExporter.Workers;
 using IFCExporterAPI.Assets;
 using IFCExporter.Models;
+using IFCExporterAPI.Models;
 
 namespace IFCExporterTest
 {
@@ -17,14 +18,20 @@ namespace IFCExporterTest
         {
             //var CP = new Copier();
             var reader = new XmlReader();
-            DataStorage.ProjectInfo = reader.GetprojectInfo(@"H:\IFCEXPORT\XML\UNN.xml");
+            DataStorage.ProjectInfo = reader.GetprojectInfo(@"H:\IFCEXPORT\XML\AutoExport UNN.xml");
+            var Exports = new List<string>();
+            Exports.Add("E410");
+            Exports.Add("E430");
 
             List<string> RIEFOLDERS = new List<string>();
             List<string> RIVFOLDERS = new List<string>();
 
             foreach (var Discipline in DataStorage.ProjectInfo.Disciplines)
             {
-                foreach (var Export in Discipline.Exports)
+
+                var ActiveExport = Discipline.Exports.FindAll(export => Exports.Contains(export.Name));
+
+                foreach (var Export in ActiveExport)
                 {
                     foreach (var Folder in Export.Folders)
                     {

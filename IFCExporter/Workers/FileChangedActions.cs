@@ -1,10 +1,11 @@
 ﻿using Autodesk.AutoCAD.ApplicationServices;
+using Autodesk.AutoCAD.Interop;
 using IFCExporter.Helpers;
 using IFCExporter.Models;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Timers;
 
 namespace IFCExporter.Workers
@@ -12,7 +13,7 @@ namespace IFCExporter.Workers
     public class FileChangedActions
     {
         private FileDateComparer FDC = new FileDateComparer();
-        private Timer DwgTimer;
+        private System.Timers.Timer DwgTimer;
         private Writer writer = new Writer();
 
         public FileChangedActions()
@@ -23,7 +24,7 @@ namespace IFCExporter.Workers
 
         public void startMonitoring()
         {
-            DwgTimer = new Timer();
+            DwgTimer = new System.Timers.Timer();
             DwgTimer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
             DwgTimer.Interval = 2000;
             DwgTimer.Enabled = true;
@@ -85,7 +86,32 @@ namespace IFCExporter.Workers
                 text.Add(exp);
             }
             writer.writeArray(text.ToArray());
-            DataStorage.app.ActiveDocument.SendCommand("AutoModeIFC ");
+            for (int i = 0; i < 5; i++)
+            {
+                try
+                {
+                    using (DocumentLock docLock = Application.DocumentManager.MdiActiveDocument.LockDocument())
+                    {
+                        var app = Application.AcadApplication as AcadApplication;
+                        app.Visible = true;
+                        app.ActiveDocument.SendCommand("AutoModeIFC ");
+                        break;
+                    }
+
+                }
+                catch (System.Exception e)
+                {
+                    if (i == 4)
+                    {
+                        writer.writeLine("Error: " + e.Message);
+                        writer.writeLine("Failed to start export");
+                        break;
+                    }
+                    Thread.Sleep(2000);
+                }
+            }
+
+            Thread.CurrentThread.Abort();
         }
     }
 }

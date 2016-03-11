@@ -44,8 +44,7 @@ namespace IFCExporter
             {
                 return;
             }
-
-            DataStorage.logFileLocation = "c:\\IFCEXPORT\\log-" + DataStorage.ProjectInfo.ProjectName + ".txt";
+            DataStorage.logFileLocation = string.Format("c:\\IFCEXPORT\\log-" + DataStorage.ProjectInfo.ProjectName + "-{0:yyyy-MM-dd_hh-mm-ss-tt}.txt", DateTime.Now);
             DataStorage.SelectedExports = NAcadTask.ExportsToExecute;
             DataStorage.ExportsToRun = new List<string>();
             RunForeverBool = NAcadTask.ContinuousMode;

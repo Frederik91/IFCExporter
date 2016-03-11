@@ -16,7 +16,7 @@ namespace IFCExporter.Helpers
     public class UnloadAllXrefs
     {
         [CommandMethod("DetachAllXref")]
-        public void UnloadAllXref(List<string> LocalFilePaths, bool Automatic)
+        public void UnloadAllXref(List<string> LocalFilePaths)
         {
             //Get the document
             Document Doc = Application.DocumentManager.MdiActiveDocument;
@@ -39,7 +39,6 @@ namespace IFCExporter.Helpers
                     }
                     using (Transaction tr = db.TransactionManager.StartTransaction())
                     {
-                        //db.ResolveXrefs(true, false);
 
                         XrefGraph xg = db.GetHostDwgXrefGraph(true);
                         int xrefcount = xg.NumNodes - 1;
@@ -53,12 +52,13 @@ namespace IFCExporter.Helpers
                                 XrefGraphNode xrefNode = xg.GetXrefNode(r);
 
                                 ObjectId xrefId = xrefNode.BlockTableRecordId;
-                                XrefColl.Add(xrefId);
+                                db.DetachXref(xrefId);
 
                             }
-                            db.UnloadXrefs(XrefColl);
-                            tr.Commit();
                         }
+
+                        tr.Commit();
+                        tr.Dispose();
                     }
                     // Overwrite the current drawing file with new updated XRef paths
                     try

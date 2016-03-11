@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace IFCExporter.Workers
@@ -29,7 +30,9 @@ namespace IFCExporter.Workers
 
             var window = new IFCExporterWindows.MainWindow();
             window.ShowDialog();
+
             var x = window.MainViewModel;
+
 
             ExportsToExecute = x.ExportsToRun;
             XMLFolder = x.SelectedProjectPath;

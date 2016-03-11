@@ -53,7 +53,7 @@ namespace IFCExporterTest
 
             var reader = new XmlReader();
 
-            DataStorage.ProjectInfo = reader.GetprojectInfo(@"H:\IFCEXPORT\XML\MH2.xml");
+            DataStorage.ProjectInfo = reader.GetprojectInfo(@"H:\IFCEXPORT\XML\UNN.xml");
 
 
 
