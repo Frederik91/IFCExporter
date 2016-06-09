@@ -31,69 +31,38 @@ namespace IFCExporter.Models
         public void Run()
         {
             var DM = new DrawingManager();
-            var Exports = DataStorage.ExportsToRun;
-            var Disciplines = DataStorage.ProjectInfo.Disciplines;
+            var Projects = DataStorage.ExportsToRun;
             var UAX = new UnloadAllXrefs();
+            var FL = new FreezeLayers();
 
-            #region prepare drawing files
-
-            //Last ned mappe med modellfiler og unload xrefer (kun ved automatisk modus)
-            if (AutomaticBool)
+            foreach (var project in Projects)
             {
-                writer.writeLine("Automatic Mode: Gathering files to unload xref");
-                var FilesWithChanges = DataStorage.FilesWithChanges.Distinct().ToList();
-                var FilesToUnload = new List<string>();
-
-                writer.writeLine("Found " + FilesWithChanges.Count + " files");
-                foreach (var _file in FilesWithChanges)
+                foreach (var Discipline in project.Disciplines)
                 {
-                    var ToPath = DataStorage.ProjectInfo.BaseFolder.To + _file.Substring(DataStorage.ProjectInfo.BaseFolder.From.Length);
-                    CP.CopySingleFile(_file, ToPath);
-                    FilesToUnload.Add(ToPath);
-                }
-                UAX.UnloadAllXref(FilesToUnload);
-                writer.writeLine("Xrefs successfully unloaded");
-            }
-            else
-            {
-                foreach (var discipline in Disciplines)
-                {
-                    foreach (var export in discipline.Exports)
-                    {
-                        if (Exports.Contains(export.Name))
-                        {
-                            //Last ned mappe med modellfiler og unload xrefer (kun ved manuell modus)
-                            writer.writeLine("Manual Mode: Gathering files to unload xref in export " + export.Name);
-
-                            foreach (var Folder in export.Folders)
-                            {
-                                CP.DirectoryCopy(Folder.From, Folder.To, false, ".dwg");
-                                UAX.UnloadAllXref(Directory.GetFiles(Folder.To).ToList());
-                            }
-                        }
-                    }
-                }
-
-            }
-            #endregion
-
-            foreach (var Discipline in Disciplines)
-            {
-                var ActiveExport = Discipline.Exports.FindAll(export => Exports.Contains(export.Name));
-
-                foreach (var Export in ActiveExport)
-                {
-                    if (Exports.Contains(Export.Name))
+                    foreach (var Export in Discipline.Exports)
                     {
                         writer.writeLine("Preparing export: " + Export.Name + "\n");
 
+                        //Last ned DWG-filer
+                        foreach (var folder in Export.Folders)
+                        {
+                            writer.writeLine("Downloading folder:  " + folder.remote + "\n");
+                            CP.DirectoryCopy(folder.remote, folder.local, false, ".dwg");
+
+                            var drawings = Directory.GetFiles(folder.local, "*.dwg").ToList();
+
+                            writer.writeLine("Unloading Xrefs");
+                            UAX.UnloadAllXref(drawings);
+                        }
+
+
                         //Lag ny IFC for eksport
                         writer.writeLine("Creating new IFC");
-                        CP.TomIFCCopy(DataStorage.ProjectInfo.TomIFC, Export.Name);
+                        CP.TomIFCCopy(project.TomIFC, Export.Name);
 
                         //Last ned single filer
-                        writer.writeLine("Downloading " + DataStorage.ProjectInfo.Files.Count + " single files");
-                        foreach (var File in DataStorage.ProjectInfo.Files)
+                        writer.writeLine("Downloading " + project.Files.Count + " single files");
+                        foreach (var File in project.Files)
                         {
                             CP.CopySingleFile(File.From, File.To);
                         }
@@ -116,7 +85,7 @@ namespace IFCExporter.Models
                             continue;
                         }
 
-                        var ifcLogFile = Path.GetDirectoryName(DataStorage.ProjectInfo.TomIFC.To) + "\\" + Export.Name + ".ifc.txt";
+                        var ifcLogFile = Path.GetDirectoryName(project.TomIFC.To) + "\\" + Export.Name + ".ifc.txt";
 
                         writer.writeLine("Running export: " + Export.Name + "\n");
 
@@ -129,6 +98,7 @@ namespace IFCExporter.Models
                                 using (DocumentLock docLock = Application.DocumentManager.MdiActiveDocument.LockDocument())
                                 {
                                     var app = Application.AcadApplication as AcadApplication;
+                                    app.Visible = true;
                                     app.ActiveDocument.SendCommand("_.-MAGIIFCEXPORT " + Export.Name + "\n");
                                     break;
                                 }
@@ -136,7 +106,7 @@ namespace IFCExporter.Models
                             }
                             catch (System.Exception e)
                             {
-                                if (i==4)
+                                if (i == 4)
                                 {
                                     writer.writeLine("Error: " + e.Message);
                                     writer.writeLine("Failed to run export");
@@ -155,10 +125,10 @@ namespace IFCExporter.Models
 
                         //--Last opp IFC
                         writer.writeLine("Uploading IFC");
-                        var IfcFromPath = Path.GetDirectoryName(DataStorage.ProjectInfo.TomIFC.To) + "\\" + Export.Name + ".ifc";
-                        var IfcToPath = DataStorage.ProjectInfo.TomIFC.Export + "\\" + Export.IFC + ".ifc";
+                        var IfcFromPath = Path.GetDirectoryName(project.TomIFC.To) + "\\" + Export.Name + ".ifc";
+                        var IfcToPath = project.TomIFC.Export + "\\" + Export.IFC + ".ifc";
 
-                        var emptyIfc = new FileInfo(DataStorage.ProjectInfo.TomIFC.From);
+                        var emptyIfc = new FileInfo(project.TomIFC.From);
                         var exportedIfc = new FileInfo(IfcFromPath);
 
                         if (emptyIfc.LastWriteTime != exportedIfc.LastWriteTime || emptyIfc.Length != exportedIfc.Length)
@@ -186,8 +156,8 @@ namespace IFCExporter.Models
                         {
                             writer.writeLine("IFC-file is empty, skipping upload");
                         }
-
                     }
+
                 }
             }
 
@@ -216,8 +186,8 @@ namespace IFCExporter.Models
             try
             {
                 SleepTimer.Enabled = false;
-                DataStorage.ExportsToRun.Clear();
                 writer.writeLine("Export ended at " + DateTime.Now.ToString() + "\n");
+                DataStorage.ExportsToRun = new List<IFCExporterAPI.Models.IfcProjectInfo>();
                 var FCA = new FileChangedActions();
                 FCA.startMonitoring();
             }

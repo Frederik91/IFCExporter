@@ -29,7 +29,7 @@
         <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.ColumnSpan="2">
             <CheckBox IsEnabled="{Binding ProjectSelected}" IsChecked="{Binding ManualMode}" Content="Manual Mode" Margin="0,0,10,0" />
             <CheckBox IsEnabled="{Binding ContinuousModeEnabled}" IsChecked="{Binding ContinuousMode}" Content="Continuous" Margin="0,0,10,0" />
-            <CheckBox IsEnabled="{Binding ProjectSelected}" IsChecked="{Binding AutomaticMode}" Content="Automatic Mode" HorizontalAlignment="Right"/>
+            <CheckBox IsEnabled="{Binding ProjectSelected}" IsChecked="{Binding AutomaticMode}" Content="Automatic Mode" HorizontalAlignment="Right" Margin="0,0,10,0"/>
         </StackPanel>
 
         <Button Grid.Row="2" Content="{Binding ToggleSelectedExportsText}" Command="{Binding ToggleSelectedExportsCommand}" Width="100" Height="30" HorizontalAlignment="Left"/>

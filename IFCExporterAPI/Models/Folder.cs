@@ -8,7 +8,7 @@ namespace IFCExporterAPI.Models
 {
     public class Folder
     {
-        public string From { get; set; }
-        public string To { get; set; }
+        public string remote { get; set; }
+        public string local { get; set; }
     }
 }

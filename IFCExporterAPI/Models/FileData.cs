@@ -6,10 +6,9 @@ using System.Threading.Tasks;
 
 namespace IFCExporterAPI.Models
 {
-    public class Discipline
+    public class FileData
     {
-        public string Name { get; set; }
-        public List<Export> Exports { get; set; }
-        public FileData StartFile { get; set; }
+        public string From { get; set; }
+        public string To { get; set; }
     }
 }

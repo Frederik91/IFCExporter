@@ -11,10 +11,11 @@ namespace IFCExporter.Models
 {
     public static class DataStorage
     {
-        public static IfcProjectInfo ProjectInfo { get; set; }
-        public static List<string> ExportsToRun { get; set; }
-        public static List<string> SelectedExports { get; set; }
-        public static List<string> FilesWithChanges { get; set; }
+        public static List<IfcProjectInfo> ProjectInfo { get; set; }
+        public static List<IfcProjectInfo> ExportsToRun { get; set; }
+        public static List<string> ProjectsToRun { get; set; }
+        public static List<ProjectChanges> SelectedExports { get; set; }
+        public static List<ProjectChanges> ProjectChanges { get; set; }
         public static List<string> AllFiles { get; set; }
         public static AcadApplication app { get; set; }
         public static string logFileLocation { get; set; }

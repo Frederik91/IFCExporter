@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IFCExporterWindows", "IFCEx
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IFCExporterAPI", "IFCExporterAPI\IFCExporterAPI.csproj", "{6E194667-CC15-4ECC-BFE2-732DF77E8977}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IFCExporterApplication", "IFCExporterApplication\IFCExporterApplication.csproj", "{ECD6B2CB-1947-44C2-99C7-D3B288656EDE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{6E194667-CC15-4ECC-BFE2-732DF77E8977}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6E194667-CC15-4ECC-BFE2-732DF77E8977}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6E194667-CC15-4ECC-BFE2-732DF77E8977}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ECD6B2CB-1947-44C2-99C7-D3B288656EDE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ECD6B2CB-1947-44C2-99C7-D3B288656EDE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ECD6B2CB-1947-44C2-99C7-D3B288656EDE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ECD6B2CB-1947-44C2-99C7-D3B288656EDE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

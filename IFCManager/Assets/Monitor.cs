@@ -1,5 +1,6 @@
 ﻿using IFCExporter.Models;
 using IFCExporter.Workers;
+using IFCManager.Models;
 using IFCManager.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -25,7 +26,7 @@ namespace IFCManager.Assets
         public void StartMonitoring()
         {          
             aTimer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
-            aTimer.Interval = 500;
+            aTimer.Interval = 3000;
             aTimer.Enabled = true;
         }
 
@@ -39,14 +40,23 @@ namespace IFCManager.Assets
         {
             var FDC = new FileDateComparer();
             var Conv = new ConvertToFileFolderDate();
-            var newList = Conv.Convert(FDC.GetNewFolderDateList(), FDC.GetIfcFileDateList(DataStorage.ProjectInfo.TomIFC.Export));
+            var newList = new List<FileFolderDate>();
+            foreach (var project in DataStorage.ProjectInfo)
+            {
+                var list = Conv.returnNewDateList(DataStorage.ProjectInfo);
+
+                foreach (var item in list)
+                {
+                    newList.Add(item);
+                }
+            }
             foreach (var currentFileFolder in FolderMonitorViewModel.FileFolderLastUpdatedList)
             {
                 foreach (var newFileFolder in newList)
                 {
                     if (currentFileFolder.Export == newFileFolder.Export)
                     {
-                        if (currentFileFolder.IfcUpdate != newFileFolder.IfcUpdate || currentFileFolder.FolderUpdate != newFileFolder.FolderUpdate || currentFileFolder.FileName != newFileFolder.FileName || currentFileFolder.Difference != newFileFolder.Difference)
+                        if (currentFileFolder.IfcUpdate != newFileFolder.IfcUpdate || currentFileFolder.FolderUpdate != newFileFolder.FolderUpdate || currentFileFolder.FileName != newFileFolder.FileName || currentFileFolder.Difference != newFileFolder.Difference || currentFileFolder.Updated != newFileFolder.Updated || currentFileFolder.LastSavedBy != newFileFolder.LastSavedBy)
                         {
                             FolderMonitorViewModel.FileFolderLastUpdatedList = newList;
                             return;

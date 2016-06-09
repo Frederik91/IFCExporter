@@ -43,10 +43,11 @@
     <Compile Include="Assets\XmlReader.cs" />
     <Compile Include="Models\Discipline.cs" />
     <Compile Include="Models\Export.cs" />
-    <Compile Include="Models\FileInfo.cs" />
+    <Compile Include="Models\FileData.cs" />
     <Compile Include="Models\Folder.cs" />
     <Compile Include="Models\IFCFile.cs" />
     <Compile Include="Models\IfcProjectInfo.cs" />
+    <Compile Include="Models\ProjectChanges.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup />

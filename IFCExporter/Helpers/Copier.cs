@@ -13,8 +13,11 @@ namespace IFCExporter.Helpers
 {
     public class Copier
     {
+        private Writer writer = new Writer();
+
         public void DirectoryCopy(string SourceDir, string DestDir, bool copySubDir, string FileType)
         {
+
             //Finn undermapper
             DirectoryInfo dir = new DirectoryInfo(SourceDir);
 
@@ -32,14 +35,38 @@ namespace IFCExporter.Helpers
             }
 
             //Finn filene i kildemappen og kopier dem til destinasjonsmappen
-            System.IO.FileInfo[] files = dir.GetFiles();
-            foreach (System.IO.FileInfo file in files)
+            FileInfo[] files = dir.GetFiles();
+            foreach (FileInfo file in files)
             {
+                if (file.Name.Contains("recover"))
+                {
+                    continue;
+                }
+
                 string temppath = Path.Combine(DestDir, file.Name);
 
                 if (Path.GetExtension(file.Name) == FileType)
                 {
-                    file.CopyTo(temppath, true);
+                    for (int i = 0; i < 10; i++)
+                    {
+                        try
+                        {
+                            file.CopyTo(temppath, true);
+                            var copiedFile = new FileInfo(temppath);
+
+                            if (file.Length == copiedFile.Length)
+                            {
+                                break;
+                            }
+
+                            Thread.Sleep(500);
+                        }
+                        catch (Exception e)
+                        {
+                            writer.writeLine(e.Message + "Caused by: " +  e.TargetSite);
+                            continue;
+                        }
+                    }
                 }
             }
 
@@ -82,7 +109,26 @@ namespace IFCExporter.Helpers
                 {
                     if (!File.Exists(temppath))
                     {
-                        file.CopyTo(temppath, true);
+                        for (int i = 0; i < 10; i++)
+                        {
+                            try
+                            {
+                                file.CopyTo(temppath, true);
+
+                                var originalFile = new FileInfo(file.Name);
+                                var copiedFile = new FileInfo(temppath);
+
+                                if (originalFile.Length == copiedFile.Length)
+                                {
+                                    break;
+                                }
+                                Thread.Sleep(500);
+                            }
+                            catch (Exception)
+                            {
+                                Thread.Sleep(500);
+                            }
+                        }
                     }
                 }
             }
@@ -111,14 +157,7 @@ namespace IFCExporter.Helpers
                 }
                 catch (Exception)
                 {
-                    if (i == 10)
-                    {
-                        break;
-                    }
-                    else
-                    {
-                        Thread.Sleep(1000);
-                    }                    
+                    Thread.Sleep(1000);
                 }
             }
 
@@ -130,7 +169,7 @@ namespace IFCExporter.Helpers
             System.IO.FileInfo file = new System.IO.FileInfo(SourceDir);
 
             for (int i = 0; i < 10; i++)
-            {            
+            {
                 try
                 {
                     file.CopyTo(DestDir, true);
@@ -138,26 +177,29 @@ namespace IFCExporter.Helpers
                 }
                 catch (Exception)
                 {
-                    if (i == 10)
-                    {
-                        break;
-                    }
-                    else
-                    {
-                        Thread.Sleep(1000);
-                    }
+                    Thread.Sleep(1000);
                 }
-            }          
+            }
         }
 
         public void TomIFCCopy(IFCFile TomIFC, string NewName)
         {
-            var SaveDir = Path.GetDirectoryName(TomIFC.To);
-            Directory.CreateDirectory(SaveDir);
+            for (int i = 0; i < 10; i++)
+            {
+                try
+                {
+                    var SaveDir = Path.GetDirectoryName(TomIFC.To);
+                    Directory.CreateDirectory(SaveDir);
 
-            System.IO.FileInfo file = new System.IO.FileInfo(TomIFC.From);
-            file.CopyTo(SaveDir + "\\" + NewName + ".ifc", true);
+                    System.IO.FileInfo file = new System.IO.FileInfo(TomIFC.From);
+                    file.CopyTo(SaveDir + "\\" + NewName + ".ifc", true);
+                    break;
+                }
+                catch (Exception)
+                {
+                    Thread.Sleep(500);
+                }
+            }
         }
     }
-
 }

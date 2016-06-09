@@ -15,15 +15,18 @@ namespace IFCExporter.Helpers
 {
     public class UnloadAllXrefs
     {
-        [CommandMethod("DetachAllXref")]
+        private Writer writer = new Writer();
+
         public void UnloadAllXref(List<string> LocalFilePaths)
         {
             //Get the document
             Document Doc = Application.DocumentManager.MdiActiveDocument;
             Editor ed = Doc.Editor;
 
+
             foreach (var file in LocalFilePaths)
             {
+               
                 //create a database and try to load the file
                 Database db = new Database(false, true);
                 using (db)
@@ -34,12 +37,12 @@ namespace IFCExporter.Helpers
                     }
                     catch (System.Exception)
                     {
-                        ed.WriteMessage("\nUnable to read the drawingfile.");
+                        writer.writeLine("Failed to unload xrefs in file \"" + Path.GetFileName(file) + "\"");
                         continue;
                     }
                     using (Transaction tr = db.TransactionManager.StartTransaction())
                     {
-
+                        //Detach xref
                         XrefGraph xg = db.GetHostDwgXrefGraph(true);
                         int xrefcount = xg.NumNodes - 1;
 
@@ -48,25 +51,40 @@ namespace IFCExporter.Helpers
                             ObjectIdCollection XrefColl = new ObjectIdCollection();
 
                             for (int r = 1; r < (xrefcount + 1); r++)
-                            {
+                            {                                
                                 XrefGraphNode xrefNode = xg.GetXrefNode(r);
+
+                                writer.writeLine("Unloading xref \"" + xrefNode.Name + "\"");
 
                                 ObjectId xrefId = xrefNode.BlockTableRecordId;
                                 db.DetachXref(xrefId);
-
+                                writer.writeLine("Xref unloaded");
+                                //writer.writeLine("Freezing layers");
+                                //var FL = new FreezeLayers();
+                                //var layerTable = tr.GetObject(db.LayerTableId, OpenMode.ForWrite) as LayerTable;
+                                //layerTable = FL.FreezeAllLayers(layerTable, tr);
                             }
                         }
-
+                        writer.writeLine("Comitting");
                         tr.Commit();
+                        writer.writeLine("Disposing");
                         tr.Dispose();
+                        writer.writeLine("Successfully unloaded xrefs in file \"" + Path.GetFileName(file) + "\"");
                     }
                     // Overwrite the current drawing file with new updated XRef paths
+                    writer.writeLine("Starting save prosess");
                     try
                     {
+                        var FI = new FileInfo(file);
+                        writer.writeLine("Deleting old version");
+                        FI.Delete();
+                        writer.writeLine("Saving new version");
                         db.SaveAs(file, false, DwgVersion.Current, null);
+                        writer.writeLine("Successfully saved file \"" + Path.GetFileName(file) + "\"");
                     }
                     catch (System.Exception)
                     {
+                        writer.writeLine("Failed to save file \"" + Path.GetFileName(file) + "\"");
                         continue;
                     }
                 }

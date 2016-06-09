@@ -1,9 +1,12 @@
 ﻿using IFCExporter.Models;
+using IFCExporter.Workers;
+using IFCExporterAPI.Models;
 using IFCManager.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -11,34 +14,52 @@ namespace IFCManager.Assets
 {
     public class ConvertToFileFolderDate
     {
-        public List<FileFolderDate> Convert(List<FolderDate> FolderList, List<FileDate> FileList)
+        public List<FileFolderDate> returnNewDateList(List<IfcProjectInfo> ProjectList)
         {
-            var FileFolderList = new List<FileFolderDate>();
+            var FDC = new FileDateComparer();
+            var newDateList = new List<FileFolderDate>();
 
-            foreach (var discipline in DataStorage.ProjectInfo.Disciplines)
+            foreach (var project in ProjectList)
             {
-                foreach (var export in discipline.Exports)
+                foreach (var discipline in project.Disciplines)
                 {
-                    FileFolderList.Add(new FileFolderDate { Export = export.Name, FileName = export.IFC });
+                    foreach (var export in discipline.Exports)
+                    {
+                        var IFCpath = project.TomIFC.Export + "\\" + export.IFC + ".ifc";
+                        var newestFileDate = new DateTime();
+                        string lastSavedBy;
+                        string newestDrawing = "";                        
+
+                        foreach (var folder in export.Folders)
+                        {
+                            var Drawings = Directory.GetFiles(folder.remote, "*.dwg", SearchOption.TopDirectoryOnly);
+                            foreach (var drawing in Drawings)
+                            {
+                                var lastWriteTime = File.GetLastWriteTime(drawing);
+
+                                if (lastWriteTime > newestFileDate)
+                                {
+                                    newestFileDate = lastWriteTime;
+                                    newestDrawing = drawing;
+                                }
+                            }
+                        }
+
+
+
+                        FileInfo file = new FileInfo(newestDrawing);                        
+                        var fs = file.GetAccessControl();
+                        var ir = fs.GetOwner(typeof(NTAccount));
+                        lastSavedBy = ir.Value;
+
+                        var ifcLastWrite = File.GetLastWriteTime(IFCpath);
+
+                        newDateList.Add(new FileFolderDate { FileName = export.IFC, Export = export.Name, FolderUpdate = newestFileDate, IfcUpdate = ifcLastWrite, LastSavedBy = lastSavedBy });
+                    }
                 }
             }
 
-            foreach (var fileFolder in FileFolderList)
-            {
-                if (FileList.Exists(x => Path.GetFileNameWithoutExtension(x.Path) == fileFolder.FileName))
-                {
-                    fileFolder.IfcUpdate = FileList.Find(x => Path.GetFileNameWithoutExtension(x.Path) == fileFolder.FileName).EditDate;
-                }
-
-
-                if (FolderList.Exists(x => Path.GetFileNameWithoutExtension(x.IfcName) == fileFolder.FileName))
-                {
-                    fileFolder.FolderUpdate = FolderList.Find(x => Path.GetFileNameWithoutExtension(x.IfcName) == fileFolder.FileName).LastUpdated;
-                }
-            }
-
-
-            return FileFolderList;
+            return newDateList;
         }
     }
 }

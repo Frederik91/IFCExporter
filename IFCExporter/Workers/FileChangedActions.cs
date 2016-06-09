@@ -19,7 +19,6 @@ namespace IFCExporter.Workers
         public FileChangedActions()
         {
             writer.writeLine("New FileDateComparer created");
-
         }
 
         public void startMonitoring()
@@ -45,19 +44,12 @@ namespace IFCExporter.Workers
 
         public void CheckForChanges()
         {
-            var newFolderList = FDC.GetNewFolderDateList();
-            var newIfcFileList = FDC.GetIfcFileDateList(DataStorage.ProjectInfo.TomIFC.Export);
-            var newExportList = FDC.ReturnExpiredExports(newFolderList, newIfcFileList).Distinct().ToList();
+            var FDC = new FileDateComparer();
 
-            foreach (var Export in newExportList)
-            {
-                if (DataStorage.SelectedExports.Contains(Export))
-                {
-                    DataStorage.ExportsToRun.Add(Export);
-                }
-            }
+            DataStorage.ExportsToRun = FDC.returnChangedProjectsWithDetail(DataStorage.ProjectInfo);
 
-            if (DataStorage.ExportsToRun.Count > 0)
+
+            if (DataStorage.ExportsToRun != null)
             {
                 writer.writeLine("Filechange detected, starting new export");
                 RunExport();
@@ -78,14 +70,11 @@ namespace IFCExporter.Workers
 
         private void RunExport()
         {
-            DataStorage.FilesWithChanges = FDC.ReturnDwgsInChangedExports();
-            var text = new List<string>();
-            text.Add("Following exports will be run");
-            foreach (var exp in DataStorage.ExportsToRun)
+            foreach (var project in DataStorage.ProjectInfo)
             {
-                text.Add(exp);
+                DataStorage.ProjectChanges.Add(new IFCExporterAPI.Models.ProjectChanges { Name = project.ProjectName, FilesWithChanges = FDC.ReturnDwgsInChangedExports() });
             }
-            writer.writeArray(text.ToArray());
+
             for (int i = 0; i < 5; i++)
             {
                 try

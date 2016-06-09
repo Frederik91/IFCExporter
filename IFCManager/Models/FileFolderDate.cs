@@ -13,22 +13,43 @@ namespace IFCManager.Models
         public string Export { get; set; }
         public DateTime FolderUpdate { get; set; }
         public DateTime IfcUpdate { get; set; }
-        public TimeSpan Difference
+        public string Difference
         {
             get { return CalculateDifferance(); }
         }
 
-        private TimeSpan CalculateDifferance()
+        public string Updated
+        {
+            get { return m_updated; }
+        }
+        public string LastSavedBy { get; set; }
+
+        private string m_updated;
+
+        private string CalculateDifferance()
         {
             if (FolderUpdate != null && IfcUpdate != null)
             {
                 var diff = FolderUpdate - IfcUpdate;
 
-                diff.ToString(@"hh\:mm");
+                if (diff > TimeSpan.Zero)
+                {
+                    m_updated = "Expired";
+                }
+                else
+                {
+                    m_updated = "Up to date";
+                }
 
-                return diff;
+                if (diff < TimeSpan.Zero)
+                {
+                    return "-" + diff.ToString(@"hh\:mm\:ss");
+                }
+                return diff.ToString(@"hh\:mm\:ss");
+                               
             }
-            return TimeSpan.Zero;
+
+            return TimeSpan.Zero.TotalHours.ToString(@"hh\:mm\:ss");
             
         }
 

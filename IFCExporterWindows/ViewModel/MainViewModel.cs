@@ -6,8 +6,10 @@ using Microsoft.Win32;
 using Prism.Commands;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -22,9 +24,9 @@ namespace IFCExporterWindows.ViewModel
         private ICommand m_fileExplorerCommand;
         private ICommand m_startCommand;
         private bool m_projectSelected = false;
-        public IfcProjectInfo ProjectInfo { get; set; }
+        public List<IfcProjectInfo> ProjectInfo { get; set; }
         private List<SelectedExport> m_aviliableExports = new List<SelectedExport>();
-        private bool m_automaticMode;
+        private bool m_automaticMode = true;
         private MainWindow MainWindow;
         private bool m_continuousMode;
         private bool m_continuousModeEnabled;
@@ -34,14 +36,17 @@ namespace IFCExporterWindows.ViewModel
         public bool ContinuousMode
         {
             get { return m_continuousMode; }
-            set { m_continuousMode = value;
+            set
+            {
+                m_continuousMode = value;
                 if (value == true && !ContinuousModeWarning)
                 {
                     MessageBox.Show("Warning, continuous mode can only be stopped by terminating the AutoCAD session using the Task Manager, use with caution.");
                     ContinuousModeWarning = true;
                 }
-                
-                OnPropertyChanged("ContinuousMode"); }
+
+                OnPropertyChanged("ContinuousMode");
+            }
         }
 
         public bool ContinuousModeEnabled
@@ -59,7 +64,9 @@ namespace IFCExporterWindows.ViewModel
         public bool AutomaticMode
         {
             get { return m_automaticMode; }
-            set { m_automaticMode = value;
+            set
+            {
+                m_automaticMode = value;
                 if (!m_automaticMode && m_projectSelected)
                 {
                     ContinuousModeEnabled = true;
@@ -69,29 +76,16 @@ namespace IFCExporterWindows.ViewModel
                     ContinuousModeEnabled = false;
                 }
                 OnPropertyChanged("AutomaticMode");
-                OnPropertyChanged("ManualMode"); }
+                OnPropertyChanged("ManualMode");
+            }
         }
 
         public bool ManualMode
         {
             get { return !m_automaticMode; }
-            set { m_automaticMode = !value;
-                if (!m_automaticMode && ProjectSelected )
-                {
-                    ContinuousModeEnabled = true;
-                }
-                else
-                {
-                    ContinuousModeEnabled = false;
-                }
-                OnPropertyChanged("ManualMode");
-                OnPropertyChanged("AutomaticMode"); }
-        }
-
-        public bool ProjectSelected
-        {
-            get { return m_projectSelected; }
-            set { m_projectSelected = value;
+            set
+            {
+                m_automaticMode = !value;
                 if (!m_automaticMode && ProjectSelected)
                 {
                     ContinuousModeEnabled = true;
@@ -100,7 +94,27 @@ namespace IFCExporterWindows.ViewModel
                 {
                     ContinuousModeEnabled = false;
                 }
-                OnPropertyChanged("ProjectSelected"); }
+                OnPropertyChanged("ManualMode");
+                OnPropertyChanged("AutomaticMode");
+            }
+        }
+
+        public bool ProjectSelected
+        {
+            get { return m_projectSelected; }
+            set
+            {
+                m_projectSelected = value;
+                if (!m_automaticMode && ProjectSelected)
+                {
+                    ContinuousModeEnabled = true;
+                }
+                else
+                {
+                    ContinuousModeEnabled = false;
+                }
+                OnPropertyChanged("ProjectSelected");
+            }
         }
 
         public List<SelectedExport> AviliableExports
@@ -124,7 +138,7 @@ namespace IFCExporterWindows.ViewModel
             get { return m_toggleSelectedExportsCommand; }
             set { m_toggleSelectedExportsCommand = value; OnPropertyChanged("ToggleSelectedExportsCommand"); }
         }
-        
+
         public string ToggleSelectedExportsText
         {
             get { return m_toggleSelectedExportsText; }
@@ -153,7 +167,7 @@ namespace IFCExporterWindows.ViewModel
                 if (Export.IsSelected)
                 {
                     ExportsToRun.Add(Export.Export);
-                }                
+                }
             }
 
             MainWindow.Close();
@@ -186,17 +200,35 @@ namespace IFCExporterWindows.ViewModel
 
         private void OpenExplorerExecute()
         {
+            ProjectInfo = new List<IfcProjectInfo>();
+
+
             OpenFileDialog fileDialog = new OpenFileDialog();
             fileDialog.Filter = "XML-files (*.xml)|*.xml";
+            fileDialog.Multiselect = true;
             fileDialog.ShowDialog();
 
-            if (fileDialog.CheckFileExists && fileDialog.FileName != string.Empty)
+            if (fileDialog.FileNames.Length > 1 && fileDialog.FileNames.Length != 0)
             {
                 var reader = new XmlReader();
-                ProjectInfo = reader.GetprojectInfo(fileDialog.FileName);
-                CreateExportList();
+                foreach (var file in fileDialog.FileNames)
+                {
+                    ProjectInfo.Add(reader.GetprojectInfo(file));
+                }
+                //CreateExportList();
                 ProjectSelected = true;
-                SelectedProjectPath = fileDialog.FileName;
+                //SelectedProjectPath = "*Multiple*";
+            }
+            else
+            {
+                if (fileDialog.CheckFileExists && fileDialog.FileName != string.Empty)
+                {
+                    var reader = new XmlReader();
+                    ProjectInfo.Add(reader.GetprojectInfo(fileDialog.FileName));
+                    CreateExportList();
+                    ProjectSelected = true;
+                    SelectedProjectPath = fileDialog.FileName;
+                }
             }
         }
 
@@ -205,15 +237,17 @@ namespace IFCExporterWindows.ViewModel
             try
             {
                 var list = new List<SelectedExport>();
-                foreach (var Discipline in ProjectInfo.Disciplines)
+                foreach (var proj in ProjectInfo)
                 {
-
-                    foreach (var Export in Discipline.Exports)
+                    foreach (var Discipline in proj.Disciplines)
                     {
-                        list.Add(new SelectedExport { Export = Export.Name, IsSelected = false });
+                        foreach (var Export in Discipline.Exports)
+                        {
+                            list.Add(new SelectedExport { Export = proj.ProjectName + " - " + Export.Name, IsSelected = false });
+                        }
                     }
+                    AviliableExports = list;
                 }
-                AviliableExports = list;
             }
             catch (Exception)
             {

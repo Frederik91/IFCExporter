@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:IFCManager.View"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="560">
+             d:DesignHeight="300" d:DesignWidth="730">
     <Grid>
 
         <DataGrid ItemsSource="{Binding FileFolderLastUpdatedList}" AutoGenerateColumns="false">
@@ -14,30 +14,10 @@
                 <DataGridTextColumn Header ="Export" Binding="{Binding Export}"/>
                 <DataGridTextColumn Header ="Last drawing update" Binding="{Binding FolderUpdate}"/>
                 <DataGridTextColumn Header ="Last IFC update" Binding="{Binding IfcUpdate}"/>
-                <DataGridTextColumn Header ="Difference" Binding="{Binding Difference}"/>                
-            </DataGrid.Columns>            
+                <DataGridTextColumn Header ="Difference" Binding="{Binding Difference}"/>
+                <DataGridTextColumn Header ="Status" Binding="{Binding Updated}"/>
+                <DataGridTextColumn Header ="Last saved by" Binding="{Binding LastSavedBy}"/>
+            </DataGrid.Columns>
         </DataGrid>
-        
-        <!--<ListView ItemsSource="{Binding Path=FileFolderLastUpdatedList}" IsEnabled="{Binding MonitorRunning}">
-            <ListView.View>
-                <GridView>
-                    <GridViewColumn DisplayMemberBinding="{Binding FileName}" 
-                                        Header="File name" 
-                                        Width="Auto"/>
-                    <GridViewColumn DisplayMemberBinding="{Binding Export}" 
-                                        Header="Export" 
-                                        Width="Auto"/>
-                    <GridViewColumn DisplayMemberBinding="{Binding FolderUpdate}" 
-                                        Header="Last drawing update" 
-                                        Width="Auto"/>
-                    <GridViewColumn DisplayMemberBinding="{Binding IfcUpdate}" 
-                                        Header="Last IFC update" 
-                                        Width="Auto"/>
-                    <GridViewColumn DisplayMemberBinding="{Binding Difference}" 
-                                        Header="Difference" 
-                                        Width="Auto"/>
-                </GridView>
-            </ListView.View>
-        </ListView>-->
     </Grid>
 </UserControl>

@@ -2,6 +2,7 @@
 using IFCExporter.Models;
 using IFCExporter.Workers;
 using IFCExporterAPI.Assets;
+using IFCExporterAPI.Models;
 using Microsoft.Win32;
 using Prism.Commands;
 using System;
@@ -51,7 +52,7 @@ namespace IFCManager.ViewModel
         {
             get { return m_fileExplorerCommand; }
             set { m_fileExplorerCommand = value; OnPropertyChanged("FileExplorerCommand"); }
-        }
+        }    
 
         public bool IsSettingsOpen
         {
@@ -85,7 +86,9 @@ namespace IFCManager.ViewModel
             if (fileDialog.CheckFileExists)
             {
                 var reader = new XmlReader();
-                DataStorage.ProjectInfo = reader.GetprojectInfo(fileDialog.FileName);
+                var projInfo = new List<IfcProjectInfo>();
+                projInfo.Add(reader.GetprojectInfo(fileDialog.FileName));
+                DataStorage.ProjectInfo = projInfo;
                 XmlViewModel.FolderMonitorViewModels[XmlViewModel.SelectedTabIndex].StartMonitoring();
                 IsSettingsOpen = false;      
             }

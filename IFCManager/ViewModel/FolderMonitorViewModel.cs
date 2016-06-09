@@ -56,9 +56,21 @@ namespace IFCManager.ViewModel
         {
             var FDC = new FileDateComparer();
             var Conv = new ConvertToFileFolderDate();
-            FileFolderLastUpdatedList = Conv.Convert(FDC.GetNewFolderDateList(), FDC.GetIfcFileDateList(DataStorage.ProjectInfo.TomIFC.Export));
+            var newList = new List<FileFolderDate>();
+
+            foreach (var project in DataStorage.ProjectInfo)
+            {
+                var List = Conv.returnNewDateList(DataStorage.ProjectInfo);
+
+                foreach (var item in List)
+                {
+                    newList.Add(item);
+                }
+            }
+
             var monitor = new Monitor(this);
-            ProjectName = DataStorage.ProjectInfo.ProjectName;
+            ProjectName = DataStorage.ProjectInfo[0].ProjectName;
+            FileFolderLastUpdatedList = newList;
             monitor.StartMonitoring();
         }
     }

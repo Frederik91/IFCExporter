@@ -1,0 +1,14 @@
+﻿<Window x:Class="IFCExporterApplication.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:IFCExporterApplication"
+        xmlns:ViewModel="clr-namespace:IFCExporterApplication.ViewModel"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="350" Width="525">
+    <Grid>
+        <Button HorizontalAlignment="Left" VerticalAlignment="center" Height="70" Width="200" Content="Start AutoCAD" FontSize="20" Command="{Binding startAutoCADCommand}"/>
+        <Button HorizontalAlignment="Right" VerticalAlignment="center" Height="70" Width="200" Content="Close AutoCAD" FontSize="20" Command="{Binding closeAutoCADCommand}"/>
+    </Grid>
+</Window>
