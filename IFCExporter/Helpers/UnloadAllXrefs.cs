@@ -59,17 +59,18 @@ namespace IFCExporter.Helpers
                                 ObjectId xrefId = xrefNode.BlockTableRecordId;
                                 db.DetachXref(xrefId);
                                 writer.writeLine("Xref unloaded");
-                                //writer.writeLine("Freezing layers");
-                                //var FL = new FreezeLayers();
-                                //var layerTable = tr.GetObject(db.LayerTableId, OpenMode.ForWrite) as LayerTable;
-                                //layerTable = FL.FreezeAllLayers(layerTable, tr);
                             }
                         }
+
+                        var setView = new setView();
+                        setView.set2DView(Doc, db, tr);
+                        writer.writeLine("Setting Viewport to 2D");
+
                         writer.writeLine("Comitting");
                         tr.Commit();
                         writer.writeLine("Disposing");
                         tr.Dispose();
-                        writer.writeLine("Successfully unloaded xrefs in file \"" + Path.GetFileName(file) + "\"");
+                        writer.writeLine("Successfully unloaded xrefs in file \"" + Path.GetFileName(file) + "\""); 
                     }
                     // Overwrite the current drawing file with new updated XRef paths
                     writer.writeLine("Starting save prosess");

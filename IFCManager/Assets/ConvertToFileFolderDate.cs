@@ -45,12 +45,17 @@ namespace IFCManager.Assets
                             }
                         }
 
-
-
-                        FileInfo file = new FileInfo(newestDrawing);                        
-                        var fs = file.GetAccessControl();
-                        var ir = fs.GetOwner(typeof(NTAccount));
-                        lastSavedBy = ir.Value;
+                        try
+                        {
+                            FileInfo file = new FileInfo(newestDrawing);
+                            var fs = file.GetAccessControl();
+                            var ir = fs.GetOwner(typeof(NTAccount));
+                            lastSavedBy = ir.Value;
+                        }
+                        catch (Exception)
+                        {
+                            lastSavedBy = "Not available";
+                        }
 
                         var ifcLastWrite = File.GetLastWriteTime(IFCpath);
 

@@ -1,6 +1,7 @@
 ﻿using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.Interop;
 using IFCExporterApplication.Models;
+using IFCManager.ViewModel;
 using Microsoft.Practices.Prism.Commands;
 using System;
 using System.Collections.Generic;

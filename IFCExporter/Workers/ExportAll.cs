@@ -33,7 +33,6 @@ namespace IFCExporter.Models
             var DM = new DrawingManager();
             var Projects = DataStorage.ExportsToRun;
             var UAX = new UnloadAllXrefs();
-            var FL = new FreezeLayers();
 
             foreach (var project in Projects)
             {
