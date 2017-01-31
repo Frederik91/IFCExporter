@@ -37,7 +37,13 @@ namespace IFCExporter.Helpers
 
             File.Delete(DataStorage.logFileLocation);
 
-            File.AppendAllLines(DataStorage.logFileLocation, newTextfile.ToArray());
+            try
+            {
+                File.AppendAllLines(DataStorage.logFileLocation, newTextfile.ToArray());
+            }
+            catch {}
+
+
 
         }
 
@@ -52,7 +58,13 @@ namespace IFCExporter.Helpers
                 textArray.Add(DateTime.Now + " @ " + line);
             }
 
-            File.AppendAllLines(DataStorage.logFileLocation, textArray);
+            try
+            {
+                File.AppendAllLines(DataStorage.logFileLocation, textArray);
+            }
+            catch {}
+
+
         }
 
         private void checkFileSize()
