@@ -110,5 +110,10 @@ namespace IFCManager.Assets
         {
             SendMessage(hwnd, WM_CLOSE, IntPtr.Zero, IntPtr.Zero);
         }
+
+        private static void TerminateProcess(object source, ElapsedEventArgs e)
+        {
+            
+        }
     }
 }

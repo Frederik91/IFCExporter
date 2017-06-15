@@ -60,7 +60,7 @@ namespace IFCMonitor.Assets
                             acApp.Visible = true;
                             acApp.ActiveDocument.SendCommand("AutomaticIFC" + " " + xmlPath + " " + fileFolderDate.Id.ToString() + " ");
                             acApp.ActiveDocument.SendCommand("_.MAGIEPROJECT2 ");
-                            acApp.ActiveDocument.SendCommand("_.MAGIHPVVPROJECT2 ");
+                            acApp.ActiveDocument.SendCommand("_.MAGIHPVPROJECT2 ");
                             acApp.ActiveDocument.SendCommand("_.-MAGIIFC " + fileFolderDate.Name + "\n");
                             CopyIfc(fileFolderDate.Project, fileFolderDate.Name, fileFolderDate.IfcName);
                             exportCompleted = true;
