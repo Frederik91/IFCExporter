@@ -23,6 +23,7 @@ namespace IFCManager.ViewModel
         private ICommand m_fileExplorerCommand;
         private XmlViewModel m_xmlViewModel;
         private ICommand m_newProjectCommand;
+        public string XmlPath { get; set; }
 
 
         public XmlViewModel XmlViewModel { get { return m_xmlViewModel; } set { m_xmlViewModel = value; OnPropertyChanged("XmlViewModel"); } }
@@ -67,12 +68,12 @@ namespace IFCManager.ViewModel
         public MainViewModel()
         {
             NewProjectCommand = new DelegateCommand(AddNewProject);
-            m_openSettings = new DelegateCommand(flip);
+            m_openSettings = new DelegateCommand(Flip);
             FileExplorerCommand = new DelegateCommand(OpenExplorerExecute);
-            XmlViewModel = new XmlViewModel();
+            XmlViewModel = new XmlViewModel(this);
         }
 
-        private void flip()
+        private void Flip()
         {
             IsSettingsOpen = !IsSettingsOpen;
         }
@@ -86,18 +87,21 @@ namespace IFCManager.ViewModel
             if (fileDialog.CheckFileExists)
             {
                 var reader = new XmlReader();
-                var projInfo = new List<IfcProjectInfo>();
-                projInfo.Add(reader.GetprojectInfo(fileDialog.FileName));
+                var projInfo = new List<IfcProjectInfo>
+                {
+                    reader.GetprojectInfo(fileDialog.FileName)
+                };
                 DataStorage.ProjectInfo = projInfo;
                 XmlViewModel.FolderMonitorViewModels[XmlViewModel.SelectedTabIndex].StartMonitoring();
-                IsSettingsOpen = false;      
+                IsSettingsOpen = false;
+                XmlPath = fileDialog.FileName;
             }
         }
 
 
         private void AddNewProject()
         {
-            var newProject = new FolderMonitorViewModel { ProjectName = "New Project" };
+            var newProject = new FolderMonitorViewModel(this) { ProjectName = "New Project" };
 
             XmlViewModel.FolderMonitorViewModels.Add(newProject);
 

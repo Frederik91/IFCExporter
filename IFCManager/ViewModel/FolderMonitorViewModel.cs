@@ -2,6 +2,7 @@
 using IFCExporter.Workers;
 using IFCManager.Assets;
 using IFCManager.Models;
+using IFCMonitor.Assets;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -13,6 +14,8 @@ namespace IFCManager.ViewModel
 {
     public class FolderMonitorViewModel : ViewModelBase
     {
+        public MainViewModel MainViewModel { get; set; }
+
         private string m_projectName;
         private int m_selectedTabIndex;
         private List<FileFolderDate> m_fileFolderLastUpdatedList;
@@ -48,8 +51,9 @@ namespace IFCManager.ViewModel
             set { m_projectName = value; OnPropertyChanged("ProjectName"); }
         }
 
-        public FolderMonitorViewModel()
+        public FolderMonitorViewModel(MainViewModel _mainViewModel)
         {
+            MainViewModel = _mainViewModel;
         }
 
         public void StartMonitoring()
@@ -60,7 +64,7 @@ namespace IFCManager.ViewModel
 
             foreach (var project in DataStorage.ProjectInfo)
             {
-                var List = Conv.returnNewDateList(DataStorage.ProjectInfo);
+                var List = Conv.ReturnNewDateList(DataStorage.ProjectInfo);
 
                 foreach (var item in List)
                 {

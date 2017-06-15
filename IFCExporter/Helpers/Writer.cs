@@ -10,9 +10,9 @@ namespace IFCExporter.Helpers
 {
     public class Writer
     {
-        public void writeArray(string[] text)
+        public void WriteArray(string[] text)
         {
-            checkFileSize();
+            CheckFileSize();
 
             var textArray = new List<string>();
 
@@ -25,9 +25,9 @@ namespace IFCExporter.Helpers
 
         }
 
-        public void removeLastLine(string[] text)
+        public void RemoveLastLine(string[] text)
         {
-            checkFileSize();
+            CheckFileSize();
 
             var newTextfile = new List<string>();
             for (int i = 0; i < text.Length - 1; i++)
@@ -47,9 +47,9 @@ namespace IFCExporter.Helpers
 
         }
 
-        public void writeLine(params string[] text)
+        public void WriteLine(params string[] text)
         {
-            checkFileSize();
+            CheckFileSize();
 
             var textArray = new List<string>();
 
@@ -67,7 +67,7 @@ namespace IFCExporter.Helpers
 
         }
 
-        private void checkFileSize()
+        private void CheckFileSize()
         {
             if (File.Exists(DataStorage.logFileLocation))
             {

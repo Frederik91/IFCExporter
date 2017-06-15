@@ -18,7 +18,7 @@ namespace IFCExporter.Workers
 
         public FileChangedActions()
         {
-            writer.writeLine("New FileDateComparer created");
+            writer.WriteLine("New FileDateComparer created");
         }
 
         public void startMonitoring()
@@ -51,7 +51,7 @@ namespace IFCExporter.Workers
 
             if (DataStorage.ExportsToRun != null)
             {
-                writer.writeLine("Filechange detected, starting new export");
+                writer.WriteLine("Filechange detected, starting new export");
                 RunExport();
             }
             else
@@ -60,10 +60,10 @@ namespace IFCExporter.Workers
                 var length = textfile.Length;
                 if (textfile[length - 1].Contains("No change detected"))
                 {
-                    writer.removeLastLine(textfile);
+                    writer.RemoveLastLine(textfile);
                 }
 
-                writer.writeLine("No change detected, waiting...");
+                writer.WriteLine("No change detected, waiting...");
                 startMonitoring();
             }
         }
@@ -92,8 +92,8 @@ namespace IFCExporter.Workers
                 {
                     if (i == 4)
                     {
-                        writer.writeLine("Error: " + e.Message);
-                        writer.writeLine("Failed to start export");
+                        writer.WriteLine("Error: " + e.Message);
+                        writer.WriteLine("Failed to start export");
                         break;
                     }
                     Thread.Sleep(2000);

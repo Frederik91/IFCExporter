@@ -4,9 +4,9 @@ using System.IO;
 
 namespace IFCExporter.Helpers
 {
-    class setView
+    class SetView
     {
-        public void set2DView(Document acDoc, Database acCurDb, Transaction acTrans)
+        public void Set2DView(Document acDoc, Database acCurDb, Transaction acTrans)
         {
             // Open the Viewport table for read
             ViewportTable acVportTbl;
@@ -21,7 +21,7 @@ namespace IFCExporter.Helpers
 
                     if (first)
                     {
-                        var vStyle = get2DVisualStyle(acDoc, acCurDb);
+                        var vStyle = Get2DVisualStyle(acDoc, acCurDb);
 
 
                         acVportTblRec.UpgradeOpen();
@@ -46,7 +46,7 @@ namespace IFCExporter.Helpers
         }
 
 
-        private DBVisualStyle get2DVisualStyle(Document acDoc, Database acCurDb)
+        private DBVisualStyle Get2DVisualStyle(Document acDoc, Database acCurDb)
         {
 
             using (Transaction acTrans = acCurDb.TransactionManager.StartTransaction())

@@ -33,7 +33,7 @@ namespace IFCExporter.Helpers
                             if (i == 9)
                             {
                                 var writer = new Writer();
-                                writer.writeLine("Unable to close drawing " + Doc.Name);
+                                writer.WriteLine("Unable to close drawing " + Doc.Name);
                             }
                         }
                     }
@@ -62,7 +62,7 @@ namespace IFCExporter.Helpers
                             if (i == 9)
                             {
                                 var writer = new Writer();
-                                writer.writeLine("Unable to close drawing " + Doc.Name);
+                                writer.WriteLine("Unable to close drawing " + Doc.Name);
                             }
                         }
                     }

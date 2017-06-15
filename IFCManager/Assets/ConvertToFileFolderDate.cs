@@ -14,7 +14,7 @@ namespace IFCManager.Assets
 {
     public class ConvertToFileFolderDate
     {
-        public List<FileFolderDate> returnNewDateList(List<IfcProjectInfo> ProjectList)
+        public List<FileFolderDate> ReturnNewDateList(List<IfcProjectInfo> ProjectList)
         {
             var FDC = new FileDateComparer();
             var newDateList = new List<FileFolderDate>();
@@ -59,7 +59,18 @@ namespace IFCManager.Assets
 
                         var ifcLastWrite = File.GetLastWriteTime(IFCpath);
 
-                        newDateList.Add(new FileFolderDate { FileName = export.IFC, Export = export.Name, FolderUpdate = newestFileDate, IfcUpdate = ifcLastWrite, LastSavedBy = lastSavedBy });
+                        newDateList.Add(new FileFolderDate
+                        {
+                            FileName = export.IFC,
+                            Export = export.Name,
+                            FolderUpdate = newestFileDate,
+                            IfcUpdate = ifcLastWrite,
+                            LastSavedBy = lastSavedBy,
+                            Id = export.Id,
+                            Name = export.Name,
+                            IfcName = export.IFC,
+                            Project = project
+                        });
                     }
                 }
             }

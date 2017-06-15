@@ -105,7 +105,34 @@ namespace IFCExporter
         public void AutoModeIFC()
         {
             var EA = new ExportAll(true);
-            EA.Run();
+            EA.Run(Guid.Empty);
+        }
+
+        [CommandMethod("AutomaticIFC", CommandFlags.Session)]
+        public void AutomaticIFC()
+        {
+            Editor ed = Application.DocumentManager.MdiActiveDocument.Editor;
+
+            PromptResult prConfigPath = ed.GetString("\nEnter path to xml-file: ");
+            if (prConfigPath.Status != PromptStatus.OK)
+            {
+                ed.WriteMessage("No string was provided\n");
+                return;
+            }
+
+            PromptResult prExportId = ed.GetString("\nEnter export id: ");
+            if (prConfigPath.Status != PromptStatus.OK)
+            {
+                ed.WriteMessage("No string was provided\n");
+                return;
+            }
+
+            if (Guid.TryParse(prExportId.StringResult, out Guid id))
+            {
+                var expAll = new ExportAll(false);
+                expAll.Run(id, prConfigPath.StringResult);
+            }
+
         }
 
 
@@ -119,14 +146,16 @@ namespace IFCExporter
                 while (true)
                 {
                     var expAll = new ExportAll(AutomaticBool);
-                    expAll.Run();
+                    expAll.Run(Guid.Empty);
                 }
             }
             else
             {
-                var text = new List<string>();
-                text.Add("Starting one-time IFC-export at: " + DateTime.Now);
-                text.Add("Will be running the following exports: ");
+                var text = new List<string>
+                {
+                    "Starting one-time IFC-export at: " + DateTime.Now,
+                    "Will be running the following exports: "
+                };
                 DataStorage.ExportsToRun = ProjectInfo;
                 //foreach (var exp in DataStorage.ExportsToRun)
                 //{
@@ -134,7 +163,7 @@ namespace IFCExporter
                 //}
                 //writer.writeArray(text.ToArray());
                 var expAll = new ExportAll(AutomaticBool);
-                expAll.Run();
+                expAll.Run(Guid.Empty);
             }
         }
 

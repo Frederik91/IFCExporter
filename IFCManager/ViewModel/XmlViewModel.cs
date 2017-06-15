@@ -18,7 +18,8 @@ using System.Windows.Input;
 namespace IFCManager.ViewModel
 {
     public class XmlViewModel : ViewModelBase
-    {            
+    {
+        public MainViewModel MainViewModel;
         private bool m_monitorRunning = false;
         private ObservableCollection<FolderMonitorViewModel> m_folderMonitorViewModels;
         private int m_selectedTabIndex;
@@ -41,8 +42,9 @@ namespace IFCManager.ViewModel
             }
         }
 
-        public XmlViewModel()
+        public XmlViewModel(MainViewModel _mainViewModel)
         {
+            MainViewModel = _mainViewModel;
             FolderMonitorViewModels = InitialSetupXmlViewModel();
         }
         public ICommand TestCommand { get; set; }
@@ -56,12 +58,14 @@ namespace IFCManager.ViewModel
 
         private ObservableCollection<FolderMonitorViewModel> InitialSetupXmlViewModel()
         {
+            ObservableCollection<FolderMonitorViewModel> xmlVms = new ObservableCollection<FolderMonitorViewModel>
+            {
+                new FolderMonitorViewModel(MainViewModel)
+                {
+                    ProjectName = "No project selected"
+                }
+            };
 
-            var xmlVM = new FolderMonitorViewModel();
-            xmlVM.ProjectName = "No project selected";
-
-            ObservableCollection<FolderMonitorViewModel> xmlVms = new ObservableCollection<FolderMonitorViewModel>();
-            xmlVms.Add(xmlVM);
             return xmlVms;
         }
     }

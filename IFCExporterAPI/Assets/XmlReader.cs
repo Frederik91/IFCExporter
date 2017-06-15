@@ -30,6 +30,17 @@ namespace IFCExporterAPI.Assets
                     var _export = new Export { Folders = new List<Folder>() };
                     _export.Name = exp.Attribute("Value").Value;
                     _export.IFC = exp.Attribute("IFC").Value;
+                    if (exp.Attribute("Id") is XAttribute xAtt)
+                    {
+                        if (Guid.TryParse(xAtt.Value, out Guid id))
+                        {
+                            _export.Id = id;
+                        };
+                    }
+                    if (_export.Id == null || _export.Id == Guid.Empty)
+                    {
+                        _export.Id = Guid.NewGuid();
+                    }
                     var folders = exp.Elements("Folder");
                     foreach (var folder in folders)
                     {

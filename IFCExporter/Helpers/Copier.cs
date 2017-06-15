@@ -63,7 +63,7 @@ namespace IFCExporter.Helpers
                         }
                         catch (Exception e)
                         {
-                            writer.writeLine(e.Message + "Caused by: " +  e.TargetSite);
+                            writer.WriteLine(e.Message + "Caused by: " +  e.TargetSite);
                             continue;
                         }
                     }

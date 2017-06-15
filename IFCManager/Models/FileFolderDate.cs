@@ -1,4 +1,6 @@
-﻿using System;
+﻿using IFCExporterAPI.Models;
+using IFCMonitor.Assets;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -9,22 +11,26 @@ namespace IFCManager.Models
 {
     public class FileFolderDate
     {
-        public string FileName { get; set; }
+        public Guid Id { get; set; }
+        public string Name { get; set; }
         public string Export { get; set; }
+        public string FileName { get; set; }
+        public IfcProjectInfo Project { get; set; }
+        public string IfcName { get; set; }
         public DateTime FolderUpdate { get; set; }
         public DateTime IfcUpdate { get; set; }
         public string Difference
         {
             get { return CalculateDifferance(); }
         }
-
-        public string Updated
+        public bool Expired { get; set; }
+        public UpdateStatus Updated
         {
             get { return m_updated; }
         }
         public string LastSavedBy { get; set; }
 
-        private string m_updated;
+        private UpdateStatus m_updated;
 
         private string CalculateDifferance()
         {
@@ -34,11 +40,11 @@ namespace IFCManager.Models
 
                 if (diff > TimeSpan.Zero)
                 {
-                    m_updated = "Expired";
+                    m_updated = UpdateStatus.Expired;
                 }
                 else
                 {
-                    m_updated = "Up to date";
+                    m_updated = UpdateStatus.Updated;
                 }
 
                 if (diff < TimeSpan.Zero)
@@ -53,5 +59,11 @@ namespace IFCManager.Models
             
         }
 
+    }
+
+    public enum UpdateStatus
+    {
+        Expired,
+        Updated
     }
 }

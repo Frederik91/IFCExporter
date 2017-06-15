@@ -8,6 +8,7 @@ namespace IFCExporterAPI.Models
 {
     public class Export
     {
+        public Guid Id { get; set; }
         public string Name { get; set; }
         public List<Folder> Folders { get; set; }
         public string IFC { get; set; }

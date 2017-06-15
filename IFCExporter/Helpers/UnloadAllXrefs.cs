@@ -37,7 +37,7 @@ namespace IFCExporter.Helpers
                     }
                     catch (System.Exception)
                     {
-                        writer.writeLine("Failed to unload xrefs in file \"" + Path.GetFileName(file) + "\"");
+                        writer.WriteLine("Failed to unload xrefs in file \"" + Path.GetFileName(file) + "\"");
                         continue;
                     }
                     using (Transaction tr = db.TransactionManager.StartTransaction())
@@ -54,38 +54,38 @@ namespace IFCExporter.Helpers
                             {                                
                                 XrefGraphNode xrefNode = xg.GetXrefNode(r);
 
-                                writer.writeLine("Unloading xref \"" + xrefNode.Name + "\"");
+                                writer.WriteLine("Unloading xref \"" + xrefNode.Name + "\"");
 
                                 ObjectId xrefId = xrefNode.BlockTableRecordId;
                                 db.DetachXref(xrefId);
-                                writer.writeLine("Xref unloaded");
+                                writer.WriteLine("Xref unloaded");
                             }
                         }
 
-                        var setView = new setView();
-                        setView.set2DView(Doc, db, tr);
-                        writer.writeLine("Setting Viewport to 2D");
+                        var setView = new SetView();
+                        setView.Set2DView(Doc, db, tr);
+                        writer.WriteLine("Setting Viewport to 2D");
 
-                        writer.writeLine("Comitting");
+                        writer.WriteLine("Comitting");
                         tr.Commit();
-                        writer.writeLine("Disposing");
+                        writer.WriteLine("Disposing");
                         tr.Dispose();
-                        writer.writeLine("Successfully unloaded xrefs in file \"" + Path.GetFileName(file) + "\""); 
+                        writer.WriteLine("Successfully unloaded xrefs in file \"" + Path.GetFileName(file) + "\""); 
                     }
                     // Overwrite the current drawing file with new updated XRef paths
-                    writer.writeLine("Starting save prosess");
+                    writer.WriteLine("Starting save prosess");
                     try
                     {
                         var FI = new FileInfo(file);
-                        writer.writeLine("Deleting old version");
+                        writer.WriteLine("Deleting old version");
                         FI.Delete();
-                        writer.writeLine("Saving new version");
+                        writer.WriteLine("Saving new version");
                         db.SaveAs(file, false, DwgVersion.Current, null);
-                        writer.writeLine("Successfully saved file \"" + Path.GetFileName(file) + "\"");
+                        writer.WriteLine("Successfully saved file \"" + Path.GetFileName(file) + "\"");
                     }
                     catch (System.Exception)
                     {
-                        writer.writeLine("Failed to save file \"" + Path.GetFileName(file) + "\"");
+                        writer.WriteLine("Failed to save file \"" + Path.GetFileName(file) + "\"");
                         continue;
                     }
                 }

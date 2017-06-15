@@ -18,11 +18,7 @@ namespace IFCManager.ViewModel
 
         protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
         {
-            var handler = this.PropertyChanged;
-            if (handler != null)
-            {
-                handler(this, e);
-            }
+            this.PropertyChanged?.Invoke(this, e);
         }
     }
 }

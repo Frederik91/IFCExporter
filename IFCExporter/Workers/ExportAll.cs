@@ -3,6 +3,8 @@ using Autodesk.AutoCAD.Interop;
 using Autodesk.AutoCAD.Runtime;
 using IFCExporter.Helpers;
 using IFCExporter.Workers;
+using IFCExporterAPI.Assets;
+using IFCExporterAPI.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -28,65 +30,109 @@ namespace IFCExporter.Models
             AutomaticBool = automaticBool;
         }
 
-        public void Run()
+        public void Run(Guid id, string xmlPath = null)
         {
             var DM = new DrawingManager();
             var Projects = DataStorage.ExportsToRun;
             var UAX = new UnloadAllXrefs();
 
+            if (id != Guid.Empty)
+            {
+                var reader = new XmlReader();
+                if (File.Exists(xmlPath))
+                {
+                    Projects = new List<IfcProjectInfo> { reader.GetprojectInfo(xmlPath) };
+                }
+                else
+                {
+                    return;
+                }
+
+            }
+
             foreach (var project in Projects)
             {
-                foreach (var Discipline in project.Disciplines)
+                foreach (var discipline in project.Disciplines)
                 {
-                    foreach (var Export in Discipline.Exports)
+                    foreach (var folder in discipline.Exports.SelectMany(x => x.Folders))
                     {
-                        writer.writeLine("Preparing export: " + Export.Name + "\n");
+                        if (Directory.Exists(folder.local))
+                        {
+                            var filesInRemote = Directory.GetFiles(folder.remote).ToList();
+                            var filesInLocal = Directory.GetFiles(folder.local).ToList();
+                            var filesNotInLocal = filesInRemote.Where(x => !filesInLocal.Contains(x));
+                            if (filesNotInLocal.Count() > 0)
+                            {
+                                foreach (var file in filesNotInLocal)
+                                {
+                                    File.Copy(file, Path.Combine(folder.local, Path.GetFileName(file)), true);
+                                }
+                            }                            
+                        }
+                        else
+                        {
+                            CP.DirectoryCopy(folder.remote, folder.local, false, ".dwg");
+                        }
+                    }
+                    foreach (var export in discipline.Exports)
+                    {
+                        if (id != Guid.Empty && id != export.Id)
+                        {
+                            continue;
+                        }
+
+                        writer.WriteLine("Preparing export: " + export.Name + "\n");
 
                         //Last ned DWG-filer
-                        foreach (var folder in Export.Folders)
+                        foreach (var folder in export.Folders)
                         {
-                            writer.writeLine("Downloading folder:  " + folder.remote + "\n");
+                            writer.WriteLine("Downloading folder:  " + folder.remote + "\n");
                             CP.DirectoryCopy(folder.remote, folder.local, false, ".dwg");
 
                             var drawings = Directory.GetFiles(folder.local, "*.dwg").ToList();
 
-                            writer.writeLine("Unloading Xrefs");
-                            UAX.UnloadAllXref(drawings);
+                            //writer.WriteLine("Unloading Xrefs");
+                            //UAX.UnloadAllXref(drawings);
+                        }
+
+                        if (!File.Exists(discipline.StartFile.To))
+                        {
+                            File.Copy(discipline.StartFile.From, discipline.StartFile.To);
                         }
 
 
                         //Lag ny IFC for eksport
-                        writer.writeLine("Creating new IFC");
-                        CP.TomIFCCopy(project.TomIFC, Export.Name);
+                        writer.WriteLine("Creating new IFC");
+                        CP.TomIFCCopy(project.TomIFC, export.Name);
 
                         //Last ned single filer
-                        writer.writeLine("Downloading " + project.Files.Count + " single files");
+                        writer.WriteLine("Downloading " + project.Files.Count + " single files");
                         foreach (var File in project.Files)
                         {
                             CP.CopySingleFile(File.From, File.To);
                         }
 
                         //--Åpne starttegning
-                        writer.writeLine("Opening startfile");
-                        DM.OpenDrawingReadOnly(Discipline.StartFile.To);
+                        writer.WriteLine("Opening startfile");
+                        DM.OpenDrawingReadOnly(discipline.StartFile.To);
 
                         //--Kjør eksport
-                        if (Application.DocumentManager.MdiActiveDocument.Name != Discipline.StartFile.To)
+                        if (Application.DocumentManager.MdiActiveDocument.Name != discipline.StartFile.To)
                         {
-                            writer.writeLine("Setting active document");
-                            Application.DocumentManager.MdiActiveDocument = DM.GetDrawingByName(Discipline.StartFile.To);
+                            writer.WriteLine("Setting active document");
+                            Application.DocumentManager.MdiActiveDocument = DM.GetDrawingByName(discipline.StartFile.To);
                         }
 
-                        if (Application.DocumentManager.MdiActiveDocument == null || Application.DocumentManager.MdiActiveDocument.Name != Discipline.StartFile.To)
+                        if (Application.DocumentManager.MdiActiveDocument == null || Application.DocumentManager.MdiActiveDocument.Name != discipline.StartFile.To)
                         {
-                            writer.writeLine("Unable to get application data");
-                            writer.writeLine("Export failed");
+                            writer.WriteLine("Unable to get application data");
+                            writer.WriteLine("Export failed");
                             continue;
                         }
 
-                        var ifcLogFile = Path.GetDirectoryName(project.TomIFC.To) + "\\" + Export.Name + ".ifc.txt";
+                        var ifcLogFile = Path.GetDirectoryName(project.TomIFC.To) + "\\" + export.Name + ".ifc.txt";
 
-                        writer.writeLine("Running export: " + Export.Name + "\n");
+                        writer.WriteLine("Running export: " + export.Name + "\n");
 
                         bool exportError = false;
 
@@ -98,7 +144,11 @@ namespace IFCExporter.Models
                                 {
                                     var app = Application.AcadApplication as AcadApplication;
                                     app.Visible = true;
-                                    app.ActiveDocument.SendCommand("_.-MAGIIFCEXPORT " + Export.Name + "\n");
+                                    if (id != Guid.Empty)
+                                    {
+                                        return;
+                                    }
+                                    app.ActiveDocument.SendCommand("_.-MAGIIFCEXPORT " + export.Name + "\n");
                                     break;
                                 }
 
@@ -107,8 +157,8 @@ namespace IFCExporter.Models
                             {
                                 if (i == 4)
                                 {
-                                    writer.writeLine("Error: " + e.Message);
-                                    writer.writeLine("Failed to run export");
+                                    writer.WriteLine("Error: " + e.Message);
+                                    writer.WriteLine("Failed to run export");
                                     exportError = true;
                                     break;
                                 }
@@ -123,9 +173,9 @@ namespace IFCExporter.Models
 
 
                         //--Last opp IFC
-                        writer.writeLine("Uploading IFC");
-                        var IfcFromPath = Path.GetDirectoryName(project.TomIFC.To) + "\\" + Export.Name + ".ifc";
-                        var IfcToPath = project.TomIFC.Export + "\\" + Export.IFC + ".ifc";
+                        writer.WriteLine("Uploading IFC");
+                        var IfcFromPath = Path.GetDirectoryName(project.TomIFC.To) + "\\" + export.Name + ".ifc";
+                        var IfcToPath = project.TomIFC.Export + "\\" + export.IFC + ".ifc";
 
                         var emptyIfc = new FileInfo(project.TomIFC.From);
                         var exportedIfc = new FileInfo(IfcFromPath);
@@ -137,7 +187,7 @@ namespace IFCExporter.Models
                                 try
                                 {
                                     CP.CopySingleFile(IfcFromPath, IfcToPath);
-                                    writer.writeLine("IFC successfully uploaded");
+                                    writer.WriteLine("IFC successfully uploaded");
                                     break;
                                 }
                                 catch (System.Exception e)
@@ -153,7 +203,7 @@ namespace IFCExporter.Models
                         }
                         else
                         {
-                            writer.writeLine("IFC-file is empty, skipping upload");
+                            writer.WriteLine("IFC-file is empty, skipping upload");
                         }
                     }
 
@@ -161,7 +211,7 @@ namespace IFCExporter.Models
             }
 
             //-- Lukker eventuelle tegninger som ikke ble lukket av MagiCAD
-            writer.writeLine("Closing other files");
+            writer.WriteLine("Closing other files");
             DM.CloseNotReadOnlyDrawings();
 
             if (AutomaticBool)
@@ -172,7 +222,7 @@ namespace IFCExporter.Models
 
         public void SleepBeforeReset()
         {
-            writer.writeLine("Cooling down after export");
+            writer.WriteLine("Cooling down after export");
             SleepTimer = new System.Timers.Timer();
             SleepTimer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
             SleepTimer.Interval = 15000;
@@ -185,7 +235,7 @@ namespace IFCExporter.Models
             try
             {
                 SleepTimer.Enabled = false;
-                writer.writeLine("Export ended at " + DateTime.Now.ToString() + "\n");
+                writer.WriteLine("Export ended at " + DateTime.Now.ToString() + "\n");
                 DataStorage.ExportsToRun = new List<IFCExporterAPI.Models.IfcProjectInfo>();
                 var FCA = new FileChangedActions();
                 FCA.startMonitoring();
