@@ -73,7 +73,11 @@ namespace IFCManager.Assets
             {                
                 foreach (var export in expiredExports)
                 {
-                    Exporter.Export(export, FolderMonitorViewModel.MainViewModel.XmlPath);
+                    try
+                    {
+                        Exporter.Export(export, FolderMonitorViewModel.MainViewModel.XmlPath);
+                    }
+                    catch { }
                 }
             }
         }
@@ -91,7 +95,8 @@ namespace IFCManager.Assets
 
             var unwantedWindowTitlesEquals = new List<string>
             {
-                "MagiCAD-E"
+                "MagiCAD-E",
+                "AutoCAD"
             };
 
             var windows = OpenWindowCollector.GetOpenWindows().Where(x => unwantedWindowTitlesContains.Any(y => x.Value.Contains(y)) || unwantedWindowTitlesEquals.Any(y => x.Value == y));

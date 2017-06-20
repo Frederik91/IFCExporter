@@ -48,10 +48,9 @@ namespace IFCMonitor.Assets
                 // By the time this is reached AutoCAD is fully
                 // functional and can be interacted with through code
 
-                var finished = false;
                 var exportCompleted = false;
 
-                while (!finished)
+                while (true)
                 {
                     try
                     {
@@ -60,32 +59,34 @@ namespace IFCMonitor.Assets
                             acApp.Visible = true;
                             acApp.ActiveDocument.SendCommand("AutomaticIFC" + " " + xmlPath + " " + fileFolderDate.Id.ToString() + " ");
                             acApp.ActiveDocument.SendCommand("_.MAGIEPROJECT2 ");
-                            acApp.ActiveDocument.SendCommand("_.MAGIHPVVPROJECT2 ");
+                            acApp.ActiveDocument.SendCommand("_.MAGIHPVPROJECT2 ");
                             acApp.ActiveDocument.SendCommand("_.-MAGIIFC " + fileFolderDate.Name + "\n");
-                            CopyIfc(fileFolderDate.Project, fileFolderDate.Name, fileFolderDate.IfcName);
                             exportCompleted = true;
+                            CopyIfc(fileFolderDate.Project, fileFolderDate.Name, fileFolderDate.IfcName);
                         }
 
-
-                        while (acApp.GetType().InvokeMember("ActiveDocument", BindingFlags.GetProperty, null, acApp, null) is object ActiveDocument)
-                        {
-                            object[] dataArry = new object[2];
-                            dataArry[0] = false; //no save
-                            dataArry[1] = ""; //drawing file name.. if saving
-                            ActiveDocument.GetType().InvokeMember("close", BindingFlags.InvokeMethod, null, ActiveDocument, dataArry);
-                        }
+                        CloseAcad(acApp);
+                        return true;
                     }
                     catch (Exception e)
                     {
-                        if (!e.Message.Contains("Busy"))
+                        try
                         {
-                            finished = true;
+
+                            if (!e.Message.Contains("Busy") && acApp != null && acApp.Visible)
+                            {
+                                CloseAcad(acApp);
+                                return true;
+                            }
                         }
-                        if (e.Message == "Failed to get the Document object")
+                        catch
                         {
-                            acApp.Quit();
-                            finished = true;
+                            if (e.Message.Contains("The RPC server is unavailable"))
+                            {
+                                return true;
+                            }
                         }
+
                     }
                 }
             }
@@ -132,6 +133,36 @@ namespace IFCMonitor.Assets
         static void CloseWindow(IntPtr hwnd)
         {
             SendMessage(hwnd, WM_CLOSE, IntPtr.Zero, IntPtr.Zero);
+        }
+
+        private static void CloseAcad(IAcadApplication acApp)
+        {
+            try
+            {
+                while (acApp.GetType().InvokeMember("ActiveDocument", BindingFlags.GetProperty, null, acApp, null) is object ActiveDocument)
+                {
+                    object[] dataArry = new object[2];
+                    dataArry[0] = false; //no save
+                    dataArry[1] = ""; //drawing file name.. if saving
+                    ActiveDocument.GetType().InvokeMember("close", BindingFlags.InvokeMethod, null, ActiveDocument, dataArry);
+                }
+            }
+            catch (Exception e)
+            {
+                if (e.Message == "Failed to get the Document object")
+                {
+                    acApp.Quit();
+                }
+                else
+                {
+                    var processes = Process.GetProcessesByName("Acad").ToList();
+                    foreach (var process in processes)
+                    {
+                        process.Kill();
+                    }
+                }
+            }
+
         }
     }
 }
