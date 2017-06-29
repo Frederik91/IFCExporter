@@ -36,27 +36,22 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="accoremgd">
-      <HintPath>..\..\..\..\..\..\Program Files\Autodesk\AutoCAD 2016\accoremgd.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\Program Files\Autodesk\AutoCAD 2017\accoremgd.dll</HintPath>
     </Reference>
     <Reference Include="AcCui">
-      <HintPath>..\..\..\..\..\..\Program Files\Autodesk\AutoCAD 2016\AcCui.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\Program Files\Autodesk\AutoCAD 2017\AcCui.dll</HintPath>
     </Reference>
     <Reference Include="acdbmgd">
-      <HintPath>..\..\..\..\..\..\Program Files\Autodesk\AutoCAD 2016\acdbmgd.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\Program Files\Autodesk\AutoCAD 2017\acdbmgd.dll</HintPath>
     </Reference>
     <Reference Include="acmgd">
-      <HintPath>..\..\..\..\..\..\Program Files\Autodesk\AutoCAD 2016\acmgd.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\Program Files\Autodesk\AutoCAD 2017\acmgd.dll</HintPath>
+    </Reference>
+    <Reference Include="AcTcMgd">
+      <HintPath>..\..\..\..\..\..\Program Files\Autodesk\AutoCAD 2017\AcTcMgd.dll</HintPath>
     </Reference>
     <Reference Include="AdWindows">
-      <HintPath>..\..\..\..\..\..\Program Files\Autodesk\AutoCAD 2016\AdWindows.dll</HintPath>
-    </Reference>
-    <Reference Include="Autodesk.AutoCAD.Interop">
-      <HintPath>..\..\..\..\..\..\Program Files\Autodesk\AutoCAD 2016\Autodesk.AutoCAD.Interop.dll</HintPath>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </Reference>
-    <Reference Include="Autodesk.AutoCAD.Interop.Common">
-      <HintPath>..\..\..\..\..\..\Program Files\Autodesk\AutoCAD 2016\Autodesk.AutoCAD.Interop.Common.dll</HintPath>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
+      <HintPath>..\..\..\..\..\..\Program Files\Autodesk\AutoCAD 2017\AdWindows.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Practices.Prism.Mvvm, Version=1.1.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Prism.Mvvm.1.1.1\lib\net45\Microsoft.Practices.Prism.Mvvm.dll</HintPath>
@@ -135,12 +130,30 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <COMReference Include="AutoCAD">
+      <Guid>{5B3245BE-661C-4324-BB55-3AD94EBBFDD7}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
     <COMReference Include="MAGICOMSRVLib">
       <Guid>{949D0710-F36F-4CB2-AD04-7315EAE74D83}</Guid>
       <VersionMajor>1</VersionMajor>
       <VersionMinor>0</VersionMinor>
       <Lcid>0</Lcid>
       <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+    <COMReference Include="stdole">
+      <Guid>{00020430-0000-0000-C000-000000000046}</Guid>
+      <VersionMajor>2</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>primary</WrapperTool>
       <Isolated>False</Isolated>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>

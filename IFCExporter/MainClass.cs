@@ -2,7 +2,6 @@
 using Autodesk.AutoCAD.Runtime;
 using IFCExporter.Helpers;
 using System.IO;
-using Autodesk.AutoCAD.Interop;
 using System.Collections.Generic;
 using IFCExporter.Workers;
 using Autodesk.AutoCAD.EditorInput;
@@ -11,6 +10,7 @@ using System.Runtime.InteropServices;
 using IFCExporter.Models;
 using System.Timers;
 using IFCExporterAPI.Models;
+using AutoCAD;
 
 namespace IFCExporter
 {
@@ -44,7 +44,7 @@ namespace IFCExporter
                 return;
             }
 
-            DataStorage.logFileLocation = string.Format("c:\\IFCEXPORT\\log-" + DataStorage.ProjectInfo[0].ProjectName + "-{0:yyyy-MM-dd_hh-mm-ss-tt}.txt", DateTime.Now);
+            DataStorage.LogFileLocation = string.Format("c:\\IFCEXPORT\\log-" + DataStorage.ProjectInfo[0].ProjectName + "-{0:yyyy-MM-dd_hh-mm-ss-tt}.txt", DateTime.Now);
             //DataStorage.SelectedExports = NAcadTask.ExportsToExecute;
             DataStorage.ExportsToRun = new List<IfcProjectInfo>();
             RunForeverBool = NAcadTask.ContinuousMode;
@@ -79,7 +79,7 @@ namespace IFCExporter
                 return;
             }
 
-            DataStorage.logFileLocation = string.Format("c:\\IFCEXPORT\\log-" + DataStorage.ProjectInfo[0].ProjectName + "-{0:yyyy-MM-dd_hh-mm-ss-tt}.txt", DateTime.Now);
+            DataStorage.LogFileLocation = string.Format("c:\\IFCEXPORT\\log-" + DataStorage.ProjectInfo[0].ProjectName + "-{0:yyyy-MM-dd_hh-mm-ss-tt}.txt", DateTime.Now);
             //DataStorage.SelectedExports = NAcadTask.ExportsToExecute;
             DataStorage.ExportsToRun = new List<IfcProjectInfo>();
             RunForeverBool = NAcadTask.ContinuousMode;

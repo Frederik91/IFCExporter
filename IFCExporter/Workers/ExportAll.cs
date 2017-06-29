@@ -1,5 +1,5 @@
-﻿using Autodesk.AutoCAD.ApplicationServices;
-using Autodesk.AutoCAD.Interop;
+﻿using AutoCAD;
+using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.Runtime;
 using IFCExporter.Helpers;
 using IFCExporter.Workers;

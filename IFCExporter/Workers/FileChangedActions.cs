@@ -1,5 +1,5 @@
-﻿using Autodesk.AutoCAD.ApplicationServices;
-using Autodesk.AutoCAD.Interop;
+﻿using AutoCAD;
+using Autodesk.AutoCAD.ApplicationServices;
 using IFCExporter.Helpers;
 using IFCExporter.Models;
 using System.Collections.Generic;
@@ -56,7 +56,7 @@ namespace IFCExporter.Workers
             }
             else
             {
-                var textfile = File.ReadAllLines(DataStorage.logFileLocation);
+                var textfile = File.ReadAllLines(DataStorage.LogFileLocation);
                 var length = textfile.Length;
                 if (textfile[length - 1].Contains("No change detected"))
                 {

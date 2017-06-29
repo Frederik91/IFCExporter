@@ -21,7 +21,7 @@ namespace IFCExporter.Helpers
                 textArray.Add(DateTime.Now + " @ " + line);
             }
 
-            File.AppendAllLines(DataStorage.logFileLocation, textArray);
+            File.AppendAllLines(DataStorage.LogFileLocation, textArray);
 
         }
 
@@ -35,11 +35,11 @@ namespace IFCExporter.Helpers
                 newTextfile.Add(text[i]);
             }
 
-            File.Delete(DataStorage.logFileLocation);
+            File.Delete(DataStorage.LogFileLocation);
 
             try
             {
-                File.AppendAllLines(DataStorage.logFileLocation, newTextfile.ToArray());
+                File.AppendAllLines(DataStorage.LogFileLocation, newTextfile.ToArray());
             }
             catch {}
 
@@ -60,7 +60,7 @@ namespace IFCExporter.Helpers
 
             try
             {
-                File.AppendAllLines(DataStorage.logFileLocation, textArray);
+                File.AppendAllLines(DataStorage.LogFileLocation, textArray);
             }
             catch {}
 
@@ -69,9 +69,9 @@ namespace IFCExporter.Helpers
 
         private void CheckFileSize()
         {
-            if (File.Exists(DataStorage.logFileLocation))
+            if (File.Exists(DataStorage.LogFileLocation))
             {
-                var file = new FileInfo(DataStorage.logFileLocation);
+                var file = new FileInfo(DataStorage.LogFileLocation);
 
                 if (file.Length > 1048576)
                 {

@@ -1,4 +1,4 @@
-﻿using Autodesk.AutoCAD.Interop;
+﻿using AutoCAD;
 using IFCExporter.Helpers;
 using IFCExporterAPI.Models;
 using IFCManager.Models;
@@ -60,7 +60,17 @@ namespace IFCMonitor.Assets
                             acApp.ActiveDocument.SendCommand("AutomaticIFC" + " " + xmlPath + " " + fileFolderDate.Id.ToString() + " ");
                             acApp.ActiveDocument.SendCommand("_.MAGIEPROJECT2 ");
                             acApp.ActiveDocument.SendCommand("_.MAGIHPVPROJECT2 ");
+                            var startTime = DateTime.Now;
                             acApp.ActiveDocument.SendCommand("_.-MAGIIFC " + fileFolderDate.Name + "\n");
+                            var endTime = DateTime.Now;
+                            var duration = endTime - startTime;
+
+                            if (duration.Minutes < 1)
+                            {
+                                CloseAcad(acApp);
+                                return true;
+                            }
+
                             exportCompleted = true;
                             CopyIfc(fileFolderDate.Project, fileFolderDate.Name, fileFolderDate.IfcName);
                         }

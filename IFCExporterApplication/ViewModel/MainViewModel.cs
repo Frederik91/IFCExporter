@@ -1,5 +1,5 @@
-﻿using Autodesk.AutoCAD.ApplicationServices;
-using Autodesk.AutoCAD.Interop;
+﻿using AutoCAD;
+using Autodesk.AutoCAD.ApplicationServices;
 using IFCExporterApplication.Models;
 using IFCManager.ViewModel;
 using Microsoft.Practices.Prism.Commands;
@@ -21,16 +21,16 @@ namespace IFCExporterApplication.ViewModel
         private ICommand m_startAutoCAD;
         private ICommand m_closeAutoCad;
 
-        public ICommand startAutoCADCommand
+        public ICommand StartAutoCADCommand
         {
             get { return m_startAutoCAD; }
-            set { m_startAutoCAD = value; OnPropertyChanged("startAutoCADCommand"); }
+            set { m_startAutoCAD = value; OnPropertyChanged(nameof(StartAutoCADCommand)); }
         }
 
-        public ICommand closeAutoCADCommand
+        public ICommand CloseAutoCADCommand
         {
             get { return m_closeAutoCad; }
-            set { m_closeAutoCad = value; OnPropertyChanged("closeAutoCADCommand"); }
+            set { m_closeAutoCad = value; OnPropertyChanged(nameof(CloseAutoCADCommand)); }
         }
 
         public MainViewModel()
@@ -41,10 +41,11 @@ namespace IFCExporterApplication.ViewModel
 
         private void startAutoCAD()
         {
-            var export = new ExportApp();
-
-            export.filePath = @"H:\IFCEXPORT\XML\AutoExportUNN.xml";
-            export.name = Path.GetFileNameWithoutExtension(export.filePath);
+            var export = new ExportApp()
+            {
+                FilePath = @"H:\IFCEXPORT\XML\AutoExportUNN.xml"
+            };
+            export.Name = Path.GetFileNameWithoutExtension(export.FilePath);
 
 
             AcadApplication app = null;
@@ -76,7 +77,7 @@ namespace IFCExporterApplication.ViewModel
             {
                 try
                 {
-                    exp.app.ActiveDocument.SendCommand("IFCExporterAuto" + " " + exp.filePath + " ");
+                    exp.App.ActiveDocument.SendCommand("IFCExporterAuto" + " " + exp.FilePath + " ");
                     break;
                 }
                 catch (Exception)
@@ -90,14 +91,14 @@ namespace IFCExporterApplication.ViewModel
             foreach (var export in ExportAppList)
             {
 
-                Object acadObject = export.app;
+                Object acadObject = export.App;
                 Object ActiveDocument = acadObject.GetType().InvokeMember("ActiveDocument", BindingFlags.GetProperty, null, acadObject, null);
 
                 object[] dataArry = new object[2];
                 dataArry[0] = false; //no save
                 dataArry[1] = ""; //drawing file name.. if saving
                 ActiveDocument.GetType().InvokeMember("close", BindingFlags.InvokeMethod, null, ActiveDocument, dataArry);
-                export.app.Quit();
+                export.App.Quit();
             }
         }
     }

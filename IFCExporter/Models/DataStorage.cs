@@ -1,4 +1,4 @@
-﻿using Autodesk.AutoCAD.Interop;
+﻿using AutoCAD;
 using IFCExporterAPI.Models;
 using System;
 using System.Collections.Generic;
@@ -18,6 +18,6 @@ namespace IFCExporter.Models
         public static List<ProjectChanges> ProjectChanges { get; set; }
         public static List<string> AllFiles { get; set; }
         public static AcadApplication app { get; set; }
-        public static string logFileLocation { get; set; }
+        public static string LogFileLocation { get; set; }
     }
 }

@@ -19,7 +19,7 @@ namespace IFCExporterTest
         [TestMethod]
         public void TestFileChangedActions()
         {
-            DataStorage.logFileLocation = @"C:\IFCEXPORT\Log - MH2.xml";
+            DataStorage.LogFileLocation = @"C:\IFCEXPORT\Log - MH2.xml";
 
             DataStorage.ProjectChanges = new List<ProjectChanges>();
             DataStorage.ExportsToRun = new List<IfcProjectInfo>();

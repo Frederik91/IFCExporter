@@ -38,23 +38,25 @@
   <ItemGroup>
     <Reference Include="AcCoreMgd, Version=20.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\Program Files\Autodesk\AutoCAD 2016\accoremgd.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\Program Files\Autodesk\AutoCAD 2017\accoremgd.dll</HintPath>
     </Reference>
     <Reference Include="AcCui, Version=20.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\Program Files\Autodesk\AutoCAD 2016\AcCui.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\Program Files\Autodesk\AutoCAD 2017\AcCui.dll</HintPath>
     </Reference>
     <Reference Include="AcDbMgd, Version=20.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\Program Files\Autodesk\AutoCAD 2016\acdbmgd.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\Program Files\Autodesk\AutoCAD 2017\acdbmgd.dll</HintPath>
     </Reference>
     <Reference Include="AcMgd, Version=20.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\Program Files\Autodesk\AutoCAD 2016\acmgd.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\Program Files\Autodesk\AutoCAD 2017\acmgd.dll</HintPath>
     </Reference>
-    <Reference Include="Autodesk.AutoCAD.Interop, Version=20.1.0.0, Culture=neutral, PublicKeyToken=null">
-      <EmbedInteropTypes>False</EmbedInteropTypes>
-      <HintPath>..\..\..\..\..\..\Program Files\Autodesk\AutoCAD 2016\Autodesk.AutoCAD.Interop.dll</HintPath>
+    <Reference Include="AcTcMgd">
+      <HintPath>..\..\..\..\..\..\Program Files\Autodesk\AutoCAD 2017\AcTcMgd.dll</HintPath>
+    </Reference>
+    <Reference Include="AdWindows">
+      <HintPath>..\..\..\..\..\..\Program Files\Autodesk\AutoCAD 2017\AdWindows.dll</HintPath>
     </Reference>
     <Reference Include="MahApps.Metro, Version=1.5.0.23, Culture=neutral, PublicKeyToken=f4fb5a3c4d1e5b4f, processorArchitecture=MSIL">
       <HintPath>..\packages\MahApps.Metro.1.5.0\lib\net45\MahApps.Metro.dll</HintPath>
@@ -105,12 +107,21 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <COMReference Include="AXDBLib">
-      <Guid>{594E795C-1019-46CC-969B-121BE08917B2}</Guid>
+    <COMReference Include="AutoCAD">
+      <Guid>{5B3245BE-661C-4324-BB55-3AD94EBBFDD7}</Guid>
       <VersionMajor>1</VersionMajor>
       <VersionMinor>0</VersionMinor>
       <Lcid>0</Lcid>
       <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+    <COMReference Include="stdole">
+      <Guid>{00020430-0000-0000-C000-000000000046}</Guid>
+      <VersionMajor>2</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>primary</WrapperTool>
       <Isolated>False</Isolated>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
