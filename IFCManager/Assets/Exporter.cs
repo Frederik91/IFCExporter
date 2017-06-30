@@ -11,11 +11,21 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Timers;
 
 namespace IFCMonitor.Assets
 {
     public class Exporter
     {
+        private static System.Timers.Timer exportTimeoutTimer = new System.Timers.Timer();
+        private static AcadApplication acApp;
+
+        public Exporter()
+        {
+            exportTimeoutTimer.Elapsed += new ElapsedEventHandler(CloseAcadTimeoutEvent);
+            exportTimeoutTimer.Interval = exportTimeoutTimer.Interval = 1800000; ;
+        }
+
         public static bool Export(FileFolderDate fileFolderDate, string xmlPath)
         {
             // "AutoCAD.Application.17" uses 2007 or 2008,
@@ -25,7 +35,7 @@ namespace IFCMonitor.Assets
 
             const string progID = "AutoCAD.Application.20.1";
 
-            AcadApplication acApp = null;
+            acApp = null;
             try
             {
                 acApp = (AcadApplication)Marshal.GetActiveObject(progID);
@@ -56,26 +66,25 @@ namespace IFCMonitor.Assets
                     {
                         if (!exportCompleted)
                         {
+                            if (!exportTimeoutTimer.Enabled)
+                            {
+                                exportTimeoutTimer.Enabled = true;
+                                exportTimeoutTimer.Start();
+                            }
                             acApp.Visible = true;
                             acApp.ActiveDocument.SendCommand("AutomaticIFC" + " " + xmlPath + " " + fileFolderDate.Id.ToString() + " ");
                             acApp.ActiveDocument.SendCommand("_.MAGIEPROJECT2 ");
                             acApp.ActiveDocument.SendCommand("_.MAGIHPVPROJECT2 ");
-                            var startTime = DateTime.Now;
+                            Thread.Sleep(2000);
                             acApp.ActiveDocument.SendCommand("_.-MAGIIFC " + fileFolderDate.Name + "\n");
-                            var endTime = DateTime.Now;
-                            var duration = endTime - startTime;
-
-                            if (duration.Minutes < 1)
-                            {
-                                CloseAcad(acApp);
-                                return true;
-                            }
 
                             exportCompleted = true;
                             CopyIfc(fileFolderDate.Project, fileFolderDate.Name, fileFolderDate.IfcName);
                         }
 
-                        CloseAcad(acApp);
+                        CloseAcad();
+                        exportTimeoutTimer.Enabled = false;
+                        exportTimeoutTimer.Stop();
                         return true;
                     }
                     catch (Exception e)
@@ -85,7 +94,9 @@ namespace IFCMonitor.Assets
 
                             if (!e.Message.Contains("Busy") && acApp != null && acApp.Visible)
                             {
-                                CloseAcad(acApp);
+                                CloseAcad();
+                                exportTimeoutTimer.Enabled = false;
+                                exportTimeoutTimer.Stop();
                                 return true;
                             }
                         }
@@ -93,6 +104,8 @@ namespace IFCMonitor.Assets
                         {
                             if (e.Message.Contains("The RPC server is unavailable"))
                             {
+                                exportTimeoutTimer.Enabled = false;
+                                exportTimeoutTimer.Stop();
                                 return true;
                             }
                         }
@@ -145,7 +158,13 @@ namespace IFCMonitor.Assets
             SendMessage(hwnd, WM_CLOSE, IntPtr.Zero, IntPtr.Zero);
         }
 
-        private static void CloseAcad(IAcadApplication acApp)
+        private static void CloseAcadTimeoutEvent(object sender, ElapsedEventArgs e)
+        {
+            CloseAcad();
+            exportTimeoutTimer.Enabled = false;            
+        }
+
+        private static void CloseAcad()
         {
             try
             {
@@ -162,6 +181,7 @@ namespace IFCMonitor.Assets
                 if (e.Message == "Failed to get the Document object")
                 {
                     acApp.Quit();
+                    acApp = null;
                 }
                 else
                 {
@@ -169,6 +189,7 @@ namespace IFCMonitor.Assets
                     foreach (var process in processes)
                     {
                         process.Kill();
+                        acApp = null;
                     }
                 }
             }
