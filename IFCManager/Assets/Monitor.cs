@@ -96,7 +96,8 @@ namespace IFCManager.Assets
             var unwantedWindowTitlesEquals = new List<string>
             {
                 "MagiCAD-E",
-                "AutoCAD"
+                "AutoCAD",
+                "Proxy Information"
             };
 
             var windows = OpenWindowCollector.GetOpenWindows().Where(x => unwantedWindowTitlesContains.Any(y => x.Value.Contains(y)) || unwantedWindowTitlesEquals.Any(y => x.Value == y));

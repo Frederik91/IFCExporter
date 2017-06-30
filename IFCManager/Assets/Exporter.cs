@@ -33,7 +33,7 @@ namespace IFCMonitor.Assets
 
             // "AutoCAD.Application.17.1" uses 2008, specifically
 
-            const string progID = "AutoCAD.Application.20.1";
+            const string progID = "AutoCAD.Application";
 
             acApp = null;
             try
